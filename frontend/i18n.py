@@ -7,7 +7,7 @@ TRANSLATIONS = {
         "nav_create": "Buat Sesi",
         "nav_host": "Layar Host",
         "nav_student": "Layar Mahasiswa",
-        "nav_transcript": "Transkrip & Ringkasan",
+        "nav_transcript": "Transkrip",
         "backend_offline": "Backend FastAPI belum terhubung di {url}. Jalankan `python -m uvicorn backend.main:app --port 8000`.",
         "home_title": "Teks Kuliah Langsung untuk Semua Mahasiswa",
         "home_subtitle": (
@@ -56,7 +56,7 @@ TRANSLATIONS = {
         "nav_create": "Create Session",
         "nav_host": "Host Live",
         "nav_student": "Student View",
-        "nav_transcript": "Transcript & Summary",
+        "nav_transcript": "Transcript",
         "backend_offline": "FastAPI backend is unreachable at {url}. Start it with `python -m uvicorn backend.main:app --port 8000`.",
         "home_title": "Accessible Live Captions for Every Student",
         "home_subtitle": (

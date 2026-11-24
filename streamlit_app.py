@@ -37,11 +37,12 @@ st.set_page_config(
 st.markdown(
     """
 <style>
-  .block-container { max-width: 1080px; padding-top: 1.2rem; padding-bottom: 3rem; }
-  button[kind="primary"], button[kind="secondary"] { min-height: 46px; border-radius: 12px !important; font-weight: 700 !important; }
+  .block-container { max-width: 1080px; padding-top: 4.2rem !important; padding-bottom: 3rem; }
+  button[kind="primary"], button[kind="secondary"] { min-height: 46px; border-radius: 12px !important; font-weight: 700 !important; white-space: nowrap; }
+  .ll-pill-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; margin-bottom: 10px; }
   .ll-pill {
-    display: inline-block; padding: 3px 10px; border-radius: 999px;
-    font-size: 12px; font-weight: 700; margin-right: 6px; margin-bottom: 4px;
+    display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 999px;
+    font-size: 12px; font-weight: 700; line-height: 1.4;
   }
   .ll-pill-blue { background: #dbeafe; color: #1e3a8a; }
   .ll-pill-green { background: #dcfce7; color: #14532d; }
@@ -150,37 +151,43 @@ health = api.health()
 # Top Header & Navigation Bar
 # ---------------------------------------------------------------------------
 
-h_col1, h_col2, h_col3 = st.columns([5, 3, 2])
+h_col1, h_col2 = st.columns([8, 2])
 with h_col1:
-    st.markdown("### 🎓 LectureLens")
+    st.markdown("## 🎓 LectureLens")
     st.caption(tr(lang, "app_tagline"))
 with h_col2:
-    if health:
-        db_badge = (
-            "Supabase PostgreSQL"
-            if health.get("database") == "supabase-postgresql"
-            else "SQLite Local"
-        )
-        gem_badge = (
-            f"Gemini {health.get('gemini_model', 'Flash')}"
-            if health.get("gemini_configured")
-            else "Rules Math Engine"
-        )
-        stt_info = health.get("stt", {})
-        stt_badge = f"Faster-Whisper ({stt_info.get('model_size', 'large-v3-turbo')}) + Silero VAD"
-        st.markdown(
-            f'<span class="ll-pill ll-pill-green">● {db_badge}</span>'
-            f'<span class="ll-pill ll-pill-blue">{gem_badge}</span>'
-            f'<span class="ll-pill ll-pill-slate">{stt_badge}</span>',
-            unsafe_allow_html=True,
-        )
-    else:
-        st.error(tr(lang, "backend_offline", url=backend_http))
-with h_col3:
     next_lang = "en" if lang == "id" else "id"
     if st.button(f"🌐 {lang.upper()} → {next_lang.upper()}", use_container_width=True):
         st.session_state.ui_lang = next_lang
         st.rerun()
+
+if health:
+    db_badge = (
+        "Supabase PostgreSQL"
+        if health.get("database") == "supabase-postgresql"
+        else "SQLite Local"
+    )
+    gem_badge = (
+        f"Gemini {health.get('gemini_model', 'Flash')}"
+        if health.get("gemini_configured")
+        else "KaTeX Math Engine"
+    )
+    stt_info = health.get("stt", {})
+    stt_badge = (
+        "Cloud Live Sync"
+        if health.get("mode") == "embedded"
+        else f"Faster-Whisper ({stt_info.get('model_size', 'large-v3-turbo')}) + Silero VAD"
+    )
+    st.markdown(
+        f'<div class="ll-pill-row">'
+        f'<span class="ll-pill ll-pill-green">● {db_badge}</span>'
+        f'<span class="ll-pill ll-pill-blue">{gem_badge}</span>'
+        f'<span class="ll-pill ll-pill-slate">{stt_badge}</span>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+else:
+    st.error(tr(lang, "backend_offline", url=backend_http))
 
 nav_cols = st.columns(5)
 nav_items = [
