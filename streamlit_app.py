@@ -11,7 +11,7 @@ import streamlit as st
 from dotenv import load_dotenv
 
 from frontend.api_client import (
-    LectureLensAPI,
+    get_api_client,
     get_backend_http_url,
     get_public_app_url,
     get_public_backend_http_url,
@@ -123,12 +123,26 @@ def parse_csv_glossary(content: str) -> list[str]:
     return list(dict.fromkeys(found))
 
 
-api = LectureLensAPI()
+def resolve_public_app_url() -> str:
+    configured = get_public_app_url()
+    if configured and "localhost" not in configured and "127.0.0.1" not in configured:
+        return configured
+    # Automatically detect deployed Streamlit Community Cloud domain from request headers!
+    try:
+        host = st.context.headers.get("host", "")
+        if host and "localhost" not in host and "127.0.0.1" not in host:
+            return f"https://{host}"
+    except Exception:
+        pass
+    return configured
+
+
+api = get_api_client()
 lang = st.session_state.ui_lang
 backend_http = get_backend_http_url()
 public_backend_http = get_public_backend_http_url()
 backend_ws = get_public_backend_ws_url()
-public_app_url = get_public_app_url()
+public_app_url = resolve_public_app_url()
 health = api.health()
 
 
@@ -426,13 +440,109 @@ elif st.session_state.page == "host":
             st.code(join_url, language=None)
             st.caption(f"Glossary hotwords: {', '.join(sess['glossary']) or '-'}")
 
-    # Real-Time WebSocket Host Console (Faster-Whisper WS + Web Speech + Mock + KaTeX)
-    render_host_live_console(
-        session=sess,
-        ws_base_url=backend_ws,
-        http_base_url=public_backend_http,
-        ui_lang=lang,
-    )
+    # Real-Time Host Console: FastAPI WebSocket mode OR Standalone Streamlit Cloud mode
+    if not getattr(api, "is_embedded", False):
+        render_host_live_console(
+            session=sess,
+            ws_base_url=backend_ws,
+            http_base_url=public_backend_http,
+            ui_lang=lang,
+        )
+    else:
+        if "demo_cursor" not in st.session_state:
+            st.session_state.demo_cursor = 0
+
+        demo_lines = (
+            [
+                "Selamat pagi, hari ini kita bahas Integral Riemann dan Konvergensi deret.",
+                "Perhatikan fungsi x kuadrat dan hitung integral dari nol sampai satu x kuadrat dx.",
+                "Pada metode eiginvalue kita menjumpai akar dari x tambah satu sebelum Transformasi Fourier.",
+                "Cek papan sebelah kiri [unclear] lalu evaluasi limit x menuju nol dari sin x per x.",
+            ]
+            if sess["language"].startswith("id")
+            else [
+                "Good morning everyone, today we study Riemann Integral and Convergence.",
+                "Consider x squared and evaluate the integral from zero to one of x squared dx.",
+                "In eiginvalue decomposition we encounter square root of x plus one before Fourier Transform.",
+                "Check the board [unclear] then compute limit as x approaches zero of sin x over x.",
+            ]
+        )
+
+        sc1, sc2, sc3, sc4 = st.columns(4)
+        with sc1:
+            st.metric("Status", sess["status"].upper())
+        with sc2:
+            st.metric("Mahasiswa Online" if lang == "id" else "Students", sess["student_count"])
+        with sc3:
+            if sess["status"] == "paused":
+                if st.button("▶ Lanjutkan" if lang == "id" else "▶ Resume", type="primary", use_container_width=True):
+                    api.patch_session(sess["id"], {"status": "live"})
+                    st.rerun()
+            else:
+                if st.button("⏸ Jeda" if lang == "id" else "⏸ Pause", use_container_width=True):
+                    api.patch_session(sess["id"], {"status": "paused"})
+                    st.rerun()
+        with sc4:
+            if st.button("■ Akhiri Sesi" if lang == "id" else "■ End Session", use_container_width=True):
+                api.patch_session(sess["id"], {"status": "ended"})
+                navigate("transcript", sess["id"])
+
+        # Native browser microphone recorder (transcribes with Gemini Flash when GEMINI_API_KEY is set)
+        mic_audio = st.audio_input(
+            "🎙️ Rekam suara dosen (klik mic → bicara → klik stop untuk transkripsi)"
+            if lang == "id"
+            else "🎙️ Record lecturer voice (tap mic → speak → stop to transcribe)"
+        )
+        if mic_audio is not None:
+            audio_sig = f"{sess['id']}-{len(mic_audio.getvalue())}"
+            if st.session_state.get("last_mic_sig") != audio_sig:
+                st.session_state.last_mic_sig = audio_sig
+                with st.spinner("Mentranskripsi suara..." if lang == "id" else "Transcribing audio..."):
+                    try:
+                        api.transcribe_audio_file(
+                            session_id=sess["id"],
+                            filename="mic.wav",
+                            data=mic_audio.getvalue(),
+                            content_type="audio/wav",
+                            language=sess["language"],
+                        )
+                        st.toast("✅ Teks berhasil ditambahkan!" if lang == "id" else "✅ Caption added!")
+                    except Exception as exc:
+                        st.warning(str(exc))
+
+        # Quick Manual Utterance & Demo Line Controls
+        mc1, mc2 = st.columns([7, 3])
+        with mc1:
+            with st.form("embedded_manual_caption", clear_on_submit=True):
+                u_in = st.text_input(
+                    "Caption",
+                    placeholder=(
+                        'Ketik kalimat uji (mis: "integral dari nol sampai satu x kuadrat dx")...'
+                        if lang == "id"
+                        else 'Type a test sentence (e.g. "integral from zero to one of x squared dx")...'
+                    ),
+                    label_visibility="collapsed",
+                )
+                if st.form_submit_button("📤 Kirim Teks" if lang == "id" else "📤 Send Caption", type="primary", use_container_width=True):
+                    if u_in.strip():
+                        api.submit_caption(sess["id"], u_in.strip())
+                        st.rerun()
+        with mc2:
+            if st.button("✨ Kirim 1 Baris Demo" if lang == "id" else "✨ Send 1 Demo Line", use_container_width=True):
+                line = demo_lines[st.session_state.demo_cursor % len(demo_lines)]
+                st.session_state.demo_cursor += 1
+                api.submit_caption(sess["id"], line)
+                st.rerun()
+
+        host_caps = api.list_captions(sess["id"])
+        if host_caps:
+            render_katex_transcript_list(host_caps, set(), ui_lang=lang)
+        else:
+            st.info(
+                "Belum ada teks. Tekan 'Kirim 1 Baris Demo', rekam mikrofon, atau ketik kalimat uji di atas."
+                if lang == "id"
+                else "No captions yet. Click 'Send 1 Demo Line', record audio, or type a sentence above."
+            )
 
     # Upload Audio Recording -> FastAPI Faster-Whisper + Silero VAD
     with st.expander(f"🎧 {tr(lang, 'upload_audio_title')}", expanded=False):
@@ -494,13 +604,81 @@ elif st.session_state.page == "join":
         if st.button(f"📄 {tr(lang, 'nav_transcript')}", use_container_width=True):
             navigate("transcript", sess["id"])
 
-    render_student_live_console(
-        session=sess,
-        ws_base_url=backend_ws,
-        http_base_url=public_backend_http,
-        student_id=st.session_state.student_id,
-        ui_lang=lang,
-    )
+    if not getattr(api, "is_embedded", False):
+        render_student_live_console(
+            session=sess,
+            ws_base_url=backend_ws,
+            http_base_url=public_backend_http,
+            student_id=st.session_state.student_id,
+            ui_lang=lang,
+        )
+    else:
+        from frontend.local_backend import touch_student_presence
+
+        if "stu_pause_poll" not in st.session_state:
+            st.session_state.stu_pause_poll = False
+
+        ctrl1, ctrl2 = st.columns([6, 4])
+        with ctrl1:
+            st.caption(
+                "🔄 Teks diperbarui otomatis tiap 1,5 detik (Cloud Live Sync)"
+                if lang == "id"
+                else "🔄 Captions auto-refresh every 1.5s (Cloud Live Sync)"
+            )
+        with ctrl2:
+            st.session_state.stu_pause_poll = st.toggle(
+                "⏸ Jeda Gulir / Auto-Refresh" if lang == "id" else "⏸ Pause Auto-Refresh",
+                value=st.session_state.stu_pause_poll,
+            )
+
+        @st.fragment(run_every=None if st.session_state.stu_pause_poll else "1.5s")
+        def _live_student_feed():
+            touch_student_presence(sess["id"], st.session_state.student_id)
+            live_sess = api.get_session(sess["id"])
+            if not live_sess:
+                st.error("Session not found.")
+                return
+            if live_sess["status"] == "ended":
+                st.success(
+                    "✅ **Sesi Telah Berakhir** — Dosen telah mengakhiri sesi ini. Buka tab **Transkrip & Ringkasan** untuk melihat ringkasan & ekspor `.docx` / `.pdf`."
+                    if lang == "id"
+                    else "✅ **Session Ended** — Open the **Transcript & Summary** tab above to summarize and export `.docx` / `.pdf`."
+                )
+                return
+            if live_sess["status"] == "paused":
+                st.warning(
+                    "⏸ Dosen sedang menjeda sesi."
+                    if lang == "id"
+                    else "⏸ The lecturer has temporarily paused the session."
+                )
+            live_caps = api.list_captions(sess["id"])
+            bks = api.list_bookmarks(sess["id"], st.session_state.student_id)
+            bk_seqs = {b["transcript_seq"] for b in bks}
+            if not live_caps:
+                st.info(
+                    "Terhubung! Menunggu dosen mulai berbicara..."
+                    if lang == "id"
+                    else "Connected! Waiting for the lecturer to begin..."
+                )
+                return
+            render_katex_transcript_list(live_caps, bk_seqs, ui_lang=lang)
+            latest_seq = live_caps[-1]["seq"]
+            bk_col1, bk_col2 = st.columns([6, 4])
+            with bk_col2:
+                saved = latest_seq in bk_seqs
+                lbl = (
+                    f"★ Hapus Bookmark #{latest_seq}"
+                    if saved
+                    else f"☆ Bookmark Segmen Terbaru (#{latest_seq})"
+                )
+                if st.button(lbl, key=f"quick_bk_{latest_seq}", use_container_width=True):
+                    if saved:
+                        api.delete_bookmark(sess["id"], latest_seq, st.session_state.student_id)
+                    else:
+                        api.upsert_bookmark(sess["id"], latest_seq, st.session_state.student_id)
+                    st.rerun()
+
+        _live_student_feed()
 
 
 # ---------------------------------------------------------------------------

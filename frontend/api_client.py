@@ -55,6 +55,8 @@ def get_public_app_url() -> str:
 
 
 class LectureLensAPI:
+    is_embedded = False
+
     def __init__(self, base_url: Optional[str] = None) -> None:
         self.base_url = (base_url or get_backend_http_url()).rstrip("/")
 
@@ -170,3 +172,29 @@ class LectureLensAPI:
         )
         r.raise_for_status()
         return r.content
+
+
+def get_api_client():
+    """
+    Returns remote FastAPI client when BACKEND_URL is reachable,
+    or seamlessly falls back to EmbeddedLectureLensAPI for 1-click
+    zero-card Streamlit Community Cloud deployment!
+    """
+    remote = LectureLensAPI()
+    if remote.health() is not None:
+        return remote
+
+    # Bridge Streamlit Cloud secrets into os.environ for backend.config.Settings
+    try:
+        import streamlit as st
+
+        for key in ("DATABASE_URL", "GEMINI_API_KEY", "GEMINI_MODEL", "PUBLIC_APP_URL"):
+            if key in st.secrets and not os.getenv(key):
+                os.environ[key] = str(st.secrets[key])
+    except Exception:
+        pass
+
+    from frontend.local_backend import EmbeddedLectureLensAPI
+
+    return EmbeddedLectureLensAPI()
+
