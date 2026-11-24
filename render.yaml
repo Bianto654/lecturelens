@@ -1,0 +1,28 @@
+# Render Blueprint for LectureLens FastAPI + WebSockets Backend
+# Deploy at https://dashboard.render.com -> New -> Blueprint
+services:
+  - type: web
+    name: lecturelens-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements-backend.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: DATABASE_URL
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: "gemini-2.5-flash"
+      # Render Free Tier has 512MB RAM; set "tiny" for free tier or "large-v3-turbo" on 4GB+/GPU plan
+      - key: WHISPER_MODEL_SIZE
+        value: "tiny"
+      - key: WHISPER_DEVICE
+        value: "cpu"
+      - key: WHISPER_COMPUTE_TYPE
+        value: "int8"
+      - key: WHISPER_ENABLED
+        value: "true"

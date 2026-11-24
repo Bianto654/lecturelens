@@ -1,0 +1,108 @@
+from __future__ import annotations
+
+TRANSLATIONS = {
+    "id": {
+        "app_tagline": "Teks kuliah langsung dengan Faster-Whisper, Gemini Flash, KaTeX & Supabase",
+        "nav_home": "Beranda",
+        "nav_create": "Buat Sesi",
+        "nav_host": "Layar Host",
+        "nav_student": "Layar Mahasiswa",
+        "nav_transcript": "Transkrip & Ringkasan",
+        "backend_offline": "Backend FastAPI belum terhubung di {url}. Jalankan `python -m uvicorn backend.main:app --port 8000`.",
+        "home_title": "Teks Kuliah Langsung untuk Semua Mahasiswa",
+        "home_subtitle": (
+            "Dosen berbicara dari satu perangkat, FastAPI + WebSockets menyiarkan teks real-time "
+            "bertenaga Faster-Whisper + Silero VAD, penyempurnaan rumus Google Gemini Flash + KaTeX, "
+            "dan tersimpan aman di Supabase PostgreSQL."
+        ),
+        "btn_create": "Buat Sesi Baru",
+        "btn_join": "Gabung Sesi",
+        "btn_demo": "Coba Demo Cepat (Host)",
+        "join_placeholder": "Masukkan kode ruangan (mis. KALK-4821) atau tautan...",
+        "past_sessions": "Riwayat Sesi",
+        "no_sessions": "Belum ada sesi di database. Klik 'Buat Sesi Baru' atau 'Coba Demo Cepat'.",
+        "create_title": "Buat Sesi Kuliah Baru",
+        "course_title": "Nama Mata Kuliah",
+        "course_code": "Kode Mata Kuliah (Opsional)",
+        "topic": "Topik / Bab",
+        "date": "Tanggal",
+        "speech_lang": "Bahasa Pengenalan Suara",
+        "glossary_label": "Glosarium Istilah Teknis (satu istilah per baris)",
+        "glossary_help": "Dipakai sebagai hotwords & initial_prompt untuk Faster-Whisper serta konteks Gemini Flash.",
+        "upload_csv": "Unggah Glosarium CSV (Opsional)",
+        "load_sample": "Isi Contoh Kalkulus",
+        "start_session": "Mulai Sesi & Buat QR",
+        "room_ready": "Ruangan Siap Digunakan",
+        "open_host": "Buka Layar Host Langsung",
+        "open_student": "Buka Layar Mahasiswa",
+        "host_title": "Layar Host Langsung",
+        "upload_audio_title": "Unggah Rekaman Audio (Faster-Whisper + Silero VAD)",
+        "upload_audio_help": "Unggah file .mp3, .wav, .m4a, .ogg, atau .webm untuk ditranskripsi di backend memakai hotwords glosarium.",
+        "btn_transcribe_audio": "Transkripsi File Rekaman",
+        "student_title": "Layar Teks Mahasiswa",
+        "transcript_title": "Transkrip, Ringkasan & Ekspor",
+        "search_placeholder": "Cari kata, istilah glosarium, atau rumus LaTeX...",
+        "only_bookmarks": "Hanya tampilkan bookmark pribadi saya",
+        "btn_summary": "Buat Ringkasan Sesi (Gemini Flash)",
+        "summary_heading": "Ringkasan Pasca-Sesi (Berbasis Transkrip)",
+        "export_docx": "Ekspor .docx (python-docx)",
+        "export_pdf": "Ekspor .pdf (ReportLab)",
+        "export_txt": "Ekspor .txt",
+        "privacy_note": "Audio tidak disimpan secara permanen—hanya teks transkrip, glosarium, dan bookmark pribadi yang disimpan di database.",
+    },
+    "en": {
+        "app_tagline": "Live lecture captions powered by Faster-Whisper, Gemini Flash, KaTeX & Supabase",
+        "nav_home": "Home",
+        "nav_create": "Create Session",
+        "nav_host": "Host Live",
+        "nav_student": "Student View",
+        "nav_transcript": "Transcript & Summary",
+        "backend_offline": "FastAPI backend is unreachable at {url}. Start it with `python -m uvicorn backend.main:app --port 8000`.",
+        "home_title": "Accessible Live Captions for Every Student",
+        "home_subtitle": (
+            "Lecturer speaks on one host device while FastAPI + WebSockets streams live captions "
+            "powered by Faster-Whisper + Silero VAD, Google Gemini Flash + KaTeX math refinement, "
+            "and Supabase PostgreSQL persistence."
+        ),
+        "btn_create": "Create New Session",
+        "btn_join": "Join Session",
+        "btn_demo": "Launch Quick Demo (Host)",
+        "join_placeholder": "Enter room code (e.g. CALC-4821) or paste link...",
+        "past_sessions": "Past Sessions",
+        "no_sessions": "No sessions in database yet. Click 'Create New Session' or 'Launch Quick Demo'.",
+        "create_title": "Create New Lecture Session",
+        "course_title": "Course Title",
+        "course_code": "Course Code (Optional)",
+        "topic": "Topic / Chapter",
+        "date": "Date",
+        "speech_lang": "Speech Recognition Language",
+        "glossary_label": "Technical Glossary (one term per line)",
+        "glossary_help": "Injected as Faster-Whisper hotwords & initial_prompt plus Gemini Flash context.",
+        "upload_csv": "Upload Glossary CSV (Optional)",
+        "load_sample": "Load Calculus Sample",
+        "start_session": "Start Session & Generate QR",
+        "room_ready": "Session Room Ready",
+        "open_host": "Open Host Live Screen",
+        "open_student": "Open Student Caption Screen",
+        "host_title": "Host Live Screen",
+        "upload_audio_title": "Upload Audio Recording (Faster-Whisper + Silero VAD)",
+        "upload_audio_help": "Upload .mp3, .wav, .m4a, .ogg, or .webm to transcribe on the backend with glossary hotwords.",
+        "btn_transcribe_audio": "Transcribe Recording",
+        "student_title": "Student Caption Screen",
+        "transcript_title": "Transcript, Summary & Export",
+        "search_placeholder": "Search words, glossary terms, or LaTeX formulas...",
+        "only_bookmarks": "Show only my private bookmarks",
+        "btn_summary": "Generate Post-Session Summary (Gemini Flash)",
+        "summary_heading": "Post-Session Summary (Transcript-Grounded)",
+        "export_docx": "Export .docx (python-docx)",
+        "export_pdf": "Export .pdf (ReportLab)",
+        "export_txt": "Export .txt",
+        "privacy_note": "Audio is never stored permanently—only text transcripts, glossaries, and private bookmarks are persisted.",
+    },
+}
+
+
+def tr(lang: str, key: str, **kwargs) -> str:
+    table = TRANSLATIONS.get(lang, TRANSLATIONS["id"])
+    template = table.get(key, key)
+    return template.format(**kwargs) if kwargs else template

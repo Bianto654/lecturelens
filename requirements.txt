@@ -1,0 +1,7 @@
+# Frontend Dependencies for Streamlit Community Cloud (lightweight & fast deploy)
+# For local full-stack development, also install requirements-backend.txt:
+#   pip install -r requirements.txt -r requirements-backend.txt
+streamlit>=1.41.0
+httpx>=0.28.0
+qrcode[pil]>=8.0
+python-dotenv>=1.0.1
