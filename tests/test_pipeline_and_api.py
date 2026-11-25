@@ -25,6 +25,25 @@ def test_spoken_math_indonesian_and_english():
     assert len(f4) == 1 and f4[0].latex == r"\int_0^1 x^2\,dx"
 
 
+def test_real_world_indonesian_asr_math_patterns():
+    # Real phone ASR outputs from Google Web Speech API
+    assert find_formula_spans("Integral dari 5x² adalah")[0].latex == r"\int 5x^2"
+    assert find_formula_spans("Integral 2x ^ 5")[0].latex == r"\int 2x^5"
+    assert find_formula_spans("5/3")[0].latex == r"\frac{5}{3}"
+    assert find_formula_spans("√5")[0].latex == r"\sqrt{5}"
+    assert find_formula_spans("x² + 3 = 5")[0].latex == "x^2+3 = 5"
+
+    # Spoken derivatives & higher powers (pangkat 3, pangkat 5, de per de ex, etc.)
+    assert find_formula_spans("hitung de per de ex")[0].latex == r"\frac{d}{dx}"
+    assert find_formula_spans("cari de ye per de ex sekarang")[0].latex == r"\frac{dy}{dx}"
+    assert find_formula_spans("d per dx dari x pangkat 3")[0].latex == r"\frac{d}{dx}\left(x^3\right)"
+    assert find_formula_spans("nilai x pangkat 3 dan 2x pangkat 5")[0].latex == "x^3"
+    assert find_formula_spans("nilai x pangkat 3 dan 2x pangkat 5")[1].latex == "2x^5"
+    assert find_formula_spans("f aksen x")[0].latex == "f'(x)"
+    # Plain prose with "integral" should NOT falsely trigger math
+    assert find_formula_spans("Integral dari materi hari ini penting") == []
+
+
 def test_glossary_fuzzy_and_whisper_prompt_builders():
     glossary = ["Eigenvalue", "Transformasi Fourier", "Konvergensi"]
     spans = find_glossary_spans("Kita pakai eiginvalue dan konvergensy", glossary)
