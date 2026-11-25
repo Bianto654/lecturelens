@@ -1,5 +1,5 @@
 # Streamlit Community Cloud Dependencies (1-click, zero credit card, runs full app!)
-streamlit>=1.41.0
+streamlit>=1.51.0
 httpx>=0.28.0
 qrcode[pil]>=8.0
 python-dotenv>=1.0.1

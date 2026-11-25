@@ -828,32 +828,95 @@ def render_katex_transcript_list(
     captions: list[dict],
     bookmarked_seqs: set[int],
     ui_lang: str = "id",
+    student_mode: bool = False,
 ) -> None:
-    """Renders searchable transcript rows with full KaTeX formulas & glossary highlights."""
+    """
+    Renders transcript rows with KaTeX formulas, glossary highlights, and [unclear] pills.
+    When `student_mode=True`, adds high-contrast Font Size (A-/A+), Light/Dark toggle,
+    and auto-scroll to newest line at the bottom.
+    """
     auto_label = "otomatis" if ui_lang == "id" else "automatic"
+    is_id = ui_lang == "id"
     payload = {
         "captions": captions,
         "bookmarks": list(bookmarked_seqs),
         "autoLabel": auto_label,
+        "studentMode": student_mode,
+        "isId": is_id,
     }
-    est_height = max(240, min(720, 95 * max(1, len(captions))))
+    est_height = 510 if student_mode else max(240, min(620, 96 * max(1, len(captions))))
+    controls_html = (
+        f"""
+        <div class="toolbar">
+          <span class="badge badge-brand">{len(captions)} {'baris teks' if is_id else 'caption lines'}</span>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <button id="fDec" class="btn" type="button" aria-label="Decrease font">A-</button>
+            <span id="fLbl" style="font-size:12px;font-weight:800;min-width:26px;text-align:center;">M</span>
+            <button id="fInc" class="btn" type="button" aria-label="Increase font">A+</button>
+            <button id="tBtn" class="btn" type="button" aria-label="Toggle theme">🌙</button>
+          </div>
+        </div>
+        """
+        if student_mode
+        else ""
+    )
     html = f"""<!doctype html>
 <html><head><meta charset="utf-8">{KATEX_HEAD}{SHARED_STYLES}</head>
 <body>
-<div id="list" style="display:flex;flex-direction:column;gap:10px;padding:4px;"></div>
+<div class="card">
+  {controls_html}
+  <div id="list" class="stream" style="height:{440 if student_mode else est_height - 16}px;"></div>
+</div>
 <script>
 {SHARED_RENDER_JS}
 const DATA = {json.dumps(payload)};
 const bset = new Set(DATA.bookmarks || []);
 const root = document.getElementById('list');
-root.innerHTML = DATA.captions.map(cap => {{
-  const star = bset.has(cap.seq) ? ' <span class="badge badge-warn">★ Bookmark</span>' : '';
-  return '<div class="cap-item">'
-    + '<div class="cap-meta"><span>#' + cap.seq + ' &middot; ' + fmtTime(cap.timestamp_ms) + star + '</span><span>' + escHtml(cap.refined_by || 'rules') + '</span></div>'
-    + '<div style="font-size:16px;">' + renderSegmentsHtml(cap, DATA.autoLabel) + '</div>'
-    + '</div>';
-}}).join('');
+
+const SIZES = [
+  {{ label: 'S', px: 16 }},
+  {{ label: 'M', px: 20 }},
+  {{ label: 'L', px: 25 }},
+  {{ label: 'XL', px: 31 }}
+];
+let fIdx = Number(localStorage.getItem('ll_stu_font') || 1);
+if (isNaN(fIdx) || fIdx < 0 || fIdx >= SIZES.length) fIdx = 1;
+let dark = localStorage.getItem('ll_stu_dark') === '1';
+
+function applyVisuals() {{
+  if (!DATA.studentMode) {{
+    root.style.fontSize = '15.5px';
+    return;
+  }}
+  document.body.classList.toggle('dark', dark);
+  root.style.fontSize = SIZES[fIdx].px + 'px';
+  const lbl = document.getElementById('fLbl');
+  const tBtn = document.getElementById('tBtn');
+  if (lbl) lbl.textContent = SIZES[fIdx].label;
+  if (tBtn) tBtn.textContent = dark ? '☀️' : '🌙';
+  localStorage.setItem('ll_stu_font', String(fIdx));
+  localStorage.setItem('ll_stu_dark', dark ? '1' : '0');
+}}
+
+if (DATA.studentMode) {{
+  document.getElementById('fDec').onclick = () => {{ if (fIdx > 0) {{ fIdx--; applyVisuals(); }} }};
+  document.getElementById('fInc').onclick = () => {{ if (fIdx < SIZES.length - 1) {{ fIdx++; applyVisuals(); }} }};
+  document.getElementById('tBtn').onclick = () => {{ dark = !dark; applyVisuals(); }};
+}}
+applyVisuals();
+
+root.innerHTML = '<div style="margin-top:auto;display:flex;flex-direction:column;gap:12px;">'
+  + DATA.captions.map((cap, idx) => {{
+      const star = bset.has(cap.seq) ? ' <span class="badge badge-warn">★ Bookmark</span>' : '';
+      const newest = idx === DATA.captions.length - 1 ? 'border-color: var(--brand);' : '';
+      return '<div class="cap-item" style="' + newest + '">'
+        + '<div class="cap-meta"><span>#' + cap.seq + ' &middot; ' + fmtTime(cap.timestamp_ms) + star + '</span><span>' + escHtml(cap.refined_by || 'rules') + '</span></div>'
+        + '<div>' + renderSegmentsHtml(cap, DATA.autoLabel) + '</div>'
+        + '</div>';
+    }}).join('')
+  + '</div>';
+root.scrollTop = root.scrollHeight;
 </script>
 </body></html>
 """
-    components.html(html, height=est_height, scrolling=True)
+    components.html(html, height=est_height, scrolling=False)

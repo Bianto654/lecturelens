@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import datetime
 import io
 import re
@@ -17,6 +18,7 @@ from frontend.api_client import (
     get_public_backend_http_url,
     get_public_backend_ws_url,
 )
+from frontend.bidi_mic import mount_host_mic_console, mount_room_qr_card
 from frontend.components import (
     render_host_live_console,
     render_katex_transcript_list,
@@ -33,21 +35,145 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# Mobile-first clean accessible CSS (large 48px tap targets, WCAG AA contrast)
+# Modern, sleek, mobile-first SaaS styling (Plus Jakarta Sans, WCAG AA contrast, large 48px tap targets)
 st.markdown(
     """
 <style>
-  .block-container { max-width: 1080px; padding-top: 4.2rem !important; padding-bottom: 3rem; }
-  button[kind="primary"], button[kind="secondary"] { min-height: 46px; border-radius: 12px !important; font-weight: 700 !important; white-space: nowrap; }
-  .ll-pill-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; margin-bottom: 10px; }
-  .ll-pill {
-    display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 999px;
-    font-size: 12px; font-weight: 700; line-height: 1.4;
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+  html, body, [class*="css"] {
+    font-family: 'Plus Jakarta Sans', Inter, system-ui, -apple-system, sans-serif !important;
   }
-  .ll-pill-blue { background: #dbeafe; color: #1e3a8a; }
-  .ll-pill-green { background: #dcfce7; color: #14532d; }
-  .ll-pill-amber { background: #fef3c7; color: #78350f; }
+  .stApp {
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  }
+  .block-container {
+    max-width: 980px !important;
+    padding-top: 3.9rem !important;
+    padding-bottom: 3rem !important;
+    padding-left: 1.1rem !important;
+    padding-right: 1.1rem !important;
+  }
+  footer { visibility: hidden; }
+
+  /* Large accessible tap targets & refined buttons */
+  button[kind="primary"] {
+    min-height: 48px !important;
+    border-radius: 14px !important;
+    font-weight: 700 !important;
+    background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%) !important;
+    border: none !important;
+    box-shadow: 0 6px 16px rgba(29, 78, 216, 0.22) !important;
+  }
+  button[kind="primary"]:hover {
+    filter: brightness(1.05);
+  }
+  button[kind="secondary"] {
+    min-height: 46px !important;
+    border-radius: 14px !important;
+    font-weight: 700 !important;
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+  }
+  button[kind="secondary"]:hover {
+    border-color: #2563eb !important;
+    background: #eff6ff !important;
+  }
+
+  /* Clean Hero & Cards */
+  .ll-brand-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .ll-brand-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 24px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+  }
+  .ll-logo-mark {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #1d4ed8 0%, #0ea5e9 100%);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 4px 12px rgba(29, 78, 216, 0.28);
+  }
+  .ll-hero-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 26px 24px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+    margin-bottom: 18px;
+  }
+  .ll-hero-card h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 8px 0;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+  .ll-hero-card p {
+    font-size: 14.5px;
+    color: #475569;
+    margin: 0;
+    line-height: 1.6;
+  }
+  .ll-room-banner {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+    color: #ffffff;
+    border-radius: 20px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14);
+  }
+  .ll-room-banner h2 {
+    margin: 6px 0 2px;
+    font-size: 20px;
+    font-weight: 800;
+    color: #ffffff;
+  }
+  .ll-room-banner .sub {
+    font-size: 13px;
+    color: #cbd5e1;
+  }
+  .ll-pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+    margin-bottom: 10px;
+  }
+  .ll-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .ll-pill-blue  { background: #dbeafe; color: #1e40af; }
+  .ll-pill-green { background: #dcfce7; color: #166534; }
+  .ll-pill-amber { background: #fef3c7; color: #92400e; }
+  .ll-pill-red   { background: #ffe4e6; color: #9f1239; }
   .ll-pill-slate { background: #e2e8f0; color: #1e293b; }
+  .ll-pill-glass { background: rgba(255,255,255,0.16); color: #ffffff; }
 </style>
 """,
     unsafe_allow_html=True,
@@ -55,7 +181,7 @@ st.markdown(
 
 
 # ---------------------------------------------------------------------------
-# Session State & Query Params Initialization
+# Session State & Direct QR Deep-Link Handling
 # ---------------------------------------------------------------------------
 
 if "ui_lang" not in st.session_state:
@@ -70,24 +196,44 @@ if "created_room" not in st.session_state:
     st.session_state.created_room = None
 if "glossary_draft" not in st.session_state:
     st.session_state.glossary_draft = ""
+if "seen_utterance_ids" not in st.session_state:
+    st.session_state.seen_utterance_ids = set()
+if "last_action_ts" not in st.session_state:
+    st.session_state.last_action_ts = 0
+if "student_qr_entry" not in st.session_state:
+    st.session_state.student_qr_entry = False
 
-# Honor deep links like ?page=join&session=KALK-4821 from QR codes
-qp = st.query_params
-if "page" in qp and qp["page"] in ("home", "create", "host", "join", "transcript"):
-    st.session_state.page = qp["page"]
-if "session" in qp and qp["session"]:
-    st.session_state.active_session_id = str(qp["session"]).strip().upper()
+# Read URL query params cleanly so scanning a QR code (?page=join&session=KALK-1234
+# or ?session=KALK-1234) drops students DIRECTLY into the live room!
+qp_page = str(st.query_params.get("page", "")).strip().lower()
+qp_session = str(st.query_params.get("session", "")).strip().upper()
+qp_sig = f"{qp_page}|{qp_session}"
+
+if qp_sig != st.session_state.get("_synced_qp"):
+    st.session_state._synced_qp = qp_sig
+    if qp_session:
+        st.session_state.active_session_id = qp_session
+        target_page = qp_page if qp_page in ("host", "join", "transcript") else "join"
+        st.session_state.page = target_page
+        st.session_state.student_qr_entry = target_page == "join"
+    elif qp_page in ("home", "create", "host", "join", "transcript"):
+        st.session_state.page = qp_page
 
 
 def navigate(page: str, session_id: str = "") -> None:
     st.session_state.page = page
     if session_id:
         st.session_state.active_session_id = session_id.upper()
+    if page != "join":
+        st.session_state.student_qr_entry = False
+
     st.query_params["page"] = page
     if st.session_state.active_session_id and page in ("host", "join", "transcript"):
         st.query_params["session"] = st.session_state.active_session_id
     elif "session" in st.query_params and page in ("home", "create"):
         del st.query_params["session"]
+
+    st.session_state._synced_qp = f"{page}|{st.query_params.get('session', '')}"
     st.rerun()
 
 
@@ -96,7 +242,9 @@ def extract_session_code(raw: str) -> str:
     if not txt:
         return ""
     if "://" in txt or "session=" in txt or "/join/" in txt:
-        parsed = urlparse(txt if "://" in txt else f"https://example.com/{txt.lstrip('/')}")
+        parsed = urlparse(
+            txt if "://" in txt else f"https://example.com/{txt.lstrip('/')}"
+        )
         qs = parse_qs(parsed.query)
         if qs.get("session"):
             return qs["session"][0].strip().upper()
@@ -106,11 +254,15 @@ def extract_session_code(raw: str) -> str:
     return re.sub(r"[^A-Za-z0-9_-]", "", txt).upper()
 
 
-def make_qr_png(url: str) -> bytes:
-    img = qrcode.make(url)
+def make_qr_data_url(url: str) -> str:
+    qr = qrcode.QRCode(border=2, box_size=8)
+    qr.add_data(url)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="#0f172a", back_color="#ffffff")
     buf = io.BytesIO()
     img.save(buf, format="PNG")
-    return buf.getvalue()
+    b64 = base64.b64encode(buf.getvalue()).decode("ascii")
+    return f"data:image/png;base64,{b64}"
 
 
 def parse_csv_glossary(content: str) -> list[str]:
@@ -125,16 +277,35 @@ def parse_csv_glossary(content: str) -> list[str]:
 
 
 def resolve_public_app_url() -> str:
+    """
+    Resolves the exact live public origin (e.g. https://lecturelens.streamlit.app)
+    using Streamlit's `st.context.url` so QR codes ALWAYS open directly inside the room.
+    """
+    # 1. Exact browser URL from Streamlit 1.45+ st.context.url
+    try:
+        ctx_url = getattr(st.context, "url", None)
+        if ctx_url:
+            parsed = urlparse(str(ctx_url))
+            if parsed.scheme and parsed.netloc:
+                return f"{parsed.scheme}://{parsed.netloc}".rstrip("/")
+    except Exception:
+        pass
+
+    # 2. Explicit configured PUBLIC_APP_URL (secrets or .env)
     configured = get_public_app_url()
     if configured and "localhost" not in configured and "127.0.0.1" not in configured:
         return configured
-    # Automatically detect deployed Streamlit Community Cloud domain from request headers!
+
+    # 3. Reverse-proxy headers fallback
     try:
-        host = st.context.headers.get("host", "")
-        if host and "localhost" not in host and "127.0.0.1" not in host:
-            return f"https://{host}"
+        fwd_host = st.context.headers.get("x-forwarded-host") or st.context.headers.get(
+            "host", ""
+        )
+        if fwd_host and "localhost" not in fwd_host and "127.0.0.1" not in fwd_host:
+            return f"https://{fwd_host}".rstrip("/")
     except Exception:
         pass
+
     return configured
 
 
@@ -148,65 +319,45 @@ health = api.health()
 
 
 # ---------------------------------------------------------------------------
-# Top Header & Navigation Bar
+# Clean Minimal Header
 # ---------------------------------------------------------------------------
 
-h_col1, h_col2 = st.columns([8, 2])
-with h_col1:
-    st.markdown("## 🎓 LectureLens")
-    st.caption(tr(lang, "app_tagline"))
-with h_col2:
+hdr_l, hdr_r = st.columns([8, 2])
+with hdr_l:
+    st.markdown(
+        '<div class="ll-brand-title">'
+        '<span class="ll-logo-mark">🎓</span>'
+        '<span>LectureLens</span>'
+        '</div>',
+        unsafe_allow_html=True,
+    )
+with hdr_r:
     next_lang = "en" if lang == "id" else "id"
     if st.button(f"🌐 {lang.upper()} → {next_lang.upper()}", use_container_width=True):
         st.session_state.ui_lang = next_lang
         st.rerun()
 
-if health:
-    db_badge = (
-        "Supabase PostgreSQL"
-        if health.get("database") == "supabase-postgresql"
-        else "SQLite Local"
-    )
-    gem_badge = (
-        f"Gemini {health.get('gemini_model', 'Flash')}"
-        if health.get("gemini_configured")
-        else "KaTeX Math Engine"
-    )
-    stt_info = health.get("stt", {})
-    stt_badge = (
-        "Cloud Live Sync"
-        if health.get("mode") == "embedded"
-        else f"Faster-Whisper ({stt_info.get('model_size', 'large-v3-turbo')}) + Silero VAD"
-    )
-    st.markdown(
-        f'<div class="ll-pill-row">'
-        f'<span class="ll-pill ll-pill-green">● {db_badge}</span>'
-        f'<span class="ll-pill ll-pill-blue">{gem_badge}</span>'
-        f'<span class="ll-pill ll-pill-slate">{stt_badge}</span>'
-        f'</div>',
-        unsafe_allow_html=True,
-    )
-else:
-    st.error(tr(lang, "backend_offline", url=backend_http))
-
-nav_cols = st.columns(5)
-nav_items = [
-    ("home", f"🏠 {tr(lang, 'nav_home')}"),
-    ("create", f"➕ {tr(lang, 'nav_create')}"),
-    ("host", f"🎙️ {tr(lang, 'nav_host')}"),
-    ("join", f"📱 {tr(lang, 'nav_student')}"),
-    ("transcript", f"📄 {tr(lang, 'nav_transcript')}"),
-]
-for col, (p_key, label) in zip(nav_cols, nav_items):
-    with col:
-        btn_type = "primary" if st.session_state.page == p_key else "secondary"
-        if st.button(label, key=f"nav_{p_key}", type=btn_type, use_container_width=True):
-            navigate(p_key)
-
-st.divider()
-
 if not health:
+    st.error(tr(lang, "backend_offline", url=backend_http))
     st.stop()
+
+# Show full navigation only when NOT in distraction-free Student QR room mode
+if not (st.session_state.student_qr_entry and st.session_state.page == "join"):
+    nav_cols = st.columns(5)
+    nav_items = [
+        ("home", f"🏠 {tr(lang, 'nav_home')}"),
+        ("create", f"➕ {tr(lang, 'nav_create')}"),
+        ("host", f"🎙️ {tr(lang, 'nav_host')}"),
+        ("join", f"📱 {tr(lang, 'nav_student')}"),
+        ("transcript", f"📄 {tr(lang, 'nav_transcript')}"),
+    ]
+    for col, (p_key, label) in zip(nav_cols, nav_items):
+        with col:
+            btn_type = "primary" if st.session_state.page == p_key else "secondary"
+            if st.button(
+                label, key=f"nav_{p_key}", type=btn_type, use_container_width=True
+            ):
+                navigate(p_key)
 
 
 # ---------------------------------------------------------------------------
@@ -214,12 +365,40 @@ if not health:
 # ---------------------------------------------------------------------------
 
 if st.session_state.page == "home":
-    st.header(tr(lang, "home_title"))
-    st.write(tr(lang, "home_subtitle"))
+    db_badge = (
+        "Supabase PostgreSQL"
+        if health.get("database") == "supabase-postgresql"
+        else "SQLite Cloud"
+    )
+    gem_badge = (
+        f"Gemini {health.get('gemini_model', 'Flash')}"
+        if health.get("gemini_configured")
+        else "KaTeX Math Engine"
+    )
+    mode_badge = (
+        "Live Speech + Cloud Sync"
+        if health.get("mode") == "embedded"
+        else f"FastAPI WS · Faster-Whisper ({health.get('stt', {}).get('model_size', 'large-v3-turbo')})"
+    )
 
-    c1, c2, c3 = st.columns(3)
+    st.markdown(
+        f'<div class="ll-hero-card">'
+        f'<div class="ll-pill-row">'
+        f'<span class="ll-pill ll-pill-green">● {db_badge}</span>'
+        f'<span class="ll-pill ll-pill-blue">{gem_badge}</span>'
+        f'<span class="ll-pill ll-pill-slate">{mode_badge}</span>'
+        f'</div>'
+        f'<h1>{tr(lang, "home_title")}</h1>'
+        f'<p>{tr(lang, "home_subtitle")}</p>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
+    c1, c2 = st.columns(2)
     with c1:
-        if st.button(f"➕ {tr(lang, 'btn_create')}", type="primary", use_container_width=True):
+        if st.button(
+            f"➕ {tr(lang, 'btn_create')}", type="primary", use_container_width=True
+        ):
             st.session_state.created_room = None
             navigate("create")
     with c2:
@@ -254,18 +433,22 @@ if st.session_state.page == "home":
                 }
             )
             navigate("host", demo["id"])
-    with c3:
-        join_raw = st.text_input(
-            tr(lang, "btn_join"),
-            placeholder=tr(lang, "join_placeholder"),
-            label_visibility="collapsed",
-        )
-        if st.button(f"📱 {tr(lang, 'btn_join')}", use_container_width=True):
-            code = extract_session_code(join_raw)
-            if code:
-                navigate("join", code)
-            else:
-                st.warning(tr(lang, "join_placeholder"))
+
+    with st.container(border=True):
+        jc1, jc2 = st.columns([7, 3])
+        with jc1:
+            join_raw = st.text_input(
+                tr(lang, "btn_join"),
+                placeholder=tr(lang, "join_placeholder"),
+                label_visibility="collapsed",
+            )
+        with jc2:
+            if st.button(f"📱 {tr(lang, 'btn_join')}", use_container_width=True):
+                code = extract_session_code(join_raw)
+                if code:
+                    navigate("join", code)
+                else:
+                    st.warning(tr(lang, "join_placeholder"))
 
     st.subheader(f"🕒 {tr(lang, 'past_sessions')}")
     sessions = api.list_sessions()
@@ -278,7 +461,7 @@ if st.session_state.page == "home":
                 with left:
                     st.markdown(
                         f"**{s['course_title']}** — {s['topic']}  \n"
-                        f"`{s['id']}` · 📅 {s['date']} · status: **{s['status']}** · "
+                        f"`{s['id']}` · 📅 {s['date']} · **{s['status'].upper()}** · "
                         f"💬 {s['caption_count']} segmen · 👥 {s['student_count']} online"
                     )
                 with right:
@@ -303,25 +486,27 @@ elif st.session_state.page == "create":
     if created:
         st.success(f"✅ {tr(lang, 'room_ready')}: **{created['id']}**")
         join_url = f"{public_app_url}/?page=join&session={created['id']}"
-        q_col, info_col = st.columns([4, 6])
-        with q_col:
-            st.image(make_qr_png(join_url), caption=f"Room {created['id']}", width=240)
-        with info_col:
-            st.markdown(f"### {created['course_title']}")
-            st.write(created["topic"])
-            st.code(join_url, language=None)
-            st.caption(f"Glossary ({len(created['glossary'])}): {', '.join(created['glossary']) or '-'}")
-            c_a, c_b = st.columns(2)
-            with c_a:
-                if st.button(f"🎙️ {tr(lang, 'open_host')}", type="primary", use_container_width=True):
-                    sid = created["id"]
-                    st.session_state.created_room = None
-                    navigate("host", sid)
-            with c_b:
-                if st.button(f"📱 {tr(lang, 'open_student')}", use_container_width=True):
-                    sid = created["id"]
-                    st.session_state.created_room = None
-                    navigate("join", sid)
+        mount_room_qr_card(
+            session_id=created["id"],
+            fallback_origin=public_app_url,
+            server_join_url=join_url,
+            qr_data_url=make_qr_data_url(join_url),
+            ui_lang=lang,
+        )
+        st.write("")
+        c_a, c_b = st.columns(2)
+        with c_a:
+            if st.button(
+                f"🎙️ {tr(lang, 'open_host')}", type="primary", use_container_width=True
+            ):
+                sid = created["id"]
+                st.session_state.created_room = None
+                navigate("host", sid)
+        with c_b:
+            if st.button(f"📱 {tr(lang, 'open_student')}", use_container_width=True):
+                sid = created["id"]
+                st.session_state.created_room = None
+                navigate("join", sid)
     else:
         st.header(tr(lang, "create_title"))
 
@@ -331,13 +516,17 @@ elif st.session_state.page == "create":
                 tr(lang, "upload_csv"), type=["csv", "txt"], key="glossary_csv"
             )
             if csv_file is not None:
-                imported = parse_csv_glossary(csv_file.getvalue().decode("utf-8", errors="ignore"))
+                imported = parse_csv_glossary(
+                    csv_file.getvalue().decode("utf-8", errors="ignore")
+                )
                 existing = [
-                    x.strip() for x in st.session_state.glossary_draft.splitlines() if x.strip()
+                    x.strip()
+                    for x in st.session_state.glossary_draft.splitlines()
+                    if x.strip()
                 ]
                 merged = list(dict.fromkeys(existing + imported))
                 st.session_state.glossary_draft = "\n".join(merged)
-                st.success(f"+{len(imported)} terms loaded from CSV")
+                st.success(f"+{len(imported)} istilah ditambahkan dari CSV")
         with up_col2:
             st.write("")
             st.write("")
@@ -381,7 +570,7 @@ elif st.session_state.page == "create":
             glossary_text = st.text_area(
                 tr(lang, "glossary_label"),
                 value=st.session_state.glossary_draft,
-                height=130,
+                height=120,
                 help=tr(lang, "glossary_help"),
             )
             submitted = st.form_submit_button(
@@ -392,7 +581,7 @@ elif st.session_state.page == "create":
 
         if submitted:
             if not course_title.strip() or not topic.strip():
-                st.error("Course Title & Topic are required.")
+                st.error("Nama Mata Kuliah & Topik wajib diisi.")
             else:
                 terms = [t.strip() for t in glossary_text.splitlines() if t.strip()]
                 room = api.create_session(
@@ -430,24 +619,31 @@ elif st.session_state.page == "host":
             navigate("create")
         st.stop()
 
-    top_l, top_r = st.columns([7, 3])
-    with top_l:
-        st.header(f"🎙️ {sess['course_title']}")
-        st.caption(f"{sess['topic']} · Room `{sess['id']}` · 📅 {sess['date']} · 🌐 {sess['language']}")
-    with top_r:
-        if st.button(f"📄 {tr(lang, 'nav_transcript')}", use_container_width=True):
-            navigate("transcript", sess["id"])
+    # Sleek Dark Navy Room Banner
+    st.markdown(
+        f'<div class="ll-room-banner">'
+        f'<span class="ll-pill ll-pill-glass">🎙️ HOST ROOM · {sess["id"]}</span> '
+        f'<span class="ll-pill ll-pill-glass">📅 {sess["date"]}</span>'
+        f'<h2>{sess["course_title"]}</h2>'
+        f'<div class="sub">{sess["topic"]}</div>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
 
+    # Shareable QR Code (always uses real browser origin -> opens directly inside Student Room!)
     join_url = f"{public_app_url}/?page=join&session={sess['id']}"
-    with st.expander(f"📲 Share QR Code & Join Link (`{sess['id']}`)", expanded=False):
-        q1, q2 = st.columns([3, 7])
-        with q1:
-            st.image(make_qr_png(join_url), width=190)
-        with q2:
-            st.code(join_url, language=None)
-            st.caption(f"Glossary hotwords: {', '.join(sess['glossary']) or '-'}")
+    with st.expander(f"📲 Bagikan QR Code & Link Mahasiswa ({sess['id']})", expanded=False):
+        mount_room_qr_card(
+            session_id=sess["id"],
+            fallback_origin=public_app_url,
+            server_join_url=join_url,
+            qr_data_url=make_qr_data_url(join_url),
+            ui_lang=lang,
+        )
 
-    # Real-Time Host Console: FastAPI WebSocket mode OR Standalone Streamlit Cloud mode
+    # Real-Time Host Console:
+    # - FastAPI WebSocket mode when local/Render backend is running
+    # - Huge 96x96px Bidirectional Live Mic Console when running standalone on Streamlit Cloud!
     if not getattr(api, "is_embedded", False):
         render_host_live_console(
             session=sess,
@@ -475,83 +671,79 @@ elif st.session_state.page == "host":
             ]
         )
 
-        sc1, sc2, sc3, sc4 = st.columns(4)
-        with sc1:
-            st.metric("Status", sess["status"].upper())
-        with sc2:
-            st.metric("Mahasiswa Online" if lang == "id" else "Students", sess["student_count"])
-        with sc3:
-            if sess["status"] == "paused":
-                if st.button("▶ Lanjutkan" if lang == "id" else "▶ Resume", type="primary", use_container_width=True):
-                    api.patch_session(sess["id"], {"status": "live"})
-                    st.rerun()
-            else:
-                if st.button("⏸ Jeda" if lang == "id" else "⏸ Pause", use_container_width=True):
-                    api.patch_session(sess["id"], {"status": "paused"})
-                    st.rerun()
-        with sc4:
-            if st.button("■ Akhiri Sesi" if lang == "id" else "■ End Session", use_container_width=True):
-                api.patch_session(sess["id"], {"status": "ended"})
-                navigate("transcript", sess["id"])
-
-        # Native browser microphone recorder (transcribes with Gemini Flash when GEMINI_API_KEY is set)
-        mic_audio = st.audio_input(
-            "🎙️ Rekam suara dosen (klik mic → bicara → klik stop untuk transkripsi)"
-            if lang == "id"
-            else "🎙️ Record lecturer voice (tap mic → speak → stop to transcribe)"
+        # HUGE tactile 96x96px pulsing Microphone Hero Component (works out-of-the-box, ZERO API key!)
+        utterance, action = mount_host_mic_console(
+            session_id=sess["id"],
+            speech_lang=sess["language"],
+            student_count=sess["student_count"],
+            ui_lang=lang,
         )
-        if mic_audio is not None:
-            audio_sig = f"{sess['id']}-{len(mic_audio.getvalue())}"
-            if st.session_state.get("last_mic_sig") != audio_sig:
-                st.session_state.last_mic_sig = audio_sig
-                with st.spinner("Mentranskripsi suara..." if lang == "id" else "Transcribing audio..."):
-                    try:
-                        api.transcribe_audio_file(
-                            session_id=sess["id"],
-                            filename="mic.wav",
-                            data=mic_audio.getvalue(),
-                            content_type="audio/wav",
-                            language=sess["language"],
-                        )
-                        st.toast("✅ Teks berhasil ditambahkan!" if lang == "id" else "✅ Caption added!")
-                    except Exception as exc:
-                        st.warning(str(exc))
 
-        # Quick Manual Utterance & Demo Line Controls
-        mc1, mc2 = st.columns([7, 3])
-        with mc1:
-            with st.form("embedded_manual_caption", clear_on_submit=True):
+        if utterance and isinstance(utterance, dict):
+            uid = str(utterance.get("id", ""))
+            txt = str(utterance.get("text", "")).strip()
+            if uid and txt and uid not in st.session_state.seen_utterance_ids:
+                st.session_state.seen_utterance_ids.add(uid)
+                api.submit_caption(
+                    sess["id"],
+                    txt,
+                    confidence=float(utterance.get("confidence", 0.92)),
+                )
+
+        if action and isinstance(action, dict):
+            ats = int(action.get("ts", 0))
+            if ats and ats != st.session_state.last_action_ts:
+                st.session_state.last_action_ts = ats
+                atype = action.get("type")
+                if atype == "pause":
+                    api.patch_session(sess["id"], {"status": "paused"})
+                elif atype == "resume":
+                    api.patch_session(sess["id"], {"status": "live"})
+                elif atype == "language" and action.get("language"):
+                    api.patch_session(sess["id"], {"language": action["language"]})
+                elif atype == "demo_one":
+                    line = demo_lines[st.session_state.demo_cursor % len(demo_lines)]
+                    st.session_state.demo_cursor += 1
+                    api.submit_caption(sess["id"], line)
+                elif atype == "end":
+                    api.patch_session(sess["id"], {"status": "ended"})
+                    navigate("transcript", sess["id"])
+
+        # Manual Utterance Input Bar
+        with st.form("embedded_manual_caption", clear_on_submit=True):
+            m1, m2 = st.columns([8, 2])
+            with m1:
                 u_in = st.text_input(
                     "Caption",
                     placeholder=(
-                        'Ketik kalimat uji (mis: "integral dari nol sampai satu x kuadrat dx")...'
+                        'Ketik kalimat uji (mis: "hitung integral dari nol sampai satu x kuadrat dx")...'
                         if lang == "id"
                         else 'Type a test sentence (e.g. "integral from zero to one of x squared dx")...'
                     ),
                     label_visibility="collapsed",
                 )
-                if st.form_submit_button("📤 Kirim Teks" if lang == "id" else "📤 Send Caption", type="primary", use_container_width=True):
+            with m2:
+                if st.form_submit_button(
+                    "📤 Kirim" if lang == "id" else "📤 Send",
+                    type="primary",
+                    use_container_width=True,
+                ):
                     if u_in.strip():
                         api.submit_caption(sess["id"], u_in.strip())
                         st.rerun()
-        with mc2:
-            if st.button("✨ Kirim 1 Baris Demo" if lang == "id" else "✨ Send 1 Demo Line", use_container_width=True):
-                line = demo_lines[st.session_state.demo_cursor % len(demo_lines)]
-                st.session_state.demo_cursor += 1
-                api.submit_caption(sess["id"], line)
-                st.rerun()
 
+        st.markdown("#### 📝 Transkrip Berlangsung" if lang == "id" else "#### 📝 Live Transcript")
         host_caps = api.list_captions(sess["id"])
         if host_caps:
             render_katex_transcript_list(host_caps, set(), ui_lang=lang)
         else:
             st.info(
-                "Belum ada teks. Tekan 'Kirim 1 Baris Demo', rekam mikrofon, atau ketik kalimat uji di atas."
+                "Belum ada teks. Tap tombol mikrofon besar di atas dan mulai berbicara, atau tekan ✨ Kirim 1 Baris Demo."
                 if lang == "id"
-                else "No captions yet. Click 'Send 1 Demo Line', record audio, or type a sentence above."
+                else "No captions yet. Tap the big microphone button above and start speaking, or tap ✨ Send 1 Demo Line."
             )
 
-    # Upload Audio Recording -> FastAPI Faster-Whisper + Silero VAD
+    # Upload Audio Recording Expander (Faster-Whisper locally/Render OR Gemini Flash on Cloud)
     with st.expander(f"🎧 {tr(lang, 'upload_audio_title')}", expanded=False):
         st.caption(tr(lang, "upload_audio_help"))
         audio_file = st.file_uploader(
@@ -566,7 +758,7 @@ elif st.session_state.page == "host":
                 type="primary",
                 use_container_width=True,
             ):
-                with st.spinner("Running Faster-Whisper + Silero VAD + Gemini Flash..."):
+                with st.spinner("Mentranskripsi rekaman audio..."):
                     try:
                         added = api.transcribe_audio_file(
                             session_id=sess["id"],
@@ -575,18 +767,20 @@ elif st.session_state.page == "host":
                             content_type=audio_file.type or "audio/mpeg",
                             language=sess["language"],
                         )
-                        st.success(f"Transcribed & refined {len(added)} segment(s)!")
+                        st.success(f"Berhasil mentranskripsi {len(added)} segmen!")
+                        st.rerun()
                     except Exception as exc:
-                        st.error(f"Transcription error: {exc}")
+                        st.error(str(exc))
 
 
 # ---------------------------------------------------------------------------
-# PAGE 4: STUDENT CAPTION SCREEN
+# PAGE 4: STUDENT CAPTION SCREEN (Direct QR Landing Room)
 # ---------------------------------------------------------------------------
 
 elif st.session_state.page == "join":
     sid = st.session_state.active_session_id
     if not sid:
+        st.header(f"📱 {tr(lang, 'btn_join')}")
         code_in = st.text_input(tr(lang, "join_placeholder"))
         if st.button(tr(lang, "btn_join"), type="primary"):
             c = extract_session_code(code_in)
@@ -596,20 +790,39 @@ elif st.session_state.page == "join":
 
     sess = api.get_session(sid)
     if not sess:
-        st.error(f"Session `{sid}` not found.")
-        if st.button(tr(lang, "nav_home")):
+        st.error(
+            f"Ruangan `{sid}` tidak ditemukan. Pastikan dosen sudah membuat sesi yang aktif."
+            if lang == "id"
+            else f"Room `{sid}` was not found. Make sure the lecturer created an active session."
+        )
+        if st.button(f"🏠 {tr(lang, 'nav_home')}", type="primary"):
             navigate("home")
         st.stop()
 
-    sl, sr = st.columns([7, 3])
-    with sl:
-        st.header(f"📱 {sess['course_title']}")
-        st.caption(
-            f"{sess['topic']} · Room `{sess['id']}` · Private ID `{st.session_state.student_id}`"
-        )
-    with sr:
+    # Clean Student Room Header Banner
+    status_pill = (
+        '<span class="ll-pill ll-pill-amber">⏸ DIJEDA</span>'
+        if sess["status"] == "paused"
+        else '<span class="ll-pill ll-pill-green">✓ SELESAI</span>'
+        if sess["status"] == "ended"
+        else '<span class="ll-pill ll-pill-red">● LANGSUNG</span>'
+    )
+    st.markdown(
+        f'<div class="ll-room-banner">'
+        f'{status_pill} <span class="ll-pill ll-pill-glass">Room {sess["id"]}</span>'
+        f'<h2>{sess["course_title"]}</h2>'
+        f'<div class="sub">{sess["topic"]}</div>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
+    s_nav1, s_nav2 = st.columns(2)
+    with s_nav1:
         if st.button(f"📄 {tr(lang, 'nav_transcript')}", use_container_width=True):
             navigate("transcript", sess["id"])
+    with s_nav2:
+        if st.button(f"🏠 {tr(lang, 'nav_home')}", use_container_width=True):
+            navigate("home")
 
     if not getattr(api, "is_embedded", False):
         render_student_live_console(
@@ -625,65 +838,61 @@ elif st.session_state.page == "join":
         if "stu_pause_poll" not in st.session_state:
             st.session_state.stu_pause_poll = False
 
-        ctrl1, ctrl2 = st.columns([6, 4])
-        with ctrl1:
-            st.caption(
-                "🔄 Teks diperbarui otomatis tiap 1,5 detik (Cloud Live Sync)"
-                if lang == "id"
-                else "🔄 Captions auto-refresh every 1.5s (Cloud Live Sync)"
-            )
-        with ctrl2:
-            st.session_state.stu_pause_poll = st.toggle(
-                "⏸ Jeda Gulir / Auto-Refresh" if lang == "id" else "⏸ Pause Auto-Refresh",
-                value=st.session_state.stu_pause_poll,
-            )
+        st.session_state.stu_pause_poll = st.toggle(
+            "⏸ Jeda Auto-Refresh" if lang == "id" else "⏸ Pause Auto-Refresh",
+            value=st.session_state.stu_pause_poll,
+        )
 
-        @st.fragment(run_every=None if st.session_state.stu_pause_poll else "1.5s")
+        @st.fragment(
+            run_every=None
+            if st.session_state.stu_pause_poll
+            else datetime.timedelta(seconds=1.5)
+        )
         def _live_student_feed():
             touch_student_presence(sess["id"], st.session_state.student_id)
             live_sess = api.get_session(sess["id"])
             if not live_sess:
-                st.error("Session not found.")
+                st.error("Sesi tidak ditemukan.")
                 return
             if live_sess["status"] == "ended":
                 st.success(
-                    "✅ **Sesi Telah Berakhir** — Dosen telah mengakhiri sesi ini. Buka tab **Transkrip & Ringkasan** untuk melihat ringkasan & ekspor `.docx` / `.pdf`."
+                    "✅ **Sesi Telah Berakhir** — Klik tombol **Transkrip** di atas untuk membaca ringkasan dan ekspor `.docx` / `.pdf`."
                     if lang == "id"
-                    else "✅ **Session Ended** — Open the **Transcript & Summary** tab above to summarize and export `.docx` / `.pdf`."
+                    else "✅ **Session Ended** — Tap **Transcript** above for the post-session summary and `.docx` / `.pdf` export."
                 )
                 return
             if live_sess["status"] == "paused":
                 st.warning(
-                    "⏸ Dosen sedang menjeda sesi."
+                    "⏸ Dosen sedang menjeda sesi sementara."
                     if lang == "id"
-                    else "⏸ The lecturer has temporarily paused the session."
+                    else "⏸ The lecturer has temporarily paused captions."
                 )
             live_caps = api.list_captions(sess["id"])
             bks = api.list_bookmarks(sess["id"], st.session_state.student_id)
             bk_seqs = {b["transcript_seq"] for b in bks}
             if not live_caps:
                 st.info(
-                    "Terhubung! Menunggu dosen mulai berbicara..."
+                    "Terhubung ke ruangan! Menunggu dosen mulai berbicara…"
                     if lang == "id"
-                    else "Connected! Waiting for the lecturer to begin..."
+                    else "Connected to the room! Waiting for the lecturer to begin…"
                 )
                 return
-            render_katex_transcript_list(live_caps, bk_seqs, ui_lang=lang)
+            render_katex_transcript_list(
+                live_caps, bk_seqs, ui_lang=lang, student_mode=True
+            )
             latest_seq = live_caps[-1]["seq"]
-            bk_col1, bk_col2 = st.columns([6, 4])
-            with bk_col2:
-                saved = latest_seq in bk_seqs
-                lbl = (
-                    f"★ Hapus Bookmark #{latest_seq}"
-                    if saved
-                    else f"☆ Bookmark Segmen Terbaru (#{latest_seq})"
-                )
-                if st.button(lbl, key=f"quick_bk_{latest_seq}", use_container_width=True):
-                    if saved:
-                        api.delete_bookmark(sess["id"], latest_seq, st.session_state.student_id)
-                    else:
-                        api.upsert_bookmark(sess["id"], latest_seq, st.session_state.student_id)
-                    st.rerun()
+            saved = latest_seq in bk_seqs
+            lbl = (
+                f"★ Hapus Bookmark Segmen #{latest_seq}"
+                if saved
+                else f"☆ Simpan Bookmark Pribadi (#{latest_seq})"
+            )
+            if st.button(lbl, key=f"quick_bk_{latest_seq}", use_container_width=True):
+                if saved:
+                    api.delete_bookmark(sess["id"], latest_seq, st.session_state.student_id)
+                else:
+                    api.upsert_bookmark(sess["id"], latest_seq, st.session_state.student_id)
+                st.rerun()
 
         _live_student_feed()
 
@@ -709,19 +918,25 @@ elif st.session_state.page == "transcript":
     bookmarks = api.list_bookmarks(sess["id"], st.session_state.student_id)
     bookmarked_seqs = {b["transcript_seq"] for b in bookmarks}
 
-    st.header(f"📄 {sess['course_title']} — {sess['topic']}")
-    st.caption(
-        f"Room `{sess['id']}` · 📅 {sess['date']} · {len(captions)} segmen · "
-        f"★ {len(bookmarked_seqs)} private bookmarks"
+    st.markdown(
+        f'<div class="ll-room-banner">'
+        f'<span class="ll-pill ll-pill-glass">📄 TRANSKRIP · {sess["id"]}</span> '
+        f'<span class="ll-pill ll-pill-glass">💬 {len(captions)} segmen</span> '
+        f'<span class="ll-pill ll-pill-glass">★ {len(bookmarked_seqs)} bookmark</span>'
+        f'<h2>{sess["course_title"]}</h2>'
+        f'<div class="sub">{sess["topic"]} · 📅 {sess["date"]}</div>'
+        f'</div>',
+        unsafe_allow_html=True,
     )
 
     if sess["glossary"]:
         chips = "".join(
             f'<span class="ll-pill ll-pill-blue">{g}</span>' for g in sess["glossary"]
         )
-        st.markdown(f"**Glossary:** {chips}", unsafe_allow_html=True)
+        st.markdown(
+            f'<div class="ll-pill-row">{chips}</div>', unsafe_allow_html=True
+        )
 
-    # Export & Gemini Flash Summary Action Bar
     ex1, ex2, ex3, ex4 = st.columns(4)
     with ex1:
         if st.button(
@@ -730,7 +945,7 @@ elif st.session_state.page == "transcript":
             disabled=len(captions) == 0,
             use_container_width=True,
         ):
-            with st.spinner("Generating transcript-grounded summary via Google Gemini Flash..."):
+            with st.spinner("Menyusun ringkasan pasca-sesi..."):
                 res = api.generate_summary(sess["id"])
                 sess["summary_md"] = res["summary_md"]
                 st.toast(f"Summary ready ({res['provider']})")
@@ -766,13 +981,11 @@ elif st.session_state.page == "transcript":
                 use_container_width=True,
             )
 
-    # Post-Session Summary Panel
     if sess.get("summary_md"):
         with st.container(border=True):
             st.subheader(f"✨ {tr(lang, 'summary_heading')}")
             st.markdown(sess["summary_md"])
 
-    # Search & Private Bookmarks Filter
     f1, f2 = st.columns([7, 3])
     with f1:
         query = st.text_input(
