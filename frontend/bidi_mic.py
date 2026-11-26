@@ -4,22 +4,49 @@ from typing import Any, Optional
 import streamlit as st
 
 _HOST_MIC_CSS = """
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=JetBrains+Mono:wght@600;800&display=swap');
 :host, * {
   box-sizing: border-box;
-  font-family: 'Plus Jakarta Sans', Inter, system-ui, -apple-system, sans-serif;
+  font-family: 'Nunito', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 }
 .ll-mic-card {
-  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid #e2e8f0;
-  border-radius: 24px;
-  padding: 24px 20px 20px;
-  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #ffffff 0%, #f0fafb 100%);
+  border: 2px solid #cbeff3;
+  border-radius: 28px;
+  padding: 24px 20px 22px;
+  box-shadow: 0 12px 32px rgba(0, 150, 168, 0.12);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
 }
+.ll-mic-card::before {
+  content: '';
+  position: absolute;
+  top: -45px;
+  right: -45px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 180, 197, 0.16) 0%, rgba(0, 180, 197, 0) 70%);
+  pointer-events: none;
+}
+.ll-mic-card::after {
+  content: '';
+  position: absolute;
+  bottom: -55px;
+  left: -35px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 122, 0, 0.12) 0%, rgba(255, 122, 0, 0) 70%);
+  pointer-events: none;
+}
 .ll-top-row {
+  position: relative;
+  z-index: 1;
   width: 100%;
   display: flex;
   flex-wrap: wrap;
@@ -37,17 +64,17 @@ _HOST_MIC_CSS = """
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
+  padding: 6px 13px;
   border-radius: 999px;
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
-.ll-pill-idle { background: #f1f5f9; color: #334155; }
-.ll-pill-live { background: #dcfce7; color: #166534; }
-.ll-pill-warn { background: #fef3c7; color: #92400e; }
+.ll-pill-idle { background: #e6f7f9; color: #0b6e79; border: 1px solid #b5e6ec; }
+.ll-pill-live { background: #fff1ed; color: #c2410c; border: 1px solid #fdba74; }
+.ll-pill-warn { background: #fef9c3; color: #854d0e; border: 1px solid #fde047; }
 .ll-pill-err  { background: #ffe4e6; color: #9f1239; }
-.ll-pill-blue { background: #dbeafe; color: #1e40af; }
+.ll-pill-blue { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
 
 .ll-dot {
   width: 8px;
@@ -56,44 +83,46 @@ _HOST_MIC_CSS = """
   background: currentColor;
 }
 .ll-dot-pulse {
-  animation: llBlink 1.1s ease-in-out infinite;
+  animation: llBlink 1.05s ease-in-out infinite;
 }
 @keyframes llBlink {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.35; transform: scale(0.8); }
+  50% { opacity: 0.35; transform: scale(0.78); }
 }
 
 .ll-lang-toggle {
   display: inline-flex;
-  background: #e2e8f0;
-  padding: 3px;
-  border-radius: 12px;
+  background: #dff4f7;
+  padding: 4px;
+  border-radius: 999px;
   gap: 3px;
 }
 .ll-lang-btn {
   border: none;
   background: transparent;
-  color: #334155;
+  color: #0e5a64;
   font-size: 12px;
-  font-weight: 700;
-  padding: 8px 12px;
-  min-height: 38px;
-  border-radius: 9px;
+  font-weight: 800;
+  padding: 7px 14px;
+  min-height: 36px;
+  border-radius: 999px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.16s ease;
 }
 .ll-lang-btn.active {
-  background: #ffffff;
-  color: #0f172a;
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.1);
+  background: #00a5b5;
+  color: #ffffff;
+  box-shadow: 0 3px 10px rgba(0, 165, 181, 0.32);
 }
 
-/* Huge tactile 96x96px mobile-first Microphone Hero Button */
+/* Huge tactile 104x104px Ruangguru-style Studio Microphone Button */
 .ll-hero-zone {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   padding: 10px 0 4px;
   width: 100%;
 }
@@ -102,8 +131,8 @@ _HOST_MIC_CSS = """
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 120px;
-  height: 120px;
+  width: 132px;
+  height: 132px;
 }
 .ll-mic-ring::before,
 .ll-mic-ring::after {
@@ -115,82 +144,78 @@ _HOST_MIC_CSS = """
   pointer-events: none;
 }
 .ll-mic-ring.listening::before {
-  border: 3px solid rgba(225, 29, 72, 0.45);
-  animation: llRipple 1.8s cubic-bezier(0.2, 0.7, 0.4, 1) infinite;
+  border: 4px solid rgba(255, 107, 44, 0.5);
+  animation: llRipple 1.7s cubic-bezier(0.2, 0.7, 0.4, 1) infinite;
 }
 .ll-mic-ring.listening::after {
-  border: 3px solid rgba(225, 29, 72, 0.3);
-  animation: llRipple 1.8s cubic-bezier(0.2, 0.7, 0.4, 1) 0.9s infinite;
+  border: 4px solid rgba(255, 107, 44, 0.32);
+  animation: llRipple 1.7s cubic-bezier(0.2, 0.7, 0.4, 1) 0.85s infinite;
 }
 @keyframes llRipple {
-  0% { transform: scale(0.84); opacity: 0.9; }
-  100% { transform: scale(1.26); opacity: 0; }
+  0% { transform: scale(0.82); opacity: 0.95; }
+  100% { transform: scale(1.28); opacity: 0; }
 }
 
 .ll-mic-btn {
   position: relative;
   z-index: 2;
-  width: 96px;
-  height: 96px;
+  width: 104px;
+  height: 104px;
   border-radius: 50%;
-  border: none;
+  border: 5px solid #ffffff;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ffffff;
-  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
-  box-shadow: 0 12px 26px rgba(29, 78, 216, 0.35), inset 0 1px 0 rgba(255,255,255,0.25);
+  background: linear-gradient(135deg, #00c4d4 0%, #0095a8 55%, #007791 100%);
+  box-shadow: 0 14px 30px rgba(0, 155, 173, 0.38), 0 0 0 4px rgba(0, 180, 197, 0.16);
   transition: transform 0.14s ease, box-shadow 0.2s ease, background 0.2s ease;
   -webkit-tap-highlight-color: transparent;
 }
-.ll-mic-btn:hover {
-  transform: scale(1.04);
-}
-.ll-mic-btn:active {
-  transform: scale(0.95);
-}
+.ll-mic-btn:hover { transform: scale(1.05); }
+.ll-mic-btn:active { transform: scale(0.94); }
 .ll-mic-btn.listening {
-  background: linear-gradient(135deg, #dc2626 0%, #e11d48 100%);
-  box-shadow: 0 12px 30px rgba(225, 29, 72, 0.42), inset 0 1px 0 rgba(255,255,255,0.25);
+  background: linear-gradient(135deg, #ff7a00 0%, #f43f5e 100%);
+  box-shadow: 0 14px 32px rgba(244, 63, 94, 0.4), 0 0 0 4px rgba(255, 122, 0, 0.2);
 }
 .ll-mic-btn svg {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
 }
 
 .ll-hero-label {
-  font-size: 16px;
-  font-weight: 800;
-  color: #0f172a;
+  font-size: 18px;
+  font-weight: 900;
+  color: #0f2937;
   text-align: center;
 }
 .ll-hero-sub {
-  font-size: 13px;
-  color: #475569;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #4b6777;
   text-align: center;
-  max-width: 440px;
-  line-height: 1.45;
+  max-width: 450px;
+  line-height: 1.5;
 }
 
-/* Animated Voice Equalizer Bars */
 .ll-wave {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  height: 26px;
+  gap: 6px;
+  height: 28px;
 }
 .ll-bar {
-  width: 5px;
-  height: 6px;
+  width: 6px;
+  height: 7px;
   border-radius: 999px;
-  background: #cbd5e1;
+  background: #bfe6ec;
   transition: height 0.12s ease, background 0.2s ease;
 }
 .ll-wave.active .ll-bar {
-  background: #e11d48;
-  animation: llWave 0.9s ease-in-out infinite alternate;
+  background: linear-gradient(180deg, #ff7a00, #f43f5e);
+  animation: llWave 0.85s ease-in-out infinite alternate;
 }
 .ll-wave.active .ll-bar:nth-child(2) { animation-delay: 0.15s; }
 .ll-wave.active .ll-bar:nth-child(3) { animation-delay: 0.30s; }
@@ -199,76 +224,83 @@ _HOST_MIC_CSS = """
 .ll-wave.active .ll-bar:nth-child(6) { animation-delay: 0.40s; }
 .ll-wave.active .ll-bar:nth-child(7) { animation-delay: 0.05s; }
 @keyframes llWave {
-  0% { height: 6px; }
-  100% { height: 24px; }
+  0% { height: 7px; }
+  100% { height: 26px; }
 }
 
-/* Live Interim Speech Preview */
 .ll-interim {
+  position: relative;
+  z-index: 1;
   width: 100%;
-  min-height: 56px;
-  border-radius: 16px;
-  border: 1.5px dashed #94a3b8;
+  min-height: 58px;
+  border-radius: 18px;
+  border: 2px dashed #93d7e0;
   background: #ffffff;
-  padding: 12px 16px;
+  padding: 13px 16px;
   font-size: 15px;
+  font-weight: 600;
   line-height: 1.5;
-  color: #64748b;
+  color: #5b7888;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
 }
 .ll-interim.has-text {
-  border-color: #2563eb;
-  background: #eff6ff;
-  color: #0f172a;
-  font-weight: 600;
+  border-style: solid;
+  border-color: #00a5b5;
+  background: #e9f9fb;
+  color: #0f2937;
+  font-weight: 700;
   justify-content: flex-start;
   text-align: left;
 }
 
 .ll-error {
+  position: relative;
+  z-index: 1;
   width: 100%;
   display: none;
   padding: 12px 14px;
-  border-radius: 14px;
+  border-radius: 16px;
   background: #fff1f2;
-  border: 1px solid #fecdd3;
+  border: 1.5px solid #fda4af;
   color: #9f1239;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.45;
 }
 .ll-error.show { display: block; }
 
 .ll-controls {
+  position: relative;
+  z-index: 1;
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   justify-content: center;
   padding-top: 4px;
 }
 .ll-action-btn {
   min-height: 46px;
-  padding: 10px 16px;
-  border-radius: 14px;
-  border: 1px solid #cbd5e1;
-  background: #ffffff;
-  color: #0f172a;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1.5px solid #fed7aa;
+  background: #fff7ed;
+  color: #c2410c;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition: transform 0.12s ease, background 0.15s ease;
 }
-.ll-action-btn:hover { background: #f1f5f9; }
+.ll-action-btn:hover { background: #ffedd5; transform: translateY(-1px); }
 .ll-action-danger {
   background: #fff1f2;
-  border-color: #fda4af;
+  border-color: #fecdd3;
   color: #be123c;
 }
 .ll-action-danger:hover { background: #ffe4e6; }
@@ -592,30 +624,32 @@ export default function(component) {
 """
 
 _QR_CARD_CSS = """
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=JetBrains+Mono:wght@600;800&display=swap');
 :host, * {
   box-sizing: border-box;
-  font-family: 'Plus Jakarta Sans', Inter, system-ui, -apple-system, sans-serif;
+  font-family: 'Nunito', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 }
 .qr-shell {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 22px;
+  background: linear-gradient(135deg, #ffffff 0%, #effafc 100%);
+  border: 2px solid #b8e8ee;
+  border-radius: 26px;
   padding: 20px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 20px;
-  box-shadow: 0 6px 22px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 10px 26px rgba(0, 155, 173, 0.1);
 }
 .qr-img-box {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
+  border: 2px solid #00a5b5;
+  border-radius: 20px;
   padding: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
+  box-shadow: 0 6px 16px rgba(0, 165, 181, 0.14);
 }
 .qr-img-box img {
   width: 196px;
@@ -636,11 +670,11 @@ _QR_CARD_CSS = """
   font-size: 22px;
   font-weight: 800;
   letter-spacing: 0.08em;
-  color: #1d4ed8;
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
-  padding: 6px 14px;
-  border-radius: 12px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #00b4c5 0%, #00829b 100%);
+  padding: 7px 16px;
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(0, 155, 173, 0.28);
 }
 .qr-url-row {
   display: flex;
@@ -650,31 +684,33 @@ _QR_CARD_CSS = """
 .qr-url-input {
   flex: 1;
   min-height: 46px;
-  padding: 8px 12px;
-  border-radius: 12px;
-  border: 1px solid #cbd5e1;
-  background: #f8fafc;
-  color: #0f172a;
+  padding: 8px 14px;
+  border-radius: 14px;
+  border: 1.5px solid #b8e8ee;
+  background: #ffffff;
+  color: #0f2937;
   font-size: 13px;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
 }
 .qr-copy-btn {
   min-height: 46px;
-  padding: 0 16px;
-  border-radius: 12px;
+  padding: 0 18px;
+  border-radius: 14px;
   border: none;
-  background: #0f172a;
+  background: linear-gradient(135deg, #ff7a00 0%, #f97316 100%);
   color: #ffffff;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(255, 122, 0, 0.28);
 }
-.qr-copy-btn.copied { background: #059669; }
+.qr-copy-btn.copied { background: #059669; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.28); }
 .qr-hint {
-  font-size: 12px;
-  color: #475569;
-  line-height: 1.45;
+  font-size: 13px;
+  font-weight: 600;
+  color: #3b5868;
+  line-height: 1.5;
 }
 """
 
