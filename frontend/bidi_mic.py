@@ -4,45 +4,68 @@ from typing import Any, Optional
 import streamlit as st
 
 _HOST_MIC_CSS = """
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=JetBrains+Mono:wght@600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..900;1,9..40,400..900&family=JetBrains+Mono:wght@600;800&display=swap');
 :host, * {
   box-sizing: border-box;
-  font-family: 'Nunito', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+}
+.ll-mic-window {
+  background: #ffffff;
+  border: 2.5px solid #0c2337;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 6px 0 #0c2337;
+}
+.ll-win-bar {
+  background: #ff4f28;
+  border-bottom: 2.5px solid #0c2337;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.ll-win-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.ll-win-circle {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #ededed;
+  display: inline-block;
+}
+.ll-win-square {
+  width: 11px;
+  height: 11px;
+  background: #ededed;
+  display: inline-block;
+}
+.ll-win-tri {
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 11px solid #ededed;
+  display: inline-block;
+}
+.ll-win-title {
+  color: #ffffff;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 .ll-mic-card {
   position: relative;
-  overflow: hidden;
-  background: linear-gradient(180deg, #ffffff 0%, #f0fafb 100%);
-  border: 2px solid #cbeff3;
-  border-radius: 28px;
-  padding: 24px 20px 22px;
-  box-shadow: 0 12px 32px rgba(0, 150, 168, 0.12);
+  background: #ffffff;
+  padding: 20px 20px 22px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
-}
-.ll-mic-card::before {
-  content: '';
-  position: absolute;
-  top: -45px;
-  right: -45px;
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 180, 197, 0.16) 0%, rgba(0, 180, 197, 0) 70%);
-  pointer-events: none;
-}
-.ll-mic-card::after {
-  content: '';
-  position: absolute;
-  bottom: -55px;
-  left: -35px;
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 122, 0, 0.12) 0%, rgba(255, 122, 0, 0) 70%);
-  pointer-events: none;
 }
 .ll-top-row {
   position: relative;
@@ -64,17 +87,19 @@ _HOST_MIC_CSS = """
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 13px;
+  padding: 6px 14px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 800;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: 2px solid #0c2337;
 }
-.ll-pill-idle { background: #e6f7f9; color: #0b6e79; border: 1px solid #b5e6ec; }
-.ll-pill-live { background: #fff1ed; color: #c2410c; border: 1px solid #fdba74; }
-.ll-pill-warn { background: #fef9c3; color: #854d0e; border: 1px solid #fde047; }
+.ll-pill-idle { background: #ededed; color: #0c2337; }
+.ll-pill-live { background: #ff4f28; color: #ffffff; }
+.ll-pill-warn { background: #fef08a; color: #0c2337; }
 .ll-pill-err  { background: #ffe4e6; color: #9f1239; }
-.ll-pill-blue { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+.ll-pill-blue { background: #004d8f; color: #ffffff; }
 
 .ll-dot {
   width: 8px;
@@ -92,30 +117,31 @@ _HOST_MIC_CSS = """
 
 .ll-lang-toggle {
   display: inline-flex;
-  background: #dff4f7;
-  padding: 4px;
+  background: #ededed;
+  border: 2px solid #0c2337;
+  padding: 3px;
   border-radius: 999px;
   gap: 3px;
 }
 .ll-lang-btn {
   border: none;
   background: transparent;
-  color: #0e5a64;
+  color: #0c2337;
   font-size: 12px;
   font-weight: 800;
-  padding: 7px 14px;
-  min-height: 36px;
+  letter-spacing: 0.04em;
+  padding: 6px 14px;
+  min-height: 34px;
   border-radius: 999px;
   cursor: pointer;
-  transition: all 0.16s ease;
+  transition: all 0.15s ease;
 }
 .ll-lang-btn.active {
-  background: #00a5b5;
+  background: #004d8f;
   color: #ffffff;
-  box-shadow: 0 3px 10px rgba(0, 165, 181, 0.32);
 }
 
-/* Huge tactile 104x104px Ruangguru-style Studio Microphone Button */
+/* Huge tactile 104x104px Canva-styled Studio Microphone Button */
 .ll-hero-zone {
   position: relative;
   z-index: 1;
@@ -123,7 +149,7 @@ _HOST_MIC_CSS = """
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  padding: 10px 0 4px;
+  padding: 8px 0 2px;
   width: 100%;
 }
 .ll-mic-ring {
@@ -144,12 +170,12 @@ _HOST_MIC_CSS = """
   pointer-events: none;
 }
 .ll-mic-ring.listening::before {
-  border: 4px solid rgba(255, 107, 44, 0.5);
-  animation: llRipple 1.7s cubic-bezier(0.2, 0.7, 0.4, 1) infinite;
+  border: 4px solid rgba(255, 79, 40, 0.58);
+  animation: llRipple 1.65s cubic-bezier(0.2, 0.7, 0.4, 1) infinite;
 }
 .ll-mic-ring.listening::after {
-  border: 4px solid rgba(255, 107, 44, 0.32);
-  animation: llRipple 1.7s cubic-bezier(0.2, 0.7, 0.4, 1) 0.85s infinite;
+  border: 4px solid rgba(0, 77, 143, 0.38);
+  animation: llRipple 1.65s cubic-bezier(0.2, 0.7, 0.4, 1) 0.82s infinite;
 }
 @keyframes llRipple {
   0% { transform: scale(0.82); opacity: 0.95; }
@@ -162,22 +188,22 @@ _HOST_MIC_CSS = """
   width: 104px;
   height: 104px;
   border-radius: 50%;
-  border: 5px solid #ffffff;
+  border: 3px solid #0c2337;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ffffff;
-  background: linear-gradient(135deg, #00c4d4 0%, #0095a8 55%, #007791 100%);
-  box-shadow: 0 14px 30px rgba(0, 155, 173, 0.38), 0 0 0 4px rgba(0, 180, 197, 0.16);
-  transition: transform 0.14s ease, box-shadow 0.2s ease, background 0.2s ease;
+  background: #004d8f;
+  box-shadow: 0 6px 0 #0c2337, 0 0 0 6px #ededed;
+  transition: transform 0.14s ease, box-shadow 0.16s ease, background 0.16s ease;
   -webkit-tap-highlight-color: transparent;
 }
-.ll-mic-btn:hover { transform: scale(1.05); }
-.ll-mic-btn:active { transform: scale(0.94); }
+.ll-mic-btn:hover { transform: translateY(-2px) scale(1.03); background: #003e75; }
+.ll-mic-btn:active { transform: translateY(2px) scale(0.96); box-shadow: 0 2px 0 #0c2337, 0 0 0 6px #ededed; }
 .ll-mic-btn.listening {
-  background: linear-gradient(135deg, #ff7a00 0%, #f43f5e 100%);
-  box-shadow: 0 14px 32px rgba(244, 63, 94, 0.4), 0 0 0 4px rgba(255, 122, 0, 0.2);
+  background: #ff4f28;
+  box-shadow: 0 6px 0 #0c2337, 0 0 0 6px #ffe3dc;
 }
 .ll-mic-btn svg {
   width: 44px;
@@ -186,16 +212,17 @@ _HOST_MIC_CSS = """
 
 .ll-hero-label {
   font-size: 18px;
-  font-weight: 900;
-  color: #0f2937;
+  font-weight: 800;
+  color: #0c2337;
   text-align: center;
+  letter-spacing: -0.015em;
 }
 .ll-hero-sub {
   font-size: 13.5px;
-  font-weight: 600;
-  color: #4b6777;
+  font-weight: 500;
+  color: #354c61;
   text-align: center;
-  max-width: 450px;
+  max-width: 460px;
   line-height: 1.5;
 }
 
@@ -210,13 +237,14 @@ _HOST_MIC_CSS = """
   width: 6px;
   height: 7px;
   border-radius: 999px;
-  background: #bfe6ec;
+  background: #cbd5e1;
   transition: height 0.12s ease, background 0.2s ease;
 }
 .ll-wave.active .ll-bar {
-  background: linear-gradient(180deg, #ff7a00, #f43f5e);
+  background: #ff4f28;
   animation: llWave 0.85s ease-in-out infinite alternate;
 }
+.ll-wave.active .ll-bar:nth-child(even) { background: #004d8f; }
 .ll-wave.active .ll-bar:nth-child(2) { animation-delay: 0.15s; }
 .ll-wave.active .ll-bar:nth-child(3) { animation-delay: 0.30s; }
 .ll-wave.active .ll-bar:nth-child(4) { animation-delay: 0.10s; }
@@ -233,14 +261,14 @@ _HOST_MIC_CSS = """
   z-index: 1;
   width: 100%;
   min-height: 58px;
-  border-radius: 18px;
-  border: 2px dashed #93d7e0;
-  background: #ffffff;
+  border-radius: 16px;
+  border: 2px dashed #0c2337;
+  background: #ededed;
   padding: 13px 16px;
   font-size: 15px;
   font-weight: 600;
   line-height: 1.5;
-  color: #5b7888;
+  color: #354c61;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -248,9 +276,9 @@ _HOST_MIC_CSS = """
 }
 .ll-interim.has-text {
   border-style: solid;
-  border-color: #00a5b5;
-  background: #e9f9fb;
-  color: #0f2937;
+  border-color: #004d8f;
+  background: #eef6ff;
+  color: #0c2337;
   font-weight: 700;
   justify-content: flex-start;
   text-align: left;
@@ -262,10 +290,10 @@ _HOST_MIC_CSS = """
   width: 100%;
   display: none;
   padding: 12px 14px;
-  border-radius: 16px;
-  background: #fff1f2;
-  border: 1.5px solid #fda4af;
-  color: #9f1239;
+  border-radius: 14px;
+  background: #fff1ed;
+  border: 2px solid #ff4f28;
+  color: #0c2337;
   font-size: 13px;
   font-weight: 700;
   line-height: 1.45;
@@ -284,69 +312,82 @@ _HOST_MIC_CSS = """
 }
 .ll-action-btn {
   min-height: 46px;
-  padding: 10px 18px;
+  padding: 10px 20px;
   border-radius: 999px;
-  border: 1.5px solid #fed7aa;
-  background: #fff7ed;
-  color: #c2410c;
-  font-size: 13px;
+  border: 2px solid #0c2337;
+  background: #ffffff;
+  color: #0c2337;
+  font-size: 12.5px;
   font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 7px;
+  box-shadow: 0 3px 0 #0c2337;
   transition: transform 0.12s ease, background 0.15s ease;
 }
-.ll-action-btn:hover { background: #ffedd5; transform: translateY(-1px); }
+.ll-action-btn:hover { background: #ededed; transform: translateY(-1px); }
 .ll-action-danger {
-  background: #fff1f2;
-  border-color: #fecdd3;
-  color: #be123c;
+  background: #ff4f28;
+  border-color: #0c2337;
+  color: #ffffff;
 }
-.ll-action-danger:hover { background: #ffe4e6; }
+.ll-action-danger:hover { background: #e03e1a; }
 """
 
 _HOST_MIC_HTML = """
-<div class="ll-mic-card">
-  <div class="ll-top-row">
-    <div class="ll-pills">
-      <span id="statePill" class="ll-pill ll-pill-idle">
-        <span class="ll-dot"></span>
-        <span id="stateText">Siap</span>
-      </span>
-      <span id="stuPill" class="ll-pill ll-pill-blue">👥 0 mahasiswa</span>
-    </div>
-    <div class="ll-lang-toggle" role="group" aria-label="Speech language">
-      <button id="langId" class="ll-lang-btn active" type="button">🇮🇩 ID</button>
-      <button id="langEn" class="ll-lang-btn" type="button">🇺🇸 EN</button>
-    </div>
+<div class="ll-mic-window">
+  <div class="ll-win-bar">
+    <span class="ll-win-dots" aria-hidden="true">
+      <span class="ll-win-circle"></span>
+      <span class="ll-win-square"></span>
+      <span class="ll-win-tri"></span>
+    </span>
+    <span class="ll-win-title">LIVE AUDIO CAPTURE</span>
   </div>
-
-  <div class="ll-hero-zone">
-    <div id="micRing" class="ll-mic-ring">
-      <button id="micBtn" class="ll-mic-btn" type="button" aria-label="Toggle microphone">
-        <svg id="micIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
-          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-          <line x1="12" x2="12" y1="19" y2="22"/>
-        </svg>
-      </button>
+  <div class="ll-mic-card">
+    <div class="ll-top-row">
+      <div class="ll-pills">
+        <span id="statePill" class="ll-pill ll-pill-idle">
+          <span class="ll-dot"></span>
+          <span id="stateText">Siap</span>
+        </span>
+        <span id="stuPill" class="ll-pill ll-pill-blue">👥 0 mahasiswa</span>
+      </div>
+      <div class="ll-lang-toggle" role="group" aria-label="Speech language">
+        <button id="langId" class="ll-lang-btn active" type="button">🇮🇩 ID</button>
+        <button id="langEn" class="ll-lang-btn" type="button">🇺🇸 EN</button>
+      </div>
     </div>
-    <div id="heroLabel" class="ll-hero-label">Tap Mikrofon untuk Mulai Bicara</div>
-    <div id="heroSub" class="ll-hero-sub">Suara dosen langsung ditranskripsi real-time dengan pencocokan glosarium & rumus KaTeX.</div>
-    <div id="wave" class="ll-wave" aria-hidden="true">
-      <div class="ll-bar"></div><div class="ll-bar"></div><div class="ll-bar"></div>
-      <div class="ll-bar"></div><div class="ll-bar"></div><div class="ll-bar"></div>
-      <div class="ll-bar"></div>
+
+    <div class="ll-hero-zone">
+      <div id="micRing" class="ll-mic-ring">
+        <button id="micBtn" class="ll-mic-btn" type="button" aria-label="Toggle microphone">
+          <svg id="micIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" x2="12" y1="19" y2="22"/>
+          </svg>
+        </button>
+      </div>
+      <div id="heroLabel" class="ll-hero-label">Tap Mikrofon untuk Mulai Bicara</div>
+      <div id="heroSub" class="ll-hero-sub">Suara dosen langsung ditranskripsi real-time dengan pencocokan glosarium & rumus KaTeX.</div>
+      <div id="wave" class="ll-wave" aria-hidden="true">
+        <div class="ll-bar"></div><div class="ll-bar"></div><div class="ll-bar"></div>
+        <div class="ll-bar"></div><div class="ll-bar"></div><div class="ll-bar"></div>
+        <div class="ll-bar"></div>
+      </div>
     </div>
-  </div>
 
-  <div id="interimBox" class="ll-interim">Teks sementara akan muncul di sini saat Anda mulai berbicara…</div>
-  <div id="errBox" class="ll-error" role="alert"></div>
+    <div id="interimBox" class="ll-interim">Teks sementara akan muncul di sini saat Anda mulai berbicara…</div>
+    <div id="errBox" class="ll-error" role="alert"></div>
 
-  <div class="ll-controls">
-    <button id="btnDemo" class="ll-action-btn" type="button">✨ Kirim 1 Baris Demo</button>
-    <button id="btnEnd" class="ll-action-btn ll-action-danger" type="button">■ Akhiri Sesi</button>
+    <div class="ll-controls">
+      <button id="btnDemo" class="ll-action-btn" type="button">✨ Kirim 1 Baris Demo</button>
+      <button id="btnEnd" class="ll-action-btn ll-action-danger" type="button">■ Akhiri Sesi</button>
+    </div>
   </div>
 </div>
 """
@@ -624,32 +665,59 @@ export default function(component) {
 """
 
 _QR_CARD_CSS = """
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=JetBrains+Mono:wght@600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@600;800&display=swap');
 :host, * {
   box-sizing: border-box;
-  font-family: 'Nunito', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+}
+.qr-window {
+  background: #ffffff;
+  border: 2.5px solid #0c2337;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 5px 0 #0c2337;
+}
+.qr-bar {
+  background: #ff4f28;
+  border-bottom: 2.5px solid #0c2337;
+  padding: 9px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.qr-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.qr-d1 { width: 10px; height: 10px; border-radius: 50%; background: #ededed; display: inline-block; }
+.qr-d2 { width: 10px; height: 10px; background: #ededed; display: inline-block; }
+.qr-d3 { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 10px solid #ededed; display: inline-block; }
+.qr-bar-lbl {
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 .qr-shell {
-  background: linear-gradient(135deg, #ffffff 0%, #effafc 100%);
-  border: 2px solid #b8e8ee;
-  border-radius: 26px;
+  background: #ffffff;
   padding: 20px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 20px;
-  box-shadow: 0 10px 26px rgba(0, 155, 173, 0.1);
 }
 .qr-img-box {
   background: #ffffff;
-  border: 2px solid #00a5b5;
-  border-radius: 20px;
+  border: 2.5px solid #0c2337;
+  border-radius: 18px;
   padding: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
-  box-shadow: 0 6px 16px rgba(0, 165, 181, 0.14);
+  box-shadow: 0 4px 0 #0c2337;
 }
 .qr-img-box img {
   width: 196px;
@@ -661,7 +729,7 @@ _QR_CARD_CSS = """
   min-width: 230px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 11px;
 }
 .qr-code-badge {
   display: inline-block;
@@ -671,10 +739,11 @@ _QR_CARD_CSS = """
   font-weight: 800;
   letter-spacing: 0.08em;
   color: #ffffff;
-  background: linear-gradient(135deg, #00b4c5 0%, #00829b 100%);
-  padding: 7px 16px;
+  background: #004d8f;
+  border: 2px solid #0c2337;
+  padding: 6px 18px;
   border-radius: 999px;
-  box-shadow: 0 4px 12px rgba(0, 155, 173, 0.28);
+  box-shadow: 0 3px 0 #0c2337;
 }
 .qr-url-row {
   display: flex;
@@ -685,46 +754,57 @@ _QR_CARD_CSS = """
   flex: 1;
   min-height: 46px;
   padding: 8px 14px;
-  border-radius: 14px;
-  border: 1.5px solid #b8e8ee;
-  background: #ffffff;
-  color: #0f2937;
+  border-radius: 999px;
+  border: 2px solid #0c2337;
+  background: #ededed;
+  color: #0c2337;
   font-size: 13px;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
 }
 .qr-copy-btn {
   min-height: 46px;
-  padding: 0 18px;
-  border-radius: 14px;
-  border: none;
-  background: linear-gradient(135deg, #ff7a00 0%, #f97316 100%);
+  padding: 0 20px;
+  border-radius: 999px;
+  border: 2px solid #0c2337;
+  background: #ff4f28;
   color: #ffffff;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   cursor: pointer;
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(255, 122, 0, 0.28);
+  box-shadow: 0 3px 0 #0c2337;
 }
-.qr-copy-btn.copied { background: #059669; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.28); }
+.qr-copy-btn:hover { background: #e03e1a; }
+.qr-copy-btn.copied { background: #004d8f; }
 .qr-hint {
-  font-size: 13px;
-  font-weight: 600;
-  color: #3b5868;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #354c61;
   line-height: 1.5;
 }
 """
 
 _QR_CARD_HTML = """
-<div class="qr-shell">
-  <div class="qr-img-box">
-    <img id="qrImg" alt="Room QR Code" />
+<div class="qr-window">
+  <div class="qr-bar">
+    <span class="qr-dots" aria-hidden="true">
+      <span class="qr-d1"></span><span class="qr-d2"></span><span class="qr-d3"></span>
+    </span>
+    <span class="qr-bar-lbl">ROOM ACCESS QR</span>
   </div>
-  <div class="qr-info">
-    <div id="roomCode" class="qr-code-badge"></div>
-    <div id="qrHint" class="qr-hint"></div>
-    <div class="qr-url-row">
-      <input id="qrUrl" class="qr-url-input" type="text" readonly />
-      <button id="copyBtn" class="qr-copy-btn" type="button">Salin</button>
+  <div class="qr-shell">
+    <div class="qr-img-box">
+      <img id="qrImg" alt="Room QR Code" />
+    </div>
+    <div class="qr-info">
+      <div id="roomCode" class="qr-code-badge"></div>
+      <div id="qrHint" class="qr-hint"></div>
+      <div class="qr-url-row">
+        <input id="qrUrl" class="qr-url-input" type="text" readonly />
+        <button id="copyBtn" class="qr-copy-btn" type="button">Salin</button>
+      </div>
     </div>
   </div>
 </div>

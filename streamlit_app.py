@@ -36,341 +36,558 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------------------------
-# Ruangguru-Inspired Indonesian EdTech Visual System
-# Signature Turquoise (#00A5B5) + Sunny Orange (#FF7A00) + Warm Yellow (#FACC15)
-# Soft Mint-Ice Canvas (#F2FAFB), Rounded 24-28px Cards, Friendly Nunito Font
+# Canva Education Bio-Link Visual System (DAHcFfKiO5Q)
+# Royal Cobalt Blue Canvas (#004D8F) + Retro Coral-Orange (#FF4F28)
+# Crisp Light Grey (#EDEDED) + Pure White Pill Surfaces (#FFFFFF)
+# Bold Deep Navy-Ink Outlines (#0C2337) + Retro Window Frames (● ■ ▲)
 # ---------------------------------------------------------------------------
 st.markdown(
     """
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;800&family=Nunito:wght@500;600;700;800;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..900;1,9..40,400..900&family=JetBrains+Mono:wght@600;800&display=swap');
 
   html, body, [class*="css"] {
-    font-family: 'Nunito', system-ui, -apple-system, sans-serif !important;
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif !important;
   }
   .stApp {
-    background:
-      radial-gradient(circle at 8% 0%, rgba(0, 184, 201, 0.12) 0%, rgba(0, 184, 201, 0) 38%),
-      radial-gradient(circle at 92% 6%, rgba(255, 122, 0, 0.09) 0%, rgba(255, 122, 0, 0) 34%),
-      linear-gradient(180deg, #f0fafb 0%, #f7fbfc 50%, #eef7f9 100%);
+    background: #004d8f !important;
+    color: #ffffff;
+  }
+  header[data-testid="stHeader"] {
+    background: rgba(0, 77, 143, 0.92) !important;
+    backdrop-filter: blur(8px);
   }
   .block-container {
-    max-width: 980px !important;
-    padding-top: 3.9rem !important;
+    max-width: 1020px !important;
+    padding-top: 4rem !important;
     padding-bottom: 3.5rem !important;
-    padding-left: 1.1rem !important;
-    padding-right: 1.1rem !important;
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
   }
   footer { visibility: hidden; }
 
-  /* Friendly Pill Buttons (Ruangguru Turquoise Primary + Crisp White Secondary) */
-  button[kind="primary"] {
+  /* Default text directly on Royal Cobalt Blue canvas */
+  .stApp .stMarkdown h1,
+  .stApp .stMarkdown h2,
+  .stApp .stMarkdown h3,
+  .stApp .stMarkdown h4,
+  .stApp .stMarkdown p,
+  .stApp [data-testid="stCaptionContainer"] p,
+  .stApp [data-testid="stWidgetLabel"] p {
+    color: #ffffff;
+  }
+  .stApp hr {
+    border-color: rgba(237, 237, 237, 0.28) !important;
+  }
+
+  /* Crisp Canva Pill Buttons (White + Navy Ink Outline, Coral-Orange Primary) */
+  button[kind="primary"],
+  div[data-testid="stFormSubmitButton"] button {
     min-height: 50px !important;
     border-radius: 999px !important;
     font-weight: 800 !important;
-    font-size: 14.5px !important;
-    background: linear-gradient(135deg, #00c0d0 0%, #0095a8 100%) !important;
+    font-size: 13px !important;
+    letter-spacing: 0.055em !important;
+    text-transform: uppercase !important;
+    background: #ff4f28 !important;
     color: #ffffff !important;
-    border: none !important;
-    box-shadow: 0 8px 18px rgba(0, 155, 173, 0.28) !important;
-    transition: transform 0.14s ease, filter 0.14s ease !important;
+    border: 2.2px solid #0c2337 !important;
+    box-shadow: 0 4px 0 #0c2337 !important;
+    transition: transform 0.13s ease, background 0.13s ease, box-shadow 0.13s ease !important;
   }
-  button[kind="primary"]:hover {
-    filter: brightness(1.06);
-    transform: translateY(-1px);
+  button[kind="primary"]:hover,
+  div[data-testid="stFormSubmitButton"] button:hover {
+    background: #e63f1a !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #0c2337 !important;
   }
-  button[kind="secondary"] {
-    min-height: 46px !important;
-    border-radius: 999px !important;
-    font-weight: 800 !important;
-    font-size: 13.5px !important;
-    background: #ffffff !important;
-    border: 1.8px solid #cbe9ee !important;
-    color: #0e4a56 !important;
-    box-shadow: 0 3px 10px rgba(0, 130, 155, 0.06) !important;
-    transition: all 0.14s ease !important;
-  }
-  button[kind="secondary"]:hover {
-    border-color: #00a5b5 !important;
-    background: #e6f8fa !important;
-    color: #006b78 !important;
-    transform: translateY(-1px);
+  button[kind="primary"]:active,
+  div[data-testid="stFormSubmitButton"] button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 0 #0c2337 !important;
   }
 
-  /* Inputs & Form Containers */
+  button[kind="secondary"],
+  div[data-testid="stDownloadButton"] button {
+    min-height: 48px !important;
+    border-radius: 999px !important;
+    font-weight: 700 !important;
+    font-size: 12.5px !important;
+    letter-spacing: 0.055em !important;
+    text-transform: uppercase !important;
+    background: #ffffff !important;
+    border: 2.2px solid #0c2337 !important;
+    color: #0c2337 !important;
+    box-shadow: 0 4px 0 #0c2337 !important;
+    transition: transform 0.13s ease, background 0.13s ease, box-shadow 0.13s ease !important;
+  }
+  button[kind="primary"] *,
+  div[data-testid="stFormSubmitButton"] button * {
+    color: #ffffff !important;
+  }
+  button[kind="secondary"] *,
+  div[data-testid="stDownloadButton"] button * {
+    color: #0c2337 !important;
+  }
+  button[kind="secondary"]:hover,
+  div[data-testid="stDownloadButton"] button:hover {
+    background: #ededed !important;
+    color: #0c2337 !important;
+    border-color: #0c2337 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #0c2337 !important;
+  }
+  button[kind="secondary"]:active,
+  div[data-testid="stDownloadButton"] button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 0 #0c2337 !important;
+  }
+
+  /* Crisp White Retro-Outlined Cards, Expanders & Alerts */
   div[data-testid="stVerticalBlockBorderWrapper"] {
     background: #ffffff !important;
-    border: 1.8px solid #d2edf1 !important;
-    border-radius: 24px !important;
-    box-shadow: 0 8px 24px rgba(0, 145, 165, 0.07) !important;
+    border: 2.5px solid #0c2337 !important;
+    border-radius: 22px !important;
+    box-shadow: 0 5px 0 #0c2337 !important;
+    color: #0c2337 !important;
   }
-  input[type="text"], textarea, div[data-baseweb="select"] > div {
-    border-radius: 14px !important;
+  div[data-testid="stVerticalBlockBorderWrapper"] .stMarkdown h1,
+  div[data-testid="stVerticalBlockBorderWrapper"] .stMarkdown h2,
+  div[data-testid="stVerticalBlockBorderWrapper"] .stMarkdown h3,
+  div[data-testid="stVerticalBlockBorderWrapper"] .stMarkdown h4,
+  div[data-testid="stVerticalBlockBorderWrapper"] .stMarkdown p,
+  div[data-testid="stVerticalBlockBorderWrapper"] .stMarkdown li,
+  div[data-testid="stVerticalBlockBorderWrapper"] [data-testid="stWidgetLabel"] p,
+  div[data-testid="stVerticalBlockBorderWrapper"] [data-testid="stCaptionContainer"] p,
+  div[data-testid="stVerticalBlockBorderWrapper"] label,
+  div[data-testid="stVerticalBlockBorderWrapper"] span {
+    color: #0c2337;
+  }
+  /* Preserve white text on primary buttons inside white cards */
+  div[data-testid="stVerticalBlockBorderWrapper"] button[kind="primary"] *,
+  div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stFormSubmitButton"] button * {
+    color: #ffffff !important;
   }
 
-  /* Brand Header */
-  .rg-brand {
+  div[data-testid="stExpander"] {
+    background: #ffffff !important;
+    border: 2.5px solid #0c2337 !important;
+    border-radius: 20px !important;
+    box-shadow: 0 4px 0 #0c2337 !important;
+    overflow: hidden;
+  }
+  div[data-testid="stExpander"] summary,
+  div[data-testid="stExpander"] summary p,
+  div[data-testid="stExpander"] summary svg,
+  div[data-testid="stExpander"] [data-testid="stCaptionContainer"] p,
+  div[data-testid="stExpander"] label,
+  div[data-testid="stExpander"] .stMarkdown p {
+    color: #0c2337 !important;
+    font-weight: 700;
+  }
+  div[data-testid="stExpander"] button[kind="primary"] * {
+    color: #ffffff !important;
+  }
+
+  div[data-testid="stAlert"] {
+    background: #ededed !important;
+    border: 2.2px solid #0c2337 !important;
+    border-radius: 18px !important;
+    box-shadow: 0 4px 0 #0c2337 !important;
+    color: #0c2337 !important;
+  }
+  div[data-testid="stAlert"] p,
+  div[data-testid="stAlert"] span,
+  div[data-testid="stAlert"] strong,
+  div[data-testid="stAlert"] code {
+    color: #0c2337 !important;
+  }
+
+  /* Inputs inside Forms & Cards */
+  input[type="text"], textarea, div[data-baseweb="select"] > div {
+    border-radius: 14px !important;
+    border: 2px solid #0c2337 !important;
+    background: #f8fafc !important;
+    color: #0c2337 !important;
+    font-weight: 600 !important;
+  }
+
+  /* Brand Header (✴ lecturelens) */
+  .cv-brand {
     display: inline-flex;
     align-items: center;
-    gap: 11px;
-    font-size: 24px;
+    gap: 10px;
+    font-size: 27px;
     font-weight: 900;
-    color: #0b3c49;
-    letter-spacing: -0.02em;
+    color: #ffffff;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    padding: 4px 0;
   }
-  .rg-brand-accent {
-    color: #00a5b5;
-  }
-  .rg-logo {
-    width: 42px;
-    height: 42px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #00c4d4 0%, #008b9e 100%);
+  .cv-spark {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 6px 16px rgba(0, 165, 181, 0.32);
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
   }
 
-  /* Ruangguru Curved Turquoise Hero Banner */
-  .rg-hero {
+  /* Signature Canva Coral-Topped Retro Browser Window (Home Hero Left) */
+  .cv-window-wrap {
     position: relative;
+    padding-top: 4px;
+    padding-right: 16px;
+    margin-bottom: 10px;
+  }
+  .cv-window {
+    background: #ffffff;
+    border: 2.5px solid #0c2337;
+    border-radius: 20px;
     overflow: hidden;
-    background: linear-gradient(135deg, #00bfd0 0%, #0092a8 52%, #066387 100%);
-    border-radius: 28px;
-    padding: 28px 26px 26px;
-    color: #ffffff;
-    box-shadow: 0 16px 36px rgba(0, 130, 155, 0.24);
-    margin: 10px 0 18px;
+    box-shadow: 0 7px 0 #0c2337;
   }
-  .rg-hero::before {
-    content: '';
-    position: absolute;
-    top: -60px;
-    right: -40px;
-    width: 220px;
-    height: 220px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.12);
-    pointer-events: none;
-  }
-  .rg-hero::after {
-    content: '';
-    position: absolute;
-    bottom: -75px;
-    right: 90px;
-    width: 170px;
-    height: 170px;
-    border-radius: 50%;
-    background: rgba(250, 204, 21, 0.18);
-    pointer-events: none;
-  }
-  .rg-hero-grid {
-    position: relative;
-    z-index: 2;
+  .cv-win-bar {
+    background: #ff4f28;
+    border-bottom: 2.5px solid #0c2337;
+    padding: 10px 15px;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 20px;
   }
-  .rg-hero-copy {
-    flex: 1;
-    min-width: 250px;
+  .cv-win-dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
   }
-  .rg-eyebrow {
+  .cv-dot-c { width: 11px; height: 11px; border-radius: 50%; background: #ededed; display: inline-block; }
+  .cv-dot-s { width: 11px; height: 11px; background: #ededed; display: inline-block; }
+  .cv-dot-t {
+    width: 0; height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 11px solid #ededed;
+    display: inline-block;
+  }
+  .cv-win-bar-tag {
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .cv-win-scene {
+    background: linear-gradient(180deg, #f7f4ef 0%, #ede8df 100%);
+    padding: 20px 18px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .cv-scene-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    align-self: flex-start;
+    background: #ff4f28;
+    color: #ffffff;
+    border: 2px solid #0c2337;
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .cv-scene-card {
+    background: #ffffff;
+    border: 2px solid #0c2337;
+    border-radius: 16px;
+    padding: 13px 15px;
+    color: #0c2337;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.5;
+    box-shadow: 0 3px 0 #0c2337;
+  }
+  .cv-scene-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #455c72;
+    margin-bottom: 4px;
+  }
+  .cv-scene-math {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: #fff4f1;
+    border: 1.8px solid #ff4f28;
+    border-radius: 10px;
+    padding: 2px 9px;
+    margin: 2px 0;
+    font-weight: 800;
+    color: #0c2337;
+  }
+  .cv-scene-auto {
+    background: #ff4f28;
+    color: #ffffff;
+    border-radius: 999px;
+    padding: 1px 7px;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .cv-scene-gloss {
+    background: #e0eefb;
+    border-bottom: 2px solid #004d8f;
+    color: #004d8f;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 6px;
+  }
+  .cv-scene-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    padding-top: 2px;
+  }
+  .cv-scene-chip {
+    background: #ededed;
+    border: 1.8px solid #0c2337;
+    color: #0c2337;
+    border-radius: 999px;
+    padding: 4px 11px;
+    font-size: 11.5px;
+    font-weight: 800;
+  }
+
+  /* Floating Retro Speech Bubble with Blue Heart (Signature Canva Detail) */
+  .cv-heart-bubble {
+    position: absolute;
+    top: 48px;
+    right: 0;
+    width: 78px;
+    height: 60px;
+    background: #ededed;
+    border: 2.5px solid #0c2337;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 0 #0c2337;
+    z-index: 3;
+  }
+  .cv-heart-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 15px;
+    height: 15px;
+    background: #ededed;
+    border-right: 2.5px solid #0c2337;
+    border-bottom: 2.5px solid #0c2337;
+  }
+
+  /* Right-Side Canva Display Headline */
+  .cv-hero-headline {
+    text-align: center;
+    padding: 6px 6px 14px;
+  }
+  .cv-hero-headline h1 {
+    font-size: 40px;
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    color: #ffffff;
+    margin: 0 0 10px 0;
+  }
+  .cv-hero-headline p {
+    font-size: 14.5px;
+    font-weight: 500;
+    line-height: 1.55;
+    color: #dbeafe;
+    margin: 0 auto;
+    max-width: 430px;
+  }
+  .cv-hero-stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .cv-stat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1.5px solid rgba(237, 237, 237, 0.45);
     color: #ffffff;
     padding: 5px 13px;
     border-radius: 999px;
     font-size: 12px;
-    font-weight: 800;
-    margin-bottom: 12px;
-    backdrop-filter: blur(6px);
-  }
-  .rg-hero h1 {
-    font-size: 27px;
-    font-weight: 900;
-    line-height: 1.22;
-    margin: 0 0 10px 0;
-    color: #ffffff;
-    letter-spacing: -0.02em;
-  }
-  .rg-hero p {
-    font-size: 14.5px;
-    font-weight: 600;
-    line-height: 1.6;
-    margin: 0;
-    color: #e6fbfe;
-    max-width: 560px;
-  }
-  .rg-hero-art {
-    width: 118px;
-    height: 118px;
-    border-radius: 26px;
-    background: rgba(255, 255, 255, 0.16);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 10px 24px rgba(0, 60, 80, 0.18);
-  }
-  .rg-hero-stats {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 18px;
-  }
-  .rg-stat-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    background: rgba(255, 255, 255, 0.94);
-    color: #0b4a56;
-    padding: 7px 14px;
-    border-radius: 999px;
-    font-size: 12.5px;
-    font-weight: 800;
-    box-shadow: 0 4px 10px rgba(0, 50, 70, 0.12);
+    font-weight: 700;
   }
 
-  /* Room & Section Banners */
-  .rg-room-banner {
-    position: relative;
+  /* Retro Window Banner for Room / Studio / Create / Transcript Pages */
+  .cv-win-banner {
+    background: #ffffff;
+    border: 2.5px solid #0c2337;
+    border-radius: 22px;
     overflow: hidden;
-    background: linear-gradient(135deg, #00a9b9 0%, #007d94 55%, #075375 100%);
-    color: #ffffff;
-    border-radius: 26px;
-    padding: 20px 22px;
-    margin: 8px 0 16px;
-    box-shadow: 0 12px 28px rgba(0, 125, 148, 0.24);
+    box-shadow: 0 6px 0 #0c2337;
+    margin: 10px 0 18px;
   }
-  .rg-room-banner::after {
-    content: '';
-    position: absolute;
-    top: -40px;
-    right: -30px;
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.12);
-    pointer-events: none;
+  .cv-win-banner-body {
+    padding: 18px 22px 20px;
+    color: #0c2337;
   }
-  .rg-room-banner h2 {
-    margin: 8px 0 3px;
-    font-size: 22px;
-    font-weight: 900;
-    color: #ffffff;
+  .cv-win-banner-body h2 {
+    margin: 8px 0 4px;
+    font-size: 24px;
+    font-weight: 800;
+    color: #0c2337 !important;
+    letter-spacing: -0.02em;
     line-height: 1.25;
   }
-  .rg-room-banner .sub {
-    font-size: 13.5px;
-    font-weight: 600;
-    color: #dcf7fb;
+  .cv-win-banner-body .sub {
+    font-size: 14px;
+    font-weight: 500;
+    color: #354c61 !important;
   }
 
-  /* Feature Mini-Tiles on Home */
-  .rg-action-banner {
-    background: linear-gradient(135deg, #fff8ed 0%, #fff1dc 100%);
-    border: 2px solid #fed7aa;
-    border-radius: 22px;
-    padding: 14px 18px;
-    margin-bottom: 12px;
+  /* Section Header Bar on Royal Cobalt Canvas */
+  .cv-section-title {
     display: flex;
     align-items: center;
-    gap: 12px;
-  }
-  .rg-action-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #ff8a00 0%, #ff5a1f 100%);
+    gap: 10px;
     color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     font-size: 20px;
-    flex-shrink: 0;
-    box-shadow: 0 6px 14px rgba(255, 106, 0, 0.28);
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    margin: 22px 0 10px;
+  }
+  .cv-section-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ff4f28;
+    border: 2px solid #0c2337;
+    display: inline-block;
   }
 
-  /* Color-Coded Ruangguru Subject Icon Tile for Past Sessions */
-  .rg-course-row {
+  /* Quick Join Coral Header Strip */
+  .cv-join-strip {
+    background: #ff4f28;
+    border: 2.5px solid #0c2337;
+    border-radius: 18px;
+    padding: 12px 18px;
+    margin: 18px 0 10px;
+    box-shadow: 0 4px 0 #0c2337;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    color: #ffffff;
+  }
+  .cv-join-strip-title {
+    font-size: 14.5px;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #ffffff;
+  }
+  .cv-join-strip-sub {
+    font-size: 13px;
+    font-weight: 500;
+    color: #fff1ed;
+  }
+
+  /* Past Sessions Row inside White Window Cards */
+  .cv-course-row {
     display: flex;
     align-items: center;
     gap: 14px;
   }
-  .rg-course-tile {
+  .cv-course-tile {
     width: 48px;
     height: 48px;
-    border-radius: 16px;
+    border-radius: 14px;
+    border: 2.2px solid #0c2337;
     color: #ffffff;
-    font-size: 21px;
-    font-weight: 900;
+    font-size: 20px;
+    font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.12);
+    box-shadow: 0 3px 0 #0c2337;
   }
-  .rg-course-title {
-    font-size: 16px;
-    font-weight: 900;
-    color: #0f2937;
+  .cv-course-title {
+    font-size: 16.5px;
+    font-weight: 800;
+    color: #0c2337;
     line-height: 1.3;
   }
-  .rg-course-sub {
+  .cv-course-sub {
     font-size: 13px;
-    font-weight: 600;
-    color: #527080;
+    font-weight: 500;
+    color: #455c72;
     margin-top: 2px;
   }
 
-  /* Pill Badges */
-  .rg-pill-row {
+  /* Pill Badges (Canva Palette) */
+  .cv-pill-row {
     display: flex;
     flex-wrap: wrap;
     gap: 7px;
-    margin: 8px 0 12px;
+    margin: 8px 0 4px;
   }
-  .rg-pill {
+  .cv-pill {
     display: inline-flex;
     align-items: center;
     gap: 5px;
     padding: 4px 12px;
     border-radius: 999px;
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border: 1.8px solid #0c2337;
     line-height: 1.35;
   }
-  .rg-pill-teal   { background: #dcf6f9; color: #0b6874; }
-  .rg-pill-orange { background: #ffedd5; color: #c2410c; }
-  .rg-pill-yellow { background: #fef9c3; color: #854d0e; }
-  .rg-pill-green  { background: #dcfce7; color: #166534; }
-  .rg-pill-red    { background: #ffe4e6; color: #be123c; }
-  .rg-pill-glass  { background: rgba(255,255,255,0.2); color: #ffffff; border: 1px solid rgba(255,255,255,0.3); }
+  .cv-pill-blue   { background: #004d8f; color: #ffffff !important; }
+  .cv-pill-orange { background: #ff4f28; color: #ffffff !important; }
+  .cv-pill-grey   { background: #ededed; color: #0c2337 !important; }
+  .cv-pill-white  { background: #ffffff; color: #0c2337 !important; }
+  .cv-pill-yellow { background: #fef08a; color: #0c2337 !important; }
+  .cv-pill-green  { background: #dcfce7; color: #0c2337 !important; }
 
-  /* Summary Highlight Card */
-  .rg-summary-header {
+  /* Summary Highlight Header */
+  .cv-summary-header {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 14px;
-    border-radius: 16px;
-    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-    border: 1.5px solid #fcd34d;
-    color: #78350f;
-    font-weight: 900;
-    font-size: 15px;
-    margin-bottom: 10px;
+    padding: 10px 15px;
+    border-radius: 14px;
+    background: #ededed;
+    border: 2px solid #0c2337;
+    color: #0c2337 !important;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  @media (max-width: 768px) {
+    .cv-hero-headline h1 { font-size: 32px; }
+    .cv-window-wrap { padding-right: 6px; }
+    .cv-heart-bubble { width: 64px; height: 50px; top: 44px; }
   }
 </style>
 """,
@@ -454,7 +671,7 @@ def make_qr_data_url(url: str) -> str:
     qr = qrcode.QRCode(border=2, box_size=8)
     qr.add_data(url)
     qr.make(fit=True)
-    img = qr.make_image(fill_color="#0b3c49", back_color="#ffffff")
+    img = qr.make_image(fill_color="#0c2337", back_color="#ffffff")
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     b64 = base64.b64encode(buf.getvalue()).decode("ascii")
@@ -499,11 +716,11 @@ def resolve_public_app_url() -> str:
 
 
 SUBJECT_PALETTES = [
-    ("linear-gradient(135deg, #00c0d0, #00829b)", "📐"),
-    ("linear-gradient(135deg, #ff8a00, #f97316)", "🧪"),
-    ("linear-gradient(135deg, #6366f1, #4338ca)", "💻"),
-    ("linear-gradient(135deg, #10b981, #047857)", "🧬"),
-    ("linear-gradient(135deg, #ec4899, #be185d)", "📚"),
+    ("#004d8f", "📐"),
+    ("#ff4f28", "🧪"),
+    ("#0c2337", "💻"),
+    ("#0369a1", "🧬"),
+    ("#ea580c", "📚"),
 ]
 
 
@@ -512,24 +729,35 @@ def subject_visual(title: str) -> tuple[str, str]:
     return SUBJECT_PALETTES[idx]
 
 
-HERO_SVG = """
-<svg width="74" height="74" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <rect x="10" y="16" width="60" height="44" rx="14" fill="#FFFFFF" fill-opacity="0.96"/>
-  <rect x="18" y="26" width="30" height="6" rx="3" fill="#00A5B5"/>
-  <rect x="18" y="37" width="44" height="6" rx="3" fill="#0F2937" fill-opacity="0.82"/>
-  <rect x="18" y="48" width="24" height="5" rx="2.5" fill="#FF7A00"/>
-  <circle cx="60" cy="56" r="14" fill="#FF7A00" stroke="#FFFFFF" stroke-width="4"/>
-  <path d="M55 56L58.5 59.5L66 52" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+SPARK_SVG = """
+<svg width="26" height="26" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <path d="M14 2L16.4 9.6L23.5 5.8L19.1 12.6L26.6 15.2L18.7 16.5L21.8 23.8L14.9 19.3L11.8 26.5L11.4 18.6L3.6 20.6L9.1 14.8L2.2 10.6L10.1 11.1L9.2 3.2L14 9.5V2Z" fill="#FF4F28"/>
 </svg>
 """
 
-LOGO_SVG = """
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-  <rect x="3" y="5" width="18" height="14" rx="4"/>
-  <path d="M7 10h6"/>
-  <path d="M7 14h10"/>
+HEART_SVG = """
+<svg width="36" height="32" viewBox="0 0 36 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <path d="M18 30.2C18 30.2 3 21.1 3 10.7C3 5.7 6.8 2 11.4 2C14.3 2 16.8 3.6 18 6C19.2 3.6 21.7 2 24.6 2C29.2 2 33 5.7 33 10.7C33 21.1 18 30.2 18 30.2Z" fill="#004D8F"/>
 </svg>
 """
+
+
+def win_banner_html(bar_title: str, pills_html: str, title: str, subtitle: str) -> str:
+    return (
+        f'<div class="cv-win-banner">'
+        f'  <div class="cv-win-bar">'
+        f'    <span class="cv-win-dots" aria-hidden="true">'
+        f'      <span class="cv-dot-c"></span><span class="cv-dot-s"></span><span class="cv-dot-t"></span>'
+        f'    </span>'
+        f'    <span class="cv-win-bar-tag">{bar_title}</span>'
+        f'  </div>'
+        f'  <div class="cv-win-banner-body">'
+        f'    <div class="cv-pill-row" style="margin:0 0 6px;">{pills_html}</div>'
+        f'    <h2>{title}</h2>'
+        f'    <div class="sub">{subtitle}</div>'
+        f'  </div>'
+        f'</div>'
+    )
 
 
 api = get_api_client()
@@ -542,15 +770,15 @@ health = api.health()
 
 
 # ---------------------------------------------------------------------------
-# Brand Top Bar
+# Brand Top Bar (Canva * lecturelens Header)
 # ---------------------------------------------------------------------------
 
 hdr_l, hdr_r = st.columns([8, 2])
 with hdr_l:
     st.markdown(
-        f'<div class="rg-brand">'
-        f'<span class="rg-logo">{LOGO_SVG}</span>'
-        f'<span>Lecture<span class="rg-brand-accent">Lens</span></span>'
+        f'<div class="cv-brand">'
+        f'  <span class="cv-spark">{SPARK_SVG}</span>'
+        f'  <span>lecturelens</span>'
         f'</div>',
         unsafe_allow_html=True,
     )
@@ -564,8 +792,11 @@ if not health:
     st.error(tr(lang, "backend_offline", url=backend_http))
     st.stop()
 
-# Sleek Pill Navigation (hidden automatically when a student scans QR straight into a room)
-if not (st.session_state.student_qr_entry and st.session_state.page == "join"):
+# Clean Canva Pill Navigation (hidden on Home because Home features the signature Canva pill hub,
+# and hidden automatically when a student scans QR straight into a room)
+if st.session_state.page != "home" and not (
+    st.session_state.student_qr_entry and st.session_state.page == "join"
+):
     nav_cols = st.columns(5)
     nav_items = [
         ("home", f"🏠 {tr(lang, 'nav_home')}"),
@@ -584,7 +815,7 @@ if not (st.session_state.student_qr_entry and st.session_state.page == "join"):
 
 
 # ---------------------------------------------------------------------------
-# PAGE 1: HOME (Ruangguru EdTech Dashboard)
+# PAGE 1: HOME (Canva Royal Blue Bio-Link Hub + Retro Classroom Window)
 # ---------------------------------------------------------------------------
 
 if st.session_state.page == "home":
@@ -600,84 +831,173 @@ if st.session_state.page == "home":
         else "KaTeX Math Pintar"
     )
 
-    eyebrow = (
-        "✨ Ruang Kuliah Interaktif & Aksesibel"
-        if lang == "id"
-        else "✨ Interactive & Accessible Live Lectures"
-    )
+    hero_l, hero_r = st.columns([5.2, 4.8], gap="large")
+    with hero_l:
+        preview_line_1 = (
+            'Hari ini kita bahas <span class="cv-scene-gloss">Integral Riemann</span> dan '
+            '<span class="cv-scene-math">∫ 5x² dx <span class="cv-scene-auto">otomatis</span></span>'
+            if lang == "id"
+            else 'Today we cover <span class="cv-scene-gloss">Riemann Integral</span> and '
+            '<span class="cv-scene-math">∫ 5x² dx <span class="cv-scene-auto">automatic</span></span>'
+        )
+        preview_line_2 = (
+            'Lalu turunan <span class="cv-scene-math">d/dx (2x⁵) <span class="cv-scene-auto">otomatis</span></span> '
+            'langsung muncul di HP mahasiswa.'
+            if lang == "id"
+            else 'Then derivative <span class="cv-scene-math">d/dx (2x⁵) <span class="cv-scene-auto">automatic</span></span> '
+            'streams live to every student phone.'
+        )
+        st.markdown(
+            f'<div class="cv-window-wrap">'
+            f'  <div class="cv-heart-bubble">{HEART_SVG}</div>'
+            f'  <div class="cv-window">'
+            f'    <div class="cv-win-bar">'
+            f'      <span class="cv-win-dots" aria-hidden="true">'
+            f'        <span class="cv-dot-c"></span>'
+            f'        <span class="cv-dot-s"></span>'
+            f'        <span class="cv-dot-t"></span>'
+            f'      </span>'
+            f'      <span class="cv-win-bar-tag">LIVE CLASSROOM</span>'
+            f'    </div>'
+            f'    <div class="cv-win-scene">'
+            f'      <span class="cv-scene-live">● {"TEKS LANGSUNG" if lang == "id" else "LIVE CAPTIONS"}</span>'
+            f'      <div class="cv-scene-card">'
+            f'        <div class="cv-scene-meta">#1 · 09:00:12 · KALK202</div>'
+            f'        <div>{preview_line_1}</div>'
+            f'      </div>'
+            f'      <div class="cv-scene-card">'
+            f'        <div class="cv-scene-meta">#2 · 09:00:18 · KATEX MATH</div>'
+            f'        <div>{preview_line_2}</div>'
+            f'      </div>'
+            f'      <div class="cv-scene-footer">'
+            f'        <span class="cv-scene-chip">🎙️ {"Mic Besar" if lang == "id" else "Big Live Mic"}</span>'
+            f'        <span class="cv-scene-chip">📲 {"Scan QR Langsung" if lang == "id" else "Direct QR Join"}</span>'
+            f'        <span class="cv-scene-chip">📄 DOCX & PDF</span>'
+            f'      </div>'
+            f'    </div>'
+            f'  </div>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
 
-    st.markdown(
-        f'<div class="rg-hero">'
-        f'  <div class="rg-hero-grid">'
-        f'    <div class="rg-hero-copy">'
-        f'      <div class="rg-eyebrow">{eyebrow}</div>'
-        f'      <h1>{tr(lang, "home_title")}</h1>'
-        f'      <p>{tr(lang, "home_subtitle")}</p>'
-        f'    </div>'
-        f'    <div class="rg-hero-art">{HERO_SVG}</div>'
-        f'  </div>'
-        f'  <div class="rg-hero-stats">'
-        f'    <span class="rg-stat-chip">🟢 {db_badge}</span>'
-        f'    <span class="rg-stat-chip">🧮 {gem_badge}</span>'
-        f'    <span class="rg-stat-chip">📚 {len(sessions)} {"Sesi Tersimpan" if lang == "id" else "Saved Sessions"}</span>'
-        f'  </div>'
-        f'</div>',
-        unsafe_allow_html=True,
-    )
+    with hero_r:
+        hero_heading = (
+            "Buat kuliah<br>makin jelas!"
+            if lang == "id"
+            else "Let's make<br>learning clear!"
+        )
+        hero_sub = (
+            "Teks kuliah langsung dengan rumus KaTeX otomatis, glosarium dosen, dan QR ruangan instan."
+            if lang == "id"
+            else "Accessible live lecture captions with automatic KaTeX formulas, glossary matching & instant QR rooms."
+        )
+        st.markdown(
+            f'<div class="cv-hero-headline">'
+            f'  <h1>{hero_heading}</h1>'
+            f'  <p>{hero_sub}</p>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
 
-    # Primary Action Buttons
-    c1, c2 = st.columns(2)
-    with c1:
-        if st.button(
-            f"🚀 {tr(lang, 'btn_create')}", type="primary", use_container_width=True
-        ):
-            st.session_state.created_room = None
-            navigate("create")
-    with c2:
-        if st.button(f"✨ {tr(lang, 'btn_demo')}", use_container_width=True):
-            is_id = lang == "id"
-            demo = api.create_session(
-                {
-                    "course_title": "Kalkulus II (Demo)" if is_id else "Calculus II (Demo)",
-                    "course_code": "KALK2",
-                    "topic": (
-                        "Bab 4 — Integral Tentu & Konvergensi"
+        # Signature Canva 2-Column Pill Action Hub
+        r1c1, r1c2 = st.columns(2)
+        with r1c1:
+            if st.button(
+                f"🚀 {tr(lang, 'btn_create')}",
+                key="hub_create",
+                type="primary",
+                use_container_width=True,
+            ):
+                st.session_state.created_room = None
+                navigate("create")
+        with r1c2:
+            if st.button(
+                f"✨ {'Demo Cepat' if lang == 'id' else 'Quick Demo'}",
+                key="hub_demo",
+                use_container_width=True,
+            ):
+                is_id = lang == "id"
+                demo = api.create_session(
+                    {
+                        "course_title": "Kalkulus II (Demo)" if is_id else "Calculus II (Demo)",
+                        "course_code": "KALK2",
+                        "topic": (
+                            "Bab 4 — Integral Tentu & Konvergensi"
+                            if is_id
+                            else "Chapter 4 — Definite Integrals & Convergence"
+                        ),
+                        "date": datetime.date.today().isoformat(),
+                        "language": "id-ID" if is_id else "en-US",
+                        "glossary": [
+                            "Integral Riemann",
+                            "Eigenvalue",
+                            "Transformasi Fourier",
+                            "Konvergensi",
+                            "Persamaan Diferensial",
+                        ]
                         if is_id
-                        else "Chapter 4 — Definite Integrals & Convergence"
-                    ),
-                    "date": datetime.date.today().isoformat(),
-                    "language": "id-ID" if is_id else "en-US",
-                    "glossary": [
-                        "Integral Riemann",
-                        "Eigenvalue",
-                        "Transformasi Fourier",
-                        "Konvergensi",
-                        "Persamaan Diferensial",
-                    ]
-                    if is_id
-                    else [
-                        "Riemann Integral",
-                        "Eigenvalue",
-                        "Fourier Transform",
-                        "Convergence",
-                        "Differential Equation",
-                    ],
-                }
-            )
-            navigate("host", demo["id"])
+                        else [
+                            "Riemann Integral",
+                            "Eigenvalue",
+                            "Fourier Transform",
+                            "Convergence",
+                            "Differential Equation",
+                        ],
+                    }
+                )
+                navigate("host", demo["id"])
 
-    # Warm Orange-Accented Quick Join Room Card
+        r2c1, r2c2 = st.columns(2)
+        with r2c1:
+            if st.button(
+                f"🎙️ {tr(lang, 'nav_host')}",
+                key="hub_host",
+                use_container_width=True,
+            ):
+                navigate("host")
+        with r2c2:
+            if st.button(
+                f"📱 {tr(lang, 'nav_student')}",
+                key="hub_join",
+                use_container_width=True,
+            ):
+                navigate("join")
+
+        r3c1, r3c2 = st.columns(2)
+        with r3c1:
+            if st.button(
+                f"📄 {tr(lang, 'nav_transcript')}",
+                key="hub_transcript",
+                use_container_width=True,
+            ):
+                navigate("transcript")
+        with r3c2:
+            next_lang_hub = "en" if lang == "id" else "id"
+            if st.button(
+                f"🌐 {'English UI' if lang == 'id' else 'Bahasa ID'}",
+                key="hub_lang",
+                use_container_width=True,
+            ):
+                st.session_state.ui_lang = next_lang_hub
+                st.rerun()
+
+        st.markdown(
+            f'<div class="cv-hero-stats">'
+            f'  <span class="cv-stat-pill">🟢 {db_badge}</span>'
+            f'  <span class="cv-stat-pill">🧮 {gem_badge}</span>'
+            f'  <span class="cv-stat-pill">📚 {len(sessions)} {"Sesi" if lang == "id" else "Sessions"}</span>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+
+    # Coral-Orange Quick Join Room Strip + Crisp White Window Input
     st.markdown(
-        f'<div class="rg-action-banner">'
-        f'  <div class="rg-action-icon">📱</div>'
+        f'<div class="cv-join-strip">'
         f'  <div>'
-        f'    <div style="font-size:15px;font-weight:900;color:#7c2d12;">'
-        f'      {"Punya Kode Ruangan dari Dosen?" if lang == "id" else "Have a Room Code from Your Lecturer?"}'
-        f'    </div>'
-        f'    <div style="font-size:13px;font-weight:600;color:#9a3412;">'
-        f'      {"Masukkan kode ruangan atau tempel link untuk langsung baca teks kuliah." if lang == "id" else "Enter the room code or paste a link to join captions immediately."}'
-        f'    </div>'
+        f'    <div class="cv-join-strip-title">📱 {"Punya Kode Ruangan dari Dosen?" if lang == "id" else "Have a Room Code from Your Lecturer?"}</div>'
+        f'    <div class="cv-join-strip-sub">{"Masukkan kode ruangan atau tempel tautan untuk langsung membaca teks kuliah." if lang == "id" else "Enter the room code or paste a link to join captions immediately."}</div>'
         f'  </div>'
+        f'  <span class="cv-win-dots" aria-hidden="true"><span class="cv-dot-c"></span><span class="cv-dot-s"></span><span class="cv-dot-t"></span></span>'
         f'</div>',
         unsafe_allow_html=True,
     )
@@ -691,7 +1011,11 @@ if st.session_state.page == "home":
                 label_visibility="collapsed",
             )
         with jc2:
-            if st.button(f"Gabung →" if lang == "id" else "Join →", type="primary", use_container_width=True):
+            if st.button(
+                "Gabung →" if lang == "id" else "Join →",
+                type="primary",
+                use_container_width=True,
+            ):
                 code = extract_session_code(join_raw)
                 if code:
                     navigate("join", code)
@@ -699,19 +1023,20 @@ if st.session_state.page == "home":
                     st.warning(tr(lang, "join_placeholder"))
 
     st.markdown(
-        f"### 📖 {tr(lang, 'past_sessions')}"
+        f'<div class="cv-section-title"><span class="cv-section-dot"></span><span>{tr(lang, "past_sessions")}</span></div>',
+        unsafe_allow_html=True,
     )
     if not sessions:
         st.info(tr(lang, "no_sessions"))
     else:
         for s in sessions:
-            grad, emoji = subject_visual(s["course_title"])
+            tile_bg, emoji = subject_visual(s["course_title"])
             status_cls = (
-                "rg-pill-green"
+                "cv-pill-orange"
                 if s["status"] == "live"
-                else "rg-pill-yellow"
+                else "cv-pill-yellow"
                 if s["status"] == "paused"
-                else "rg-pill-teal"
+                else "cv-pill-green"
             )
             status_lbl = (
                 "● LANGSUNG"
@@ -724,16 +1049,16 @@ if st.session_state.page == "home":
                 left, right = st.columns([6, 4])
                 with left:
                     st.markdown(
-                        f'<div class="rg-course-row">'
-                        f'  <div class="rg-course-tile" style="background:{grad};">{emoji}</div>'
+                        f'<div class="cv-course-row">'
+                        f'  <div class="cv-course-tile" style="background:{tile_bg};">{emoji}</div>'
                         f'  <div>'
-                        f'    <div class="rg-course-title">{s["course_title"]}</div>'
-                        f'    <div class="rg-course-sub">{s["topic"]}</div>'
-                        f'    <div class="rg-pill-row" style="margin:6px 0 0;">'
-                        f'      <span class="rg-pill {status_cls}">{status_lbl}</span>'
-                        f'      <span class="rg-pill rg-pill-orange">{s["id"]}</span>'
-                        f'      <span class="rg-pill rg-pill-teal">💬 {s["caption_count"]}</span>'
-                        f'      <span class="rg-pill rg-pill-yellow">👥 {s["student_count"]}</span>'
+                        f'    <div class="cv-course-title">{s["course_title"]}</div>'
+                        f'    <div class="cv-course-sub">{s["topic"]}</div>'
+                        f'    <div class="cv-pill-row" style="margin:6px 0 0;">'
+                        f'      <span class="cv-pill {status_cls}">{status_lbl}</span>'
+                        f'      <span class="cv-pill cv-pill-blue">{s["id"]}</span>'
+                        f'      <span class="cv-pill cv-pill-grey">💬 {s["caption_count"]}</span>'
+                        f'      <span class="cv-pill cv-pill-grey">👥 {s["student_count"]}</span>'
                         f'    </div>'
                         f'  </div>'
                         f'</div>',
@@ -761,12 +1086,13 @@ elif st.session_state.page == "create":
     created = st.session_state.created_room
     if created:
         st.markdown(
-            f'<div class="rg-room-banner">'
-            f'<span class="rg-pill rg-pill-glass">🎉 RUANGAN SIAP</span> '
-            f'<span class="rg-pill rg-pill-glass">{created["id"]}</span>'
-            f'<h2>{created["course_title"]}</h2>'
-            f'<div class="sub">{created["topic"]} · Bagikan QR di bawah ke mahasiswa sebelum mulai bicara!</div>'
-            f'</div>',
+            win_banner_html(
+                "ROOM READY",
+                f'<span class="cv-pill cv-pill-orange">🎉 RUANGAN SIAP</span>'
+                f'<span class="cv-pill cv-pill-blue">{created["id"]}</span>',
+                created["course_title"],
+                f'{created["topic"]} · Bagikan QR di bawah ke mahasiswa sebelum mulai bicara!',
+            ),
             unsafe_allow_html=True,
         )
         join_url = f"{public_app_url}/?page=join&session={created['id']}"
@@ -793,11 +1119,14 @@ elif st.session_state.page == "create":
                 navigate("join", sid)
     else:
         st.markdown(
-            f'<div class="rg-room-banner">'
-            f'<span class="rg-pill rg-pill-glass">✨ STUDIO DOSEN</span>'
-            f'<h2>{tr(lang, "create_title")}</h2>'
-            f'<div class="sub">{"Lengkapi mata kuliah & glosarium istilah agar transkripsi dan rumus semakin akurat." if lang == "id" else "Add course details and a glossary so captions & formulas stay ultra-accurate."}</div>'
-            f'</div>',
+            win_banner_html(
+                "CREATE SESSION",
+                '<span class="cv-pill cv-pill-orange">✨ STUDIO DOSEN</span>',
+                tr(lang, "create_title"),
+                "Lengkapi mata kuliah & glosarium istilah agar transkripsi dan rumus semakin akurat."
+                if lang == "id"
+                else "Add course details and a glossary so captions & formulas stay ultra-accurate.",
+            ),
             unsafe_allow_html=True,
         )
 
@@ -893,7 +1222,7 @@ elif st.session_state.page == "create":
 
 
 # ---------------------------------------------------------------------------
-# PAGE 3: HOST LIVE SCREEN (Ruangguru Studio Mode)
+# PAGE 3: HOST LIVE SCREEN (Canva Retro Window Studio)
 # ---------------------------------------------------------------------------
 
 elif st.session_state.page == "host":
@@ -912,13 +1241,14 @@ elif st.session_state.page == "host":
         st.stop()
 
     st.markdown(
-        f'<div class="rg-room-banner">'
-        f'<span class="rg-pill rg-pill-glass">🎙️ STUDIO HOST · {sess["id"]}</span> '
-        f'<span class="rg-pill rg-pill-glass">📅 {sess["date"]}</span> '
-        f'<span class="rg-pill rg-pill-yellow">👥 {sess["student_count"]} online</span>'
-        f'<h2>{sess["course_title"]}</h2>'
-        f'<div class="sub">{sess["topic"]}</div>'
-        f'</div>',
+        win_banner_html(
+            f"HOST STUDIO · {sess['id']}",
+            f'<span class="cv-pill cv-pill-blue">🎙️ {sess["id"]}</span>'
+            f'<span class="cv-pill cv-pill-grey">📅 {sess["date"]}</span>'
+            f'<span class="cv-pill cv-pill-orange">👥 {sess["student_count"]} online</span>',
+            sess["course_title"],
+            sess["topic"],
+        ),
         unsafe_allow_html=True,
     )
 
@@ -1060,23 +1390,30 @@ elif st.session_state.page == "host":
 
 
 # ---------------------------------------------------------------------------
-# PAGE 4: STUDENT CAPTION SCREEN (Ruangguru Live Class Reading Mode)
+# PAGE 4: STUDENT CAPTION SCREEN (Canva Live Class Reading Room)
 # ---------------------------------------------------------------------------
 
 elif st.session_state.page == "join":
     sid = st.session_state.active_session_id
     if not sid:
         st.markdown(
-            f'<div class="rg-room-banner">'
-            f'<span class="rg-pill rg-pill-glass">📱 RUANG BELAJAR</span>'
-            f'<h2>{tr(lang, "btn_join")}</h2>'
-            f'<div class="sub">{"Masukkan kode ruangan atau tempel link dari dosen." if lang == "id" else "Enter the room code or paste your lecturer link."}</div>'
-            f'</div>',
+            win_banner_html(
+                "JOIN CLASSROOM",
+                '<span class="cv-pill cv-pill-orange">📱 RUANG BELAJAR</span>',
+                tr(lang, "btn_join"),
+                "Masukkan kode ruangan atau tempel link dari dosen."
+                if lang == "id"
+                else "Enter the room code or paste your lecturer link.",
+            ),
             unsafe_allow_html=True,
         )
         with st.container(border=True):
             code_in = st.text_input(tr(lang, "join_placeholder"))
-            if st.button(f"Masuk Ruangan →" if lang == "id" else "Join Room →", type="primary", use_container_width=True):
+            if st.button(
+                "Masuk Ruangan →" if lang == "id" else "Join Room →",
+                type="primary",
+                use_container_width=True,
+            ):
                 c = extract_session_code(code_in)
                 if c:
                     navigate("join", c)
@@ -1094,18 +1431,19 @@ elif st.session_state.page == "join":
         st.stop()
 
     status_pill = (
-        '<span class="rg-pill rg-pill-yellow">⏸ DIJEDA</span>'
+        '<span class="cv-pill cv-pill-yellow">⏸ DIJEDA</span>'
         if sess["status"] == "paused"
-        else '<span class="rg-pill rg-pill-green">✓ SELESAI</span>'
+        else '<span class="cv-pill cv-pill-green">✓ SELESAI</span>'
         if sess["status"] == "ended"
-        else '<span class="rg-pill rg-pill-orange">● LANGSUNG</span>'
+        else '<span class="cv-pill cv-pill-orange">● LANGSUNG</span>'
     )
     st.markdown(
-        f'<div class="rg-room-banner">'
-        f'{status_pill} <span class="rg-pill rg-pill-glass">Room {sess["id"]}</span>'
-        f'<h2>{sess["course_title"]}</h2>'
-        f'<div class="sub">{sess["topic"]}</div>'
-        f'</div>',
+        win_banner_html(
+            f"STUDENT ROOM · {sess['id']}",
+            f'{status_pill}<span class="cv-pill cv-pill-blue">ROOM {sess["id"]}</span>',
+            sess["course_title"],
+            sess["topic"],
+        ),
         unsafe_allow_html=True,
     )
 
@@ -1131,10 +1469,11 @@ elif st.session_state.page == "join":
         if "stu_pause_poll" not in st.session_state:
             st.session_state.stu_pause_poll = False
 
-        st.session_state.stu_pause_poll = st.toggle(
-            "⏸ Jeda Auto-Refresh" if lang == "id" else "⏸ Pause Auto-Refresh",
-            value=st.session_state.stu_pause_poll,
-        )
+        with st.container(border=True):
+            st.session_state.stu_pause_poll = st.toggle(
+                "⏸ Jeda Auto-Refresh" if lang == "id" else "⏸ Pause Auto-Refresh",
+                value=st.session_state.stu_pause_poll,
+            )
 
         @st.fragment(
             run_every=None
@@ -1212,21 +1551,22 @@ elif st.session_state.page == "transcript":
     bookmarked_seqs = {b["transcript_seq"] for b in bookmarks}
 
     st.markdown(
-        f'<div class="rg-room-banner">'
-        f'<span class="rg-pill rg-pill-glass">📘 CATATAN BELAJAR · {sess["id"]}</span> '
-        f'<span class="rg-pill rg-pill-glass">💬 {len(captions)} segmen</span> '
-        f'<span class="rg-pill rg-pill-yellow">⭐ {len(bookmarked_seqs)} bookmark</span>'
-        f'<h2>{sess["course_title"]}</h2>'
-        f'<div class="sub">{sess["topic"]} · 📅 {sess["date"]}</div>'
-        f'</div>',
+        win_banner_html(
+            f"STUDY NOTES · {sess['id']}",
+            f'<span class="cv-pill cv-pill-blue">📘 {sess["id"]}</span>'
+            f'<span class="cv-pill cv-pill-grey">💬 {len(captions)} segmen</span>'
+            f'<span class="cv-pill cv-pill-orange">⭐ {len(bookmarked_seqs)} bookmark</span>',
+            sess["course_title"],
+            f'{sess["topic"]} · 📅 {sess["date"]}',
+        ),
         unsafe_allow_html=True,
     )
 
     if sess["glossary"]:
         chips = "".join(
-            f'<span class="rg-pill rg-pill-teal">🏷️ {g}</span>' for g in sess["glossary"]
+            f'<span class="cv-pill cv-pill-white">🏷️ {g}</span>' for g in sess["glossary"]
         )
-        st.markdown(f'<div class="rg-pill-row">{chips}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="cv-pill-row" style="margin-bottom:14px;">{chips}</div>', unsafe_allow_html=True)
 
     ex1, ex2, ex3, ex4 = st.columns(4)
     with ex1:
@@ -1275,7 +1615,7 @@ elif st.session_state.page == "transcript":
     if sess.get("summary_md"):
         with st.container(border=True):
             st.markdown(
-                f'<div class="rg-summary-header">✨ {tr(lang, "summary_heading")}</div>',
+                f'<div class="cv-summary-header">✨ {tr(lang, "summary_heading")}</div>',
                 unsafe_allow_html=True,
             )
             st.markdown(sess["summary_md"])
