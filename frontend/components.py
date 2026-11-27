@@ -10,130 +10,125 @@ KATEX_HEAD = """
 
 SHARED_STYLES = """
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..900;1,9..40,400..900&family=JetBrains+Mono:wght@600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700&display=swap');
   :root {
     --bg: #ffffff;
-    --panel: #ededed;
-    --card-row: #f7f8fa;
-    --border: #0c2337;
-    --soft-border: #cbd5e1;
-    --text: #0c2337;
-    --muted: #455c72;
-    --brand: #004d8f;
-    --brand-soft: #e0eefb;
-    --accent: #ff4f28;
-    --formula-bg: #fff4f1;
-    --formula-border: #ff4f28;
-    --unclear-bg: #fef08a;
-    --unclear-text: #0c2337;
+    --panel: #fff7f2;
+    --card-row: #fffaf7;
+    --border: #ffe2cf;
+    --soft-border: #f3e4da;
+    --text: #333333;
+    --muted: #666666;
+    --brand: #f77e23;
+    --brand-soft: #fff1e8;
+    --accent: #f77e23;
+    --formula-bg: #fff4ec;
+    --formula-border: #f77e23;
+    --unclear-bg: #fef3c7;
+    --unclear-text: #92400e;
   }
   body.dark {
-    --bg: #071726;
-    --panel: #0c2337;
-    --card-row: #102d47;
-    --border: #5da9e9;
-    --soft-border: #1e476b;
-    --text: #ffffff;
-    --muted: #bfd6ea;
-    --brand: #60a5fa;
-    --brand-soft: #103557;
-    --accent: #ff6b47;
-    --formula-bg: #261613;
-    --formula-border: #ff6b47;
-    --unclear-bg: #713f12;
-    --unclear-text: #fef08a;
+    --bg: #121212;
+    --panel: #1c1c1c;
+    --card-row: #181818;
+    --border: #2e2e2e;
+    --soft-border: #2b2b2b;
+    --text: #f8fafc;
+    --muted: #a3a3a3;
+    --brand: #ff9442;
+    --brand-soft: #2e1d12;
+    --accent: #ff9442;
+    --formula-bg: #261910;
+    --formula-border: #f77e23;
+    --unclear-bg: #451a03;
+    --unclear-text: #fde68a;
   }
-  * { box-sizing: border-box; font-family: 'DM Sans', system-ui, -apple-system, sans-serif; }
+  * { box-sizing: border-box; font-family: 'Poppins', system-ui, -apple-system, sans-serif; }
   body { margin: 0; padding: 2px 2px 8px; background: transparent; color: var(--text); }
   .card {
     background: var(--bg);
-    border: 2.5px solid var(--border);
-    border-radius: 22px;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 5px 0 var(--border);
+    box-shadow: 0 12px 30px rgba(51, 51, 51, 0.06);
   }
   .toolbar {
     display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between;
-    padding: 11px 16px; background: var(--accent); border-bottom: 2.5px solid var(--border);
+    padding: 12px 18px; background: var(--panel); border-bottom: 1px solid var(--border);
   }
-  body.dark .toolbar { background: #0c2337; }
-  .win-dots { display: inline-flex; align-items: center; gap: 7px; margin-right: 6px; }
-  .wd-c { width: 10px; height: 10px; border-radius: 50%; background: #ededed; display: inline-block; }
-  .wd-s { width: 10px; height: 10px; background: #ededed; display: inline-block; }
-  .wd-t { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 10px solid #ededed; display: inline-block; }
+  .win-dots { display: none; }
   .badge {
     display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px;
-    border-radius: 999px; font-size: 11.5px; font-weight: 800; letter-spacing: 0.04em;
-    text-transform: uppercase; border: 1.8px solid #0c2337;
+    border-radius: 999px; font-size: 12px; font-weight: 600;
   }
-  .badge-ok { background: #ffffff; color: #0c2337; }
-  .badge-warn { background: #fef08a; color: #0c2337; }
-  .badge-err { background: #0c2337; color: #ffffff; }
-  .badge-brand { background: #004d8f; color: #ffffff; }
+  .badge-ok { background: #ecfdf5; color: #166534; border: 1px solid #bbf7d0; }
+  .badge-warn { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+  .badge-err { background: #f77e23; color: #ffffff; }
+  .badge-brand { background: #fff1e8; color: #d9620f; border: 1px solid #ffd9c6; }
+  body.dark .badge-ok { background: #052e16; color: #86efac; border-color: #166534; }
+  body.dark .badge-brand { background: #2e1d12; color: #ff9442; border-color: #6b3410; }
   .btn {
-    min-height: 40px; min-width: 40px; padding: 6px 14px; border-radius: 999px;
-    border: 2px solid #0c2337; background: #ffffff; color: #0c2337;
-    font-size: 12px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase;
+    min-height: 38px; min-width: 38px; padding: 6px 14px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--bg); color: var(--text);
+    font-size: 12.5px; font-weight: 600;
     cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
-    gap: 6px; box-shadow: 0 2px 0 #0c2337; transition: transform 0.12s ease, background 0.14s ease;
+    gap: 6px; transition: all 0.14s ease;
   }
-  .btn:hover { background: #ededed; transform: translateY(-1px); }
-  .btn-primary { background: #004d8f; color: #ffffff; }
-  .btn-primary:hover { background: #003c70; }
-  .btn-green { background: #004d8f; color: #ffffff; }
-  .btn-amber { background: #fef08a; color: #0c2337; }
-  .btn-red { background: #ff4f28; color: #ffffff; }
+  .btn:hover { border-color: var(--brand); color: var(--brand); transform: translateY(-1px); }
+  .btn-primary { background: #f77e23; color: #ffffff; border: none; box-shadow: 0 6px 14px rgba(247, 126, 35, 0.25); }
+  .btn-primary:hover { background: #e36a12; color: #ffffff; }
+  .btn-green { background: #f77e23; color: #ffffff; border: none; }
+  .btn-amber { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+  .btn-red { background: #333333; color: #ffffff; border: none; }
   .stream {
     height: 410px; overflow-y: auto; padding: 18px; display: flex; flex-direction: column;
     gap: 12px; scroll-behavior: smooth;
   }
   .cap-item {
-    padding: 14px 16px; border-radius: 16px; background: var(--card-row);
-    border: 2px solid var(--soft-border); line-height: 1.65; font-weight: 500;
+    padding: 15px 17px; border-radius: 14px; background: var(--card-row);
+    border: 1px solid var(--soft-border); line-height: 1.65; font-weight: 400;
   }
   .cap-meta {
     display: flex; justify-content: space-between; align-items: center;
     font-size: 11px; color: var(--muted); margin-bottom: 6px; font-family: 'JetBrains Mono', monospace;
   }
   .glossary-chip {
-    display: inline; padding: 2px 8px; border-radius: 8px;
-    background: var(--brand-soft); border-bottom: 2px solid var(--brand); font-weight: 800;
+    display: inline; padding: 2px 8px; border-radius: 7px;
+    background: var(--brand-soft); border-bottom: 2px solid var(--brand); font-weight: 600;
     color: var(--brand);
   }
   .formula-chip {
     display: inline-flex; flex-wrap: wrap; align-items: center; gap: 7px;
-    padding: 4px 11px; margin: 3px 4px; border-radius: 12px;
-    background: var(--formula-bg); border: 1.8px solid var(--formula-border);
+    padding: 4px 11px; margin: 3px 4px; border-radius: 10px;
+    background: var(--formula-bg); border: 1.5px solid var(--formula-border);
     vertical-align: middle;
   }
   .formula-orig { font-size: 0.78em; font-style: italic; color: var(--muted); }
   .auto-tag {
-    font-size: 0.65em; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
-    padding: 2px 8px; border-radius: 999px; background: #ff4f28; color: #ffffff;
+    font-size: 0.65em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+    padding: 2px 8px; border-radius: 999px; background: #f77e23; color: #ffffff;
   }
   .unclear-tag {
-    display: inline-block; padding: 2px 8px; border-radius: 8px;
-    background: var(--unclear-bg); color: var(--unclear-text); font-weight: 800; font-size: 0.85em;
-    border: 1.5px solid #0c2337;
+    display: inline-block; padding: 2px 8px; border-radius: 7px;
+    background: var(--unclear-bg); color: var(--unclear-text); font-weight: 600; font-size: 0.85em;
   }
   .meter-wrap {
-    height: 12px; border-radius: 999px; background: var(--panel); border: 1.5px solid var(--border); overflow: hidden; margin-top: 6px;
+    height: 10px; border-radius: 999px; background: var(--panel); border: 1px solid var(--border); overflow: hidden; margin-top: 6px;
   }
-  .meter-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #004d8f, #ff4f28); transition: width 80ms; }
+  .meter-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ff9642, #f77e23); transition: width 80ms; }
   .interim-box {
-    padding: 12px 15px; border-radius: 14px; border: 2px dashed var(--brand);
+    padding: 12px 15px; border-radius: 14px; border: 1.5px dashed var(--brand);
     font-style: italic; color: var(--muted); background: var(--panel);
   }
   select, input[type="text"] {
-    min-height: 42px; padding: 8px 14px; border-radius: 999px;
-    border: 2px solid #0c2337; background: #ffffff; color: #0c2337; font-size: 13.5px; font-weight: 600;
+    min-height: 40px; padding: 8px 14px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 13px; font-weight: 500;
   }
   .bk-btn {
-    border: 1.8px solid #0c2337; background: #ffffff; color: #0c2337;
-    border-radius: 999px; padding: 4px 11px; font-size: 11.5px; cursor: pointer; font-weight: 800;
-    text-transform: uppercase; letter-spacing: 0.03em;
+    border: 1px solid var(--border); background: var(--bg); color: var(--muted);
+    border-radius: 999px; padding: 4px 11px; font-size: 11.5px; cursor: pointer; font-weight: 600;
   }
-  .bk-btn.saved { background: #ff4f28; color: #ffffff; border-color: #0c2337; }
+  .bk-btn.saved { background: #f77e23; color: #ffffff; border-color: #f77e23; }
 </style>
 """
 
@@ -628,7 +623,7 @@ def render_student_live_console(
     </div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
       <button id="btnFontDec" class="btn" type="button" aria-label="Decrease font">A-</button>
-      <span id="fontLabel" style="font-size:12px;font-weight:800;min-width:26px;text-align:center;color:#ffffff;">M</span>
+      <span id="fontLabel" style="font-size:12px;font-weight:700;min-width:26px;text-align:center;color:var(--text);">M</span>
       <button id="btnFontInc" class="btn" type="button" aria-label="Increase font">A+</button>
       <button id="btnScroll" class="btn" type="button">⏸ {'Jeda Gulir' if is_id else 'Pause Scroll'}</button>
       <button id="btnTheme" class="btn" type="button">🌙</button>
@@ -869,12 +864,11 @@ def render_katex_transcript_list(
         f"""
         <div class="toolbar">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <span class="win-dots" aria-hidden="true"><span class="wd-c"></span><span class="wd-s"></span><span class="wd-t"></span></span>
-            <span class="badge badge-ok">{len(captions)} {'baris teks' if is_id else 'caption lines'}</span>
+            <span class="badge badge-brand">{len(captions)} {'baris teks' if is_id else 'caption lines'}</span>
           </div>
           <div style="display:flex;gap:6px;align-items:center;">
             <button id="fDec" class="btn" type="button" aria-label="Decrease font">A-</button>
-            <span id="fLbl" style="font-size:12px;font-weight:800;min-width:26px;text-align:center;color:#ffffff;">M</span>
+            <span id="fLbl" style="font-size:12px;font-weight:700;min-width:26px;text-align:center;color:var(--text);">M</span>
             <button id="fInc" class="btn" type="button" aria-label="Increase font">A+</button>
             <button id="tBtn" class="btn" type="button" aria-label="Toggle theme">🌙</button>
           </div>

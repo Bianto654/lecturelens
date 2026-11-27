@@ -4,22 +4,22 @@ from typing import Any, Optional
 import streamlit as st
 
 _HOST_MIC_CSS = """
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..900;1,9..40,400..900&family=JetBrains+Mono:wght@600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap');
 :host, * {
   box-sizing: border-box;
-  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
 }
 .ll-mic-window {
   background: #ffffff;
-  border: 2.5px solid #0c2337;
-  border-radius: 22px;
+  border: 1.5px solid #ffe4d2;
+  border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 6px 0 #0c2337;
+  box-shadow: 0 14px 36px rgba(51, 51, 51, 0.07);
 }
 .ll-win-bar {
-  background: #ff4f28;
-  border-bottom: 2.5px solid #0c2337;
-  padding: 10px 16px;
+  background: #fff1e8;
+  border-bottom: 1px solid #ffe0cc;
+  padding: 12px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -30,38 +30,33 @@ _HOST_MIC_CSS = """
   align-items: center;
   gap: 8px;
 }
-.ll-win-circle {
-  width: 11px;
-  height: 11px;
+.ll-win-badge-icon {
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  background: #ededed;
-  display: inline-block;
-}
-.ll-win-square {
-  width: 11px;
-  height: 11px;
-  background: #ededed;
-  display: inline-block;
-}
-.ll-win-tri {
-  width: 0;
-  height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-bottom: 11px solid #ededed;
-  display: inline-block;
+  background: #ffd9c6;
+  color: #f77e23;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
 }
 .ll-win-title {
-  color: #ffffff;
+  color: #333333;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.ll-win-sub {
+  color: #f77e23;
   font-size: 11.5px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-weight: 600;
 }
 .ll-mic-card {
   position: relative;
   background: #ffffff;
-  padding: 20px 20px 22px;
+  padding: 22px 22px 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -89,17 +84,14 @@ _HOST_MIC_CSS = """
   gap: 6px;
   padding: 6px 14px;
   border-radius: 999px;
-  font-size: 11.5px;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  border: 2px solid #0c2337;
+  font-size: 12px;
+  font-weight: 600;
 }
-.ll-pill-idle { background: #ededed; color: #0c2337; }
-.ll-pill-live { background: #ff4f28; color: #ffffff; }
-.ll-pill-warn { background: #fef08a; color: #0c2337; }
-.ll-pill-err  { background: #ffe4e6; color: #9f1239; }
-.ll-pill-blue { background: #004d8f; color: #ffffff; }
+.ll-pill-idle { background: #fff1e8; color: #b45309; border: 1px solid #ffd9c6; }
+.ll-pill-live { background: #f77e23; color: #ffffff; box-shadow: 0 4px 12px rgba(247, 126, 35, 0.3); }
+.ll-pill-warn { background: #fef3c7; color: #92400e; }
+.ll-pill-err  { background: #fee2e2; color: #991b1b; }
+.ll-pill-blue { background: #fff7f2; color: #333333; border: 1px solid #ffe0cc; }
 
 .ll-dot {
   width: 8px;
@@ -117,8 +109,8 @@ _HOST_MIC_CSS = """
 
 .ll-lang-toggle {
   display: inline-flex;
-  background: #ededed;
-  border: 2px solid #0c2337;
+  background: #fff1e8;
+  border: 1px solid #ffd9c6;
   padding: 3px;
   border-radius: 999px;
   gap: 3px;
@@ -126,10 +118,9 @@ _HOST_MIC_CSS = """
 .ll-lang-btn {
   border: none;
   background: transparent;
-  color: #0c2337;
+  color: #555555;
   font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
+  font-weight: 600;
   padding: 6px 14px;
   min-height: 34px;
   border-radius: 999px;
@@ -137,11 +128,12 @@ _HOST_MIC_CSS = """
   transition: all 0.15s ease;
 }
 .ll-lang-btn.active {
-  background: #004d8f;
+  background: #f77e23;
   color: #ffffff;
+  box-shadow: 0 4px 10px rgba(247, 126, 35, 0.28);
 }
 
-/* Huge tactile 104x104px Canva-styled Studio Microphone Button */
+/* Huge tactile 104x104px Figma-styled Studio Microphone Button with dashed peach orbit */
 .ll-hero-zone {
   position: relative;
   z-index: 1;
@@ -149,7 +141,7 @@ _HOST_MIC_CSS = """
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  padding: 8px 0 2px;
+  padding: 10px 0 4px;
   width: 100%;
 }
 .ll-mic-ring {
@@ -157,29 +149,32 @@ _HOST_MIC_CSS = """
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 132px;
-  height: 132px;
+  width: 136px;
+  height: 136px;
+  border-radius: 50%;
+  border: 2px dashed #f5b793;
+  background: #fff9f5;
 }
 .ll-mic-ring::before,
 .ll-mic-ring::after {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: -4px;
   border-radius: 50%;
   opacity: 0;
   pointer-events: none;
 }
 .ll-mic-ring.listening::before {
-  border: 4px solid rgba(255, 79, 40, 0.58);
+  border: 3px solid rgba(247, 126, 35, 0.52);
   animation: llRipple 1.65s cubic-bezier(0.2, 0.7, 0.4, 1) infinite;
 }
 .ll-mic-ring.listening::after {
-  border: 4px solid rgba(0, 77, 143, 0.38);
+  border: 3px solid rgba(239, 68, 68, 0.35);
   animation: llRipple 1.65s cubic-bezier(0.2, 0.7, 0.4, 1) 0.82s infinite;
 }
 @keyframes llRipple {
-  0% { transform: scale(0.82); opacity: 0.95; }
-  100% { transform: scale(1.28); opacity: 0; }
+  0% { transform: scale(0.84); opacity: 0.95; }
+  100% { transform: scale(1.26); opacity: 0; }
 }
 
 .ll-mic-btn {
@@ -188,22 +183,22 @@ _HOST_MIC_CSS = """
   width: 104px;
   height: 104px;
   border-radius: 50%;
-  border: 3px solid #0c2337;
+  border: 4px solid #ffffff;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ffffff;
-  background: #004d8f;
-  box-shadow: 0 6px 0 #0c2337, 0 0 0 6px #ededed;
+  background: linear-gradient(135deg, #ff9642 0%, #f77e23 100%);
+  box-shadow: 0 12px 28px rgba(247, 126, 35, 0.36);
   transition: transform 0.14s ease, box-shadow 0.16s ease, background 0.16s ease;
   -webkit-tap-highlight-color: transparent;
 }
-.ll-mic-btn:hover { transform: translateY(-2px) scale(1.03); background: #003e75; }
-.ll-mic-btn:active { transform: translateY(2px) scale(0.96); box-shadow: 0 2px 0 #0c2337, 0 0 0 6px #ededed; }
+.ll-mic-btn:hover { transform: scale(1.04); box-shadow: 0 16px 34px rgba(247, 126, 35, 0.44); }
+.ll-mic-btn:active { transform: scale(0.95); }
 .ll-mic-btn.listening {
-  background: #ff4f28;
-  box-shadow: 0 6px 0 #0c2337, 0 0 0 6px #ffe3dc;
+  background: linear-gradient(135deg, #ef4444 0%, #f77e23 100%);
+  box-shadow: 0 14px 32px rgba(239, 68, 68, 0.38);
 }
 .ll-mic-btn svg {
   width: 44px;
@@ -211,19 +206,18 @@ _HOST_MIC_CSS = """
 }
 
 .ll-hero-label {
-  font-size: 18px;
-  font-weight: 800;
-  color: #0c2337;
+  font-size: 17px;
+  font-weight: 700;
+  color: #333333;
   text-align: center;
-  letter-spacing: -0.015em;
 }
 .ll-hero-sub {
-  font-size: 13.5px;
-  font-weight: 500;
-  color: #354c61;
+  font-size: 13px;
+  font-weight: 400;
+  color: #666666;
   text-align: center;
   max-width: 460px;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 .ll-wave {
@@ -234,17 +228,16 @@ _HOST_MIC_CSS = """
   height: 28px;
 }
 .ll-bar {
-  width: 6px;
+  width: 5px;
   height: 7px;
   border-radius: 999px;
-  background: #cbd5e1;
+  background: #ffd9c6;
   transition: height 0.12s ease, background 0.2s ease;
 }
 .ll-wave.active .ll-bar {
-  background: #ff4f28;
+  background: linear-gradient(180deg, #f77e23, #ef4444);
   animation: llWave 0.85s ease-in-out infinite alternate;
 }
-.ll-wave.active .ll-bar:nth-child(even) { background: #004d8f; }
 .ll-wave.active .ll-bar:nth-child(2) { animation-delay: 0.15s; }
 .ll-wave.active .ll-bar:nth-child(3) { animation-delay: 0.30s; }
 .ll-wave.active .ll-bar:nth-child(4) { animation-delay: 0.10s; }
@@ -261,14 +254,14 @@ _HOST_MIC_CSS = """
   z-index: 1;
   width: 100%;
   min-height: 58px;
-  border-radius: 16px;
-  border: 2px dashed #0c2337;
-  background: #ededed;
+  border-radius: 14px;
+  border: 1.5px dashed #f5b793;
+  background: #fff9f5;
   padding: 13px 16px;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.5;
-  color: #354c61;
+  font-size: 14.5px;
+  font-weight: 500;
+  line-height: 1.55;
+  color: #666666;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -276,10 +269,10 @@ _HOST_MIC_CSS = """
 }
 .ll-interim.has-text {
   border-style: solid;
-  border-color: #004d8f;
-  background: #eef6ff;
-  color: #0c2337;
-  font-weight: 700;
+  border-color: #f77e23;
+  background: #fff4ec;
+  color: #333333;
+  font-weight: 600;
   justify-content: flex-start;
   text-align: left;
 }
@@ -291,12 +284,12 @@ _HOST_MIC_CSS = """
   display: none;
   padding: 12px 14px;
   border-radius: 14px;
-  background: #fff1ed;
-  border: 2px solid #ff4f28;
-  color: #0c2337;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
   font-size: 13px;
-  font-weight: 700;
-  line-height: 1.45;
+  font-weight: 500;
+  line-height: 1.5;
 }
 .ll-error.show { display: block; }
 
@@ -311,41 +304,38 @@ _HOST_MIC_CSS = """
   padding-top: 4px;
 }
 .ll-action-btn {
-  min-height: 46px;
+  min-height: 44px;
   padding: 10px 20px;
-  border-radius: 999px;
-  border: 2px solid #0c2337;
-  background: #ffffff;
-  color: #0c2337;
-  font-size: 12.5px;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  border-radius: 10px;
+  border: 1px solid #ffd9c6;
+  background: #fff7f2;
+  color: #d9620f;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  box-shadow: 0 3px 0 #0c2337;
-  transition: transform 0.12s ease, background 0.15s ease;
+  transition: transform 0.12s ease, background 0.15s ease, box-shadow 0.15s ease;
 }
-.ll-action-btn:hover { background: #ededed; transform: translateY(-1px); }
+.ll-action-btn:hover { background: #ffe8d9; transform: translateY(-1px); }
 .ll-action-danger {
-  background: #ff4f28;
-  border-color: #0c2337;
+  background: #333333;
+  border-color: #333333;
   color: #ffffff;
+  box-shadow: 0 6px 16px rgba(51, 51, 51, 0.18);
 }
-.ll-action-danger:hover { background: #e03e1a; }
+.ll-action-danger:hover { background: #1e1e1e; }
 """
 
 _HOST_MIC_HTML = """
 <div class="ll-mic-window">
   <div class="ll-win-bar">
-    <span class="ll-win-dots" aria-hidden="true">
-      <span class="ll-win-circle"></span>
-      <span class="ll-win-square"></span>
-      <span class="ll-win-tri"></span>
+    <span class="ll-win-dots">
+      <span class="ll-win-badge-icon" aria-hidden="true">🎙</span>
+      <span class="ll-win-title">Live Classroom Audio Studio</span>
     </span>
-    <span class="ll-win-title">LIVE AUDIO CAPTURE</span>
+    <span class="ll-win-sub">Real-time Captioning</span>
   </div>
   <div class="ll-mic-card">
     <div class="ll-top-row">
@@ -665,40 +655,38 @@ export default function(component) {
 """
 
 _QR_CARD_CSS = """
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700&display=swap');
 :host, * {
   box-sizing: border-box;
-  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
 }
 .qr-window {
   background: #ffffff;
-  border: 2.5px solid #0c2337;
+  border: 1.5px solid #ffe4d2;
   border-radius: 22px;
   overflow: hidden;
-  box-shadow: 0 5px 0 #0c2337;
+  box-shadow: 0 12px 32px rgba(51, 51, 51, 0.06);
 }
 .qr-bar {
-  background: #ff4f28;
-  border-bottom: 2.5px solid #0c2337;
-  padding: 9px 15px;
+  background: #fff1e8;
+  border-bottom: 1px solid #ffe0cc;
+  padding: 11px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.qr-dots {
+.qr-bar-left {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
+  color: #333333;
+  font-size: 13px;
+  font-weight: 700;
 }
-.qr-d1 { width: 10px; height: 10px; border-radius: 50%; background: #ededed; display: inline-block; }
-.qr-d2 { width: 10px; height: 10px; background: #ededed; display: inline-block; }
-.qr-d3 { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 10px solid #ededed; display: inline-block; }
 .qr-bar-lbl {
-  color: #ffffff;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  color: #f77e23;
+  font-size: 11.5px;
+  font-weight: 600;
 }
 .qr-shell {
   background: #ffffff;
@@ -706,23 +694,23 @@ _QR_CARD_CSS = """
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 20px;
+  gap: 22px;
 }
 .qr-img-box {
-  background: #ffffff;
-  border: 2.5px solid #0c2337;
+  background: #fff7f2;
+  border: 2px dashed #f5b793;
   border-radius: 18px;
-  padding: 10px;
+  padding: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
-  box-shadow: 0 4px 0 #0c2337;
 }
 .qr-img-box img {
   width: 196px;
   height: 196px;
   display: block;
+  border-radius: 10px;
 }
 .qr-info {
   flex: 1;
@@ -735,15 +723,14 @@ _QR_CARD_CSS = """
   display: inline-block;
   align-self: flex-start;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  color: #ffffff;
-  background: #004d8f;
-  border: 2px solid #0c2337;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #f77e23;
+  background: #fff1e8;
+  border: 1.5px solid #ffd9c6;
   padding: 6px 18px;
-  border-radius: 999px;
-  box-shadow: 0 3px 0 #0c2337;
+  border-radius: 12px;
 }
 .qr-url-row {
   display: flex;
@@ -752,47 +739,43 @@ _QR_CARD_CSS = """
 }
 .qr-url-input {
   flex: 1;
-  min-height: 46px;
+  min-height: 44px;
   padding: 8px 14px;
-  border-radius: 999px;
-  border: 2px solid #0c2337;
-  background: #ededed;
-  color: #0c2337;
-  font-size: 13px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #fafafa;
+  color: #333333;
+  font-size: 12.5px;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
 }
 .qr-copy-btn {
-  min-height: 46px;
+  min-height: 44px;
   padding: 0 20px;
-  border-radius: 999px;
-  border: 2px solid #0c2337;
-  background: #ff4f28;
+  border-radius: 10px;
+  border: none;
+  background: #f77e23;
   color: #ffffff;
-  font-size: 12.5px;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  box-shadow: 0 3px 0 #0c2337;
+  box-shadow: 0 6px 16px rgba(247, 126, 35, 0.28);
 }
-.qr-copy-btn:hover { background: #e03e1a; }
-.qr-copy-btn.copied { background: #004d8f; }
+.qr-copy-btn:hover { background: #e36a12; }
+.qr-copy-btn.copied { background: #16a34a; box-shadow: 0 6px 16px rgba(22, 163, 74, 0.28); }
 .qr-hint {
-  font-size: 13.5px;
-  font-weight: 500;
-  color: #354c61;
-  line-height: 1.5;
+  font-size: 13px;
+  font-weight: 400;
+  color: #666666;
+  line-height: 1.55;
 }
 """
 
 _QR_CARD_HTML = """
 <div class="qr-window">
   <div class="qr-bar">
-    <span class="qr-dots" aria-hidden="true">
-      <span class="qr-d1"></span><span class="qr-d2"></span><span class="qr-d3"></span>
-    </span>
-    <span class="qr-bar-lbl">ROOM ACCESS QR</span>
+    <span class="qr-bar-left">📲 Room Access QR</span>
+    <span class="qr-bar-lbl">Scan langsung masuk kelas</span>
   </div>
   <div class="qr-shell">
     <div class="qr-img-box">

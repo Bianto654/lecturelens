@@ -36,576 +36,132 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------------------------
-# Canva Education Bio-Link Visual System (DAHcFfKiO5Q)
-# Royal Cobalt Blue Canvas (#004D8F) + Retro Coral-Orange (#FF4F28)
-# Crisp Light Grey (#EDEDED) + Pure White Pill Surfaces (#FFFFFF)
-# Bold Deep Navy-Ink Outlines (#0C2337) + Retro Window Frames (● ■ ▲)
+# Figma Online Educational Platform Visual System (MKS Academy Aesthetic)
+# Pure White Canvas (#FFFFFF) + Warm Peach Hero/Bands (#FFF1E8, #FFF7F2)
+# Soft Apricot Decorative Arch (#FFD9C6) + Signature EdTech Orange (#F77E23)
+# Deep Charcoal Headings (#333333) + Muted Copy (#666666) + Poppins Font
 # ---------------------------------------------------------------------------
 st.markdown(
     """
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..900;1,9..40,400..900&family=JetBrains+Mono:wght@600;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap');
 
   html, body, [class*="css"] {
-    font-family: 'DM Sans', system-ui, -apple-system, sans-serif !important;
+    font-family: 'Poppins', system-ui, -apple-system, sans-serif !important;
   }
   .stApp {
-    background: #004d8f !important;
-    color: #ffffff;
+    background: #ffffff !important;
+    color: #333333;
   }
   header[data-testid="stHeader"] {
-    background: rgba(0, 77, 143, 0.92) !important;
+    background: rgba(255, 255, 255, 0.92) !important;
     backdrop-filter: blur(8px);
   }
   .block-container {
-    max-width: 1020px !important;
-    padding-top: 4rem !important;
-    padding-bottom: 3.5rem !important;
+    max-width: 1040px !important;
+    padding-top: 3.9rem !important;
+    padding-bottom: 3rem !important;
     padding-left: 1.25rem !important;
     padding-right: 1.25rem !important;
   }
   footer { visibility: hidden; }
 
-  /* Default text directly on Royal Cobalt Blue canvas */
-  .stApp .stMarkdown h1,
-  .stApp .stMarkdown h2,
-  .stApp .stMarkdown h3,
-  .stApp .stMarkdown h4,
-  .stApp .stMarkdown p,
-  .stApp [data-testid="stCaptionContainer"] p,
-  .stApp [data-testid="stWidgetLabel"] p {
-    color: #ffffff;
-  }
-  .stApp hr {
-    border-color: rgba(237, 237, 237, 0.28) !important;
-  }
-
-  /* Crisp Canva Pill Buttons (White + Navy Ink Outline, Coral-Orange Primary) */
+  /* Primary Vibrant EdTech Orange Buttons (#F77E23) */
   button[kind="primary"],
   div[data-testid="stFormSubmitButton"] button {
-    min-height: 50px !important;
-    border-radius: 999px !important;
-    font-weight: 800 !important;
-    font-size: 13px !important;
-    letter-spacing: 0.055em !important;
-    text-transform: uppercase !important;
-    background: #ff4f28 !important;
+    min-height: 46px !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: 13.5px !important;
+    background: #f77e23 !important;
     color: #ffffff !important;
-    border: 2.2px solid #0c2337 !important;
-    box-shadow: 0 4px 0 #0c2337 !important;
-    transition: transform 0.13s ease, background 0.13s ease, box-shadow 0.13s ease !important;
-  }
-  button[kind="primary"]:hover,
-  div[data-testid="stFormSubmitButton"] button:hover {
-    background: #e63f1a !important;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 0 #0c2337 !important;
-  }
-  button[kind="primary"]:active,
-  div[data-testid="stFormSubmitButton"] button:active {
-    transform: translateY(1px);
-    box-shadow: 0 2px 0 #0c2337 !important;
-  }
-
-  button[kind="secondary"],
-  div[data-testid="stDownloadButton"] button {
-    min-height: 48px !important;
-    border-radius: 999px !important;
-    font-weight: 700 !important;
-    font-size: 12.5px !important;
-    letter-spacing: 0.055em !important;
-    text-transform: uppercase !important;
-    background: #ffffff !important;
-    border: 2.2px solid #0c2337 !important;
-    color: #0c2337 !important;
-    box-shadow: 0 4px 0 #0c2337 !important;
-    transition: transform 0.13s ease, background 0.13s ease, box-shadow 0.13s ease !important;
+    border: none !important;
+    box-shadow: 0 8px 20px rgba(247, 126, 35, 0.28) !important;
+    transition: transform 0.14s ease, background 0.14s ease, box-shadow 0.14s ease !important;
   }
   button[kind="primary"] *,
   div[data-testid="stFormSubmitButton"] button * {
     color: #ffffff !important;
   }
+  button[kind="primary"]:hover,
+  div[data-testid="stFormSubmitButton"] button:hover {
+    background: #e36a12 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(247, 126, 35, 0.36) !important;
+  }
+
+  /* Secondary Floating White Buttons with Orange Text (Matches Figma 'Register' Button) */
+  button[kind="secondary"],
+  div[data-testid="stDownloadButton"] button {
+    min-height: 44px !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    background: #ffffff !important;
+    border: 1px solid #ffe0cc !important;
+    color: #f77e23 !important;
+    box-shadow: 0 6px 18px rgba(51, 51, 51, 0.06) !important;
+    transition: all 0.14s ease !important;
+  }
   button[kind="secondary"] *,
   div[data-testid="stDownloadButton"] button * {
-    color: #0c2337 !important;
+    color: #f77e23 !important;
   }
   button[kind="secondary"]:hover,
   div[data-testid="stDownloadButton"] button:hover {
-    background: #ededed !important;
-    color: #0c2337 !important;
-    border-color: #0c2337 !important;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 0 #0c2337 !important;
-  }
-  button[kind="secondary"]:active,
-  div[data-testid="stDownloadButton"] button:active {
-    transform: translateY(1px);
-    box-shadow: 0 2px 0 #0c2337 !important;
+    background: #fff7f2 !important;
+    border-color: #f77e23 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(247, 126, 35, 0.14) !important;
   }
 
-  /* Crisp White Retro-Outlined Cards, Expanders & Alerts */
+  /* Airy Pure White Cards with Soft Shadow (Matches Figma Course & Form Cards) */
   div[data-testid="stVerticalBlockBorderWrapper"] {
     background: #ffffff !important;
-    border: 2.5px solid #0c2337 !important;
-    border-radius: 22px !important;
-    box-shadow: 0 5px 0 #0c2337 !important;
-    color: #0c2337 !important;
+    border: 1px solid #f2e6de !important;
+    border-radius: 18px !important;
+    box-shadow: 0 10px 30px rgba(51, 51, 51, 0.06) !important;
   }
-  div[data-testid="stVerticalBlockBorderWrapper"] .stMarkdown h1,
-  div[data-testid="stVerticalBlockBorderWrapper"] .stMarkdown h2,
-  div[data-testid="stVerticalBlockBorderWrapper"] .stMarkdown h3,
-  div[data-testid="stVerticalBlockBorderWrapper"] .stMarkdown h4,
-  div[data-testid="stVerticalBlockBorderWrapper"] .stMarkdown p,
-  div[data-testid="stVerticalBlockBorderWrapper"] .stMarkdown li,
-  div[data-testid="stVerticalBlockBorderWrapper"] [data-testid="stWidgetLabel"] p,
-  div[data-testid="stVerticalBlockBorderWrapper"] [data-testid="stCaptionContainer"] p,
-  div[data-testid="stVerticalBlockBorderWrapper"] label,
-  div[data-testid="stVerticalBlockBorderWrapper"] span {
-    color: #0c2337;
-  }
-  /* Preserve white text on primary buttons inside white cards */
-  div[data-testid="stVerticalBlockBorderWrapper"] button[kind="primary"] *,
-  div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stFormSubmitButton"] button * {
-    color: #ffffff !important;
-  }
-
   div[data-testid="stExpander"] {
     background: #ffffff !important;
-    border: 2.5px solid #0c2337 !important;
-    border-radius: 20px !important;
-    box-shadow: 0 4px 0 #0c2337 !important;
-    overflow: hidden;
+    border: 1px solid #ffe2cf !important;
+    border-radius: 16px !important;
+    box-shadow: 0 6px 20px rgba(51, 51, 51, 0.04) !important;
   }
-  div[data-testid="stExpander"] summary,
-  div[data-testid="stExpander"] summary p,
-  div[data-testid="stExpander"] summary svg,
-  div[data-testid="stExpander"] [data-testid="stCaptionContainer"] p,
-  div[data-testid="stExpander"] label,
-  div[data-testid="stExpander"] .stMarkdown p {
-    color: #0c2337 !important;
-    font-weight: 700;
-  }
-  div[data-testid="stExpander"] button[kind="primary"] * {
-    color: #ffffff !important;
-  }
-
-  div[data-testid="stAlert"] {
-    background: #ededed !important;
-    border: 2.2px solid #0c2337 !important;
-    border-radius: 18px !important;
-    box-shadow: 0 4px 0 #0c2337 !important;
-    color: #0c2337 !important;
-  }
-  div[data-testid="stAlert"] p,
-  div[data-testid="stAlert"] span,
-  div[data-testid="stAlert"] strong,
-  div[data-testid="stAlert"] code {
-    color: #0c2337 !important;
-  }
-
-  /* Inputs inside Forms & Cards */
   input[type="text"], textarea, div[data-baseweb="select"] > div {
-    border-radius: 14px !important;
-    border: 2px solid #0c2337 !important;
-    background: #f8fafc !important;
-    color: #0c2337 !important;
-    font-weight: 600 !important;
+    border-radius: 10px !important;
+    border: 1px solid #e5e7eb !important;
+    background: #fafafa !important;
+    color: #333333 !important;
+  }
+  input[type="text"]:focus, textarea:focus {
+    border-color: #f77e23 !important;
+    background: #ffffff !important;
   }
 
-  /* Brand Header (✴ lecturelens) */
-  .cv-brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 27px;
-    font-weight: 900;
-    color: #ffffff;
-    letter-spacing: -0.03em;
-    line-height: 1;
-    padding: 4px 0;
-  }
-  .cv-spark {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    flex-shrink: 0;
-  }
-
-  /* Signature Canva Coral-Topped Retro Browser Window (Home Hero Left) */
-  .cv-window-wrap {
-    position: relative;
-    padding-top: 4px;
-    padding-right: 16px;
-    margin-bottom: 10px;
-  }
-  .cv-window {
-    background: #ffffff;
-    border: 2.5px solid #0c2337;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 7px 0 #0c2337;
-  }
-  .cv-win-bar {
-    background: #ff4f28;
-    border-bottom: 2.5px solid #0c2337;
-    padding: 10px 15px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .cv-win-dots {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .cv-dot-c { width: 11px; height: 11px; border-radius: 50%; background: #ededed; display: inline-block; }
-  .cv-dot-s { width: 11px; height: 11px; background: #ededed; display: inline-block; }
-  .cv-dot-t {
-    width: 0; height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-bottom: 11px solid #ededed;
-    display: inline-block;
-  }
-  .cv-win-bar-tag {
-    color: #ffffff;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .cv-win-scene {
-    background: linear-gradient(180deg, #f7f4ef 0%, #ede8df 100%);
-    padding: 20px 18px 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .cv-scene-live {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    align-self: flex-start;
-    background: #ff4f28;
-    color: #ffffff;
-    border: 2px solid #0c2337;
-    border-radius: 999px;
-    padding: 4px 12px;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-  .cv-scene-card {
-    background: #ffffff;
-    border: 2px solid #0c2337;
-    border-radius: 16px;
-    padding: 13px 15px;
-    color: #0c2337;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1.5;
-    box-shadow: 0 3px 0 #0c2337;
-  }
-  .cv-scene-meta {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
-    font-weight: 700;
-    color: #455c72;
-    margin-bottom: 4px;
-  }
-  .cv-scene-math {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: #fff4f1;
-    border: 1.8px solid #ff4f28;
-    border-radius: 10px;
-    padding: 2px 9px;
-    margin: 2px 0;
-    font-weight: 800;
-    color: #0c2337;
-  }
-  .cv-scene-auto {
-    background: #ff4f28;
-    color: #ffffff;
-    border-radius: 999px;
-    padding: 1px 7px;
-    font-size: 9.5px;
-    font-weight: 800;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-  .cv-scene-gloss {
-    background: #e0eefb;
-    border-bottom: 2px solid #004d8f;
-    color: #004d8f;
-    font-weight: 800;
-    padding: 1px 6px;
-    border-radius: 6px;
-  }
-  .cv-scene-footer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 7px;
-    padding-top: 2px;
-  }
-  .cv-scene-chip {
-    background: #ededed;
-    border: 1.8px solid #0c2337;
-    color: #0c2337;
-    border-radius: 999px;
-    padding: 4px 11px;
-    font-size: 11.5px;
-    font-weight: 800;
-  }
-
-  /* Floating Retro Speech Bubble with Blue Heart (Signature Canva Detail) */
-  .cv-heart-bubble {
-    position: absolute;
-    top: 48px;
-    right: 0;
-    width: 78px;
-    height: 60px;
-    background: #ededed;
-    border: 2.5px solid #0c2337;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 0 #0c2337;
-    z-index: 3;
-  }
-  .cv-heart-bubble::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%) rotate(45deg);
-    width: 15px;
-    height: 15px;
-    background: #ededed;
-    border-right: 2.5px solid #0c2337;
-    border-bottom: 2.5px solid #0c2337;
-  }
-
-  /* Right-Side Canva Display Headline */
-  .cv-hero-headline {
-    text-align: center;
-    padding: 6px 6px 14px;
-  }
-  .cv-hero-headline h1 {
-    font-size: 40px;
-    font-weight: 500;
-    line-height: 1.1;
-    letter-spacing: -0.025em;
-    color: #ffffff;
-    margin: 0 0 10px 0;
-  }
-  .cv-hero-headline p {
-    font-size: 14.5px;
-    font-weight: 500;
-    line-height: 1.55;
-    color: #dbeafe;
-    margin: 0 auto;
-    max-width: 430px;
-  }
-  .cv-hero-stats {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 14px;
-  }
-  .cv-stat-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(255, 255, 255, 0.14);
-    border: 1.5px solid rgba(237, 237, 237, 0.45);
-    color: #ffffff;
-    padding: 5px 13px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 700;
-  }
-
-  /* Retro Window Banner for Room / Studio / Create / Transcript Pages */
-  .cv-win-banner {
-    background: #ffffff;
-    border: 2.5px solid #0c2337;
-    border-radius: 22px;
-    overflow: hidden;
-    box-shadow: 0 6px 0 #0c2337;
-    margin: 10px 0 18px;
-  }
-  .cv-win-banner-body {
-    padding: 18px 22px 20px;
-    color: #0c2337;
-  }
-  .cv-win-banner-body h2 {
-    margin: 8px 0 4px;
-    font-size: 24px;
-    font-weight: 800;
-    color: #0c2337 !important;
-    letter-spacing: -0.02em;
-    line-height: 1.25;
-  }
-  .cv-win-banner-body .sub {
-    font-size: 14px;
-    font-weight: 500;
-    color: #354c61 !important;
-  }
-
-  /* Section Header Bar on Royal Cobalt Canvas */
-  .cv-section-title {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #ffffff;
-    font-size: 20px;
-    font-weight: 800;
-    letter-spacing: -0.015em;
-    margin: 22px 0 10px;
-  }
-  .cv-section-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #ff4f28;
-    border: 2px solid #0c2337;
-    display: inline-block;
-  }
-
-  /* Quick Join Coral Header Strip */
-  .cv-join-strip {
-    background: #ff4f28;
-    border: 2.5px solid #0c2337;
-    border-radius: 18px;
-    padding: 12px 18px;
-    margin: 18px 0 10px;
-    box-shadow: 0 4px 0 #0c2337;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    color: #ffffff;
-  }
-  .cv-join-strip-title {
-    font-size: 14.5px;
-    font-weight: 800;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    color: #ffffff;
-  }
-  .cv-join-strip-sub {
-    font-size: 13px;
-    font-weight: 500;
-    color: #fff1ed;
-  }
-
-  /* Past Sessions Row inside White Window Cards */
-  .cv-course-row {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  .cv-course-tile {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
-    border: 2.2px solid #0c2337;
-    color: #ffffff;
-    font-size: 20px;
-    font-weight: 800;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    box-shadow: 0 3px 0 #0c2337;
-  }
-  .cv-course-title {
-    font-size: 16.5px;
-    font-weight: 800;
-    color: #0c2337;
-    line-height: 1.3;
-  }
-  .cv-course-sub {
-    font-size: 13px;
-    font-weight: 500;
-    color: #455c72;
-    margin-top: 2px;
-  }
-
-  /* Pill Badges (Canva Palette) */
-  .cv-pill-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 7px;
-    margin: 8px 0 4px;
-  }
-  .cv-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 11.5px;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    border: 1.8px solid #0c2337;
-    line-height: 1.35;
-  }
-  .cv-pill-blue   { background: #004d8f; color: #ffffff !important; }
-  .cv-pill-orange { background: #ff4f28; color: #ffffff !important; }
-  .cv-pill-grey   { background: #ededed; color: #0c2337 !important; }
-  .cv-pill-white  { background: #ffffff; color: #0c2337 !important; }
-  .cv-pill-yellow { background: #fef08a; color: #0c2337 !important; }
-  .cv-pill-green  { background: #dcfce7; color: #0c2337 !important; }
-
-  /* Summary Highlight Header */
-  .cv-summary-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 15px;
-    border-radius: 14px;
-    background: #ededed;
-    border: 2px solid #0c2337;
-    color: #0c2337 !important;
-    font-weight: 800;
-    font-size: 14px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  /* Streamlit Tabs on Royal Cobalt Blue Canvas */
+  /* Streamlit Tabs (Soft Peach + Active Vibrant Orange) */
   div[data-testid="stTabs"] [role="tablist"] {
     gap: 8px;
-    border-bottom: none !important;
-    margin-bottom: 10px;
+    border-bottom: 1px solid #f2e6de !important;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
   }
   div[data-testid="stTabs"] button[role="tab"] {
-    background: #ffffff !important;
-    color: #0c2337 !important;
-    border: 2.2px solid #0c2337 !important;
+    background: #fff7f2 !important;
+    color: #555555 !important;
+    border: 1px solid #ffe2cf !important;
     border-radius: 999px !important;
-    padding: 8px 18px !important;
-    font-weight: 800 !important;
-    letter-spacing: 0.03em;
-    box-shadow: 0 3px 0 #0c2337 !important;
+    padding: 7px 18px !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
   }
   div[data-testid="stTabs"] button[role="tab"] * {
-    color: #0c2337 !important;
+    color: #555555 !important;
   }
   div[data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
-    background: #ff4f28 !important;
-    color: #ffffff !important;
+    background: #f77e23 !important;
+    border-color: #f77e23 !important;
+    box-shadow: 0 6px 16px rgba(247, 126, 35, 0.25) !important;
   }
   div[data-testid="stTabs"] button[role="tab"][aria-selected="true"] * {
     color: #ffffff !important;
@@ -614,10 +170,480 @@ st.markdown(
     display: none !important;
   }
 
+  /* Brand Header (Matches Figma MKS Monogram Style) */
+  .fg-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 23px;
+    font-weight: 800;
+    color: #333333;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    padding: 4px 0;
+  }
+  .fg-brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: #fff1e8;
+    border: 1.5px solid #ffd9c6;
+  }
+  .fg-brand-accent {
+    color: #f77e23;
+  }
+
+  /* Signature Figma Warm Peach Hero with Soft Apricot Right Arch */
+  .fg-hero {
+    position: relative;
+    overflow: hidden;
+    background: #fff1e8;
+    border-radius: 26px;
+    padding: 34px 32px 32px;
+    margin: 10px 0 22px;
+    border: 1px solid #ffe3d1;
+  }
+  .fg-hero-arch {
+    position: absolute;
+    top: 0;
+    right: 26px;
+    width: 39%;
+    height: 92%;
+    background: #ffd9c6;
+    border-radius: 0 0 180px 180px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .fg-hero-grid {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+  }
+  .fg-hero-copy {
+    flex: 1.15;
+    min-width: 270px;
+  }
+  .fg-hero h1 {
+    font-size: 38px;
+    font-weight: 800;
+    line-height: 1.18;
+    letter-spacing: -0.025em;
+    color: #333333;
+    margin: 0 0 14px 0;
+  }
+  .fg-accent-word {
+    position: relative;
+    display: inline-block;
+    color: #f77e23;
+    padding-bottom: 6px;
+  }
+  .fg-accent-word svg {
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 10px;
+  }
+  .fg-hero p {
+    font-size: 14.5px;
+    font-weight: 400;
+    line-height: 1.65;
+    color: #666666;
+    margin: 0 0 18px 0;
+    max-width: 470px;
+  }
+  .fg-hero-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .fg-stat-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ffffff;
+    border: 1px solid #ffe0cc;
+    color: #333333;
+    padding: 6px 13px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(247, 126, 35, 0.08);
+  }
+
+  /* Right Hero Dashed Oval Visual + Floating Stat Badge (Matches Figma Portrait Motif) */
+  .fg-hero-visual {
+    position: relative;
+    flex: 0.85;
+    min-width: 260px;
+    display: flex;
+    justify-content: center;
+    padding: 8px 6px 14px;
+  }
+  .fg-dashed-frame {
+    position: relative;
+    width: 100%;
+    max-width: 330px;
+    border: 2px dashed #f5b793;
+    border-radius: 28px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.45);
+  }
+  .fg-preview-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 16px;
+    box-shadow: 0 14px 32px rgba(51, 51, 51, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .fg-preview-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .fg-live-dot-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f77e23;
+    color: #ffffff;
+    border-radius: 999px;
+    padding: 4px 11px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .fg-preview-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: #888888;
+  }
+  .fg-preview-line {
+    background: #fff9f5;
+    border: 1px solid #ffe4d2;
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #333333;
+  }
+  .fg-preview-gloss {
+    background: #fff1e8;
+    border-bottom: 2px solid #f77e23;
+    color: #d9620f;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 5px;
+  }
+  .fg-preview-math {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #ffffff;
+    border: 1.5px solid #f77e23;
+    border-radius: 8px;
+    padding: 1px 8px;
+    font-weight: 700;
+    color: #333333;
+  }
+  .fg-preview-auto {
+    background: #f77e23;
+    color: #ffffff;
+    border-radius: 999px;
+    padding: 1px 6px;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .fg-float-badge {
+    position: absolute;
+    bottom: -10px;
+    left: -10px;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 10px 14px;
+    box-shadow: 0 12px 28px rgba(51, 51, 51, 0.12);
+    border: 1px solid #ffe8d9;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 3;
+  }
+  .fg-float-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #fff1e8;
+    color: #f77e23;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .fg-float-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #f77e23;
+    line-height: 1.2;
+  }
+  .fg-float-sub {
+    font-size: 10.5px;
+    color: #555555;
+    line-height: 1.2;
+  }
+
+  /* 3 Pastel Peach Feature Cards Row (Matches Figma Live Chat / Examination / Competition) */
+  .fg-features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin: 22px 0 26px;
+  }
+  .fg-feat-card {
+    background: #fff7f2;
+    border: 1px solid #ffe8d9;
+    border-radius: 16px;
+    padding: 20px 18px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .fg-feat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(247, 126, 35, 0.1);
+  }
+  .fg-feat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #ffe4d2;
+    color: #f77e23;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+  .fg-feat-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #333333;
+    margin-bottom: 5px;
+  }
+  .fg-feat-desc {
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #666666;
+  }
+
+  /* Centered Figma Section Titles */
+  .fg-section-head {
+    text-align: center;
+    margin: 26px 0 16px;
+  }
+  .fg-section-head h2 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #333333;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.02em;
+  }
+  .fg-section-head p {
+    font-size: 13.5px;
+    color: #666666;
+    margin: 0;
+  }
+
+  /* Warm Peach Quick Join Callout Strip */
+  .fg-join-band {
+    background: #fff1e8;
+    border: 1px solid #ffe0cc;
+    border-radius: 18px;
+    padding: 16px 20px;
+    margin: 8px 0 12px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .fg-join-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .fg-join-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #f77e23;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    flex-shrink: 0;
+    box-shadow: 0 6px 14px rgba(247, 126, 35, 0.28);
+  }
+  .fg-join-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #333333;
+  }
+  .fg-join-sub {
+    font-size: 12.5px;
+    color: #666666;
+  }
+
+  /* Room / Studio / Create / Transcript Warm Peach Page Banners */
+  .fg-page-banner {
+    position: relative;
+    overflow: hidden;
+    background: #fff1e8;
+    border: 1px solid #ffe0cc;
+    border-radius: 22px;
+    padding: 22px 24px;
+    margin: 10px 0 18px;
+  }
+  .fg-page-banner::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 24px;
+    width: 180px;
+    height: 85%;
+    background: #ffd9c6;
+    border-radius: 0 0 110px 110px;
+    opacity: 0.72;
+    pointer-events: none;
+  }
+  .fg-page-banner-inner {
+    position: relative;
+    z-index: 2;
+  }
+  .fg-page-banner h2 {
+    margin: 8px 0 4px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #333333;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+  }
+  .fg-page-banner .sub {
+    font-size: 13.5px;
+    color: #666666;
+  }
+
+  /* Course / Session Row (Matches Figma Popular Courses Card Aesthetics) */
+  .fg-course-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .fg-course-tile {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    color: #ffffff;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 8px 18px rgba(247, 126, 35, 0.2);
+  }
+  .fg-course-title {
+    font-size: 15.5px;
+    font-weight: 700;
+    color: #333333;
+    line-height: 1.3;
+  }
+  .fg-course-sub {
+    font-size: 12.5px;
+    color: #666666;
+    margin-top: 2px;
+  }
+
+  /* Clean Soft Pill Badges */
+  .fg-pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin: 8px 0 4px;
+  }
+  .fg-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .fg-pill-orange { background: #f77e23; color: #ffffff; }
+  .fg-pill-peach  { background: #ffe7d6; color: #c7570b; }
+  .fg-pill-white  { background: #ffffff; color: #333333; border: 1px solid #ffe0cc; }
+  .fg-pill-green  { background: #ecfdf5; color: #166534; border: 1px solid #bbf7d0; }
+  .fg-pill-yellow { background: #fef3c7; color: #92400e; }
+  .fg-pill-dark   { background: #333333; color: #ffffff; }
+
+  /* Summary & Study Guide Header inside White Cards */
+  .fg-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 15px;
+    border-radius: 12px;
+    background: #fff7f2;
+    border: 1px solid #ffe2cf;
+    color: #333333;
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  /* Sleek Dark Footer (Matches Figma Black Bottom Footer) */
+  .fg-footer {
+    margin-top: 34px;
+    background: #111111;
+    color: #e5e5e5;
+    border-radius: 20px;
+    padding: 22px 26px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  .fg-footer-brand {
+    font-size: 18px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+  }
+  .fg-footer-brand span { color: #f77e23; }
+  .fg-footer-note {
+    font-size: 12px;
+    color: #b5b5b5;
+    max-width: 620px;
+    line-height: 1.55;
+  }
+
   @media (max-width: 768px) {
-    .cv-hero-headline h1 { font-size: 32px; }
-    .cv-window-wrap { padding-right: 6px; }
-    .cv-heart-bubble { width: 64px; height: 50px; top: 44px; }
+    .fg-hero { padding: 24px 20px; }
+    .fg-hero h1 { font-size: 29px; }
+    .fg-hero-arch { width: 100%; height: 42%; top: auto; bottom: 0; right: 0; border-radius: 40px 40px 0 0; opacity: 0.55; }
+    .fg-features-grid { grid-template-columns: 1fr; }
+    .fg-float-badge { position: static; margin-top: 10px; }
   }
 </style>
 """,
@@ -701,7 +727,7 @@ def make_qr_data_url(url: str) -> str:
     qr = qrcode.QRCode(border=2, box_size=8)
     qr.add_data(url)
     qr.make(fit=True)
-    img = qr.make_image(fill_color="#0c2337", back_color="#ffffff")
+    img = qr.make_image(fill_color="#333333", back_color="#ffffff")
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     b64 = base64.b64encode(buf.getvalue()).decode("ascii")
@@ -746,11 +772,11 @@ def resolve_public_app_url() -> str:
 
 
 SUBJECT_PALETTES = [
-    ("#004d8f", "📐"),
-    ("#ff4f28", "🧪"),
-    ("#0c2337", "💻"),
-    ("#0369a1", "🧬"),
-    ("#ea580c", "📚"),
+    ("linear-gradient(135deg, #ff9642, #f77e23)", "📐"),
+    ("linear-gradient(135deg, #333333, #1e1e1e)", "💻"),
+    ("linear-gradient(135deg, #fb923c, #ea580c)", "🧪"),
+    ("linear-gradient(135deg, #f59e0b, #d97706)", "🧬"),
+    ("linear-gradient(135deg, #4b5563, #1f2937)", "📚"),
 ]
 
 
@@ -759,30 +785,25 @@ def subject_visual(title: str) -> tuple[str, str]:
     return SUBJECT_PALETTES[idx]
 
 
-SPARK_SVG = """
-<svg width="26" height="26" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <path d="M14 2L16.4 9.6L23.5 5.8L19.1 12.6L26.6 15.2L18.7 16.5L21.8 23.8L14.9 19.3L11.8 26.5L11.4 18.6L3.6 20.6L9.1 14.8L2.2 10.6L10.1 11.1L9.2 3.2L14 9.5V2Z" fill="#FF4F28"/>
+BRAND_SVG = """
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <path d="M4 5V19H11" stroke="#333333" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M13 5V19H20" stroke="#F77E23" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 """
 
-HEART_SVG = """
-<svg width="36" height="32" viewBox="0 0 36 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <path d="M18 30.2C18 30.2 3 21.1 3 10.7C3 5.7 6.8 2 11.4 2C14.3 2 16.8 3.6 18 6C19.2 3.6 21.7 2 24.6 2C29.2 2 33 5.7 33 10.7C33 21.1 18 30.2 18 30.2Z" fill="#004D8F"/>
+UNDERLINE_SVG = """
+<svg viewBox="0 0 180 12" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" aria-hidden="true">
+  <path d="M3 9C48 2.5 128 2 177 7.5" stroke="#F77E23" stroke-width="4" stroke-linecap="round"/>
 </svg>
 """
 
 
-def win_banner_html(bar_title: str, pills_html: str, title: str, subtitle: str) -> str:
+def page_banner_html(pills_html: str, title: str, subtitle: str) -> str:
     return (
-        f'<div class="cv-win-banner">'
-        f'  <div class="cv-win-bar">'
-        f'    <span class="cv-win-dots" aria-hidden="true">'
-        f'      <span class="cv-dot-c"></span><span class="cv-dot-s"></span><span class="cv-dot-t"></span>'
-        f'    </span>'
-        f'    <span class="cv-win-bar-tag">{bar_title}</span>'
-        f'  </div>'
-        f'  <div class="cv-win-banner-body">'
-        f'    <div class="cv-pill-row" style="margin:0 0 6px;">{pills_html}</div>'
+        f'<div class="fg-page-banner">'
+        f'  <div class="fg-page-banner-inner">'
+        f'    <div class="fg-pill-row" style="margin:0 0 6px;">{pills_html}</div>'
         f'    <h2>{title}</h2>'
         f'    <div class="sub">{subtitle}</div>'
         f'  </div>'
@@ -800,15 +821,15 @@ health = api.health()
 
 
 # ---------------------------------------------------------------------------
-# Brand Top Bar (Canva * lecturelens Header)
+# Brand Top Bar (Matches Figma MKS Top Header)
 # ---------------------------------------------------------------------------
 
 hdr_l, hdr_r = st.columns([8, 2])
 with hdr_l:
     st.markdown(
-        f'<div class="cv-brand">'
-        f'  <span class="cv-spark">{SPARK_SVG}</span>'
-        f'  <span>lecturelens</span>'
+        f'<div class="fg-brand">'
+        f'  <span class="fg-brand-mark">{BRAND_SVG}</span>'
+        f'  <span>Lecture<span class="fg-brand-accent">Lens</span></span>'
         f'</div>',
         unsafe_allow_html=True,
     )
@@ -822,11 +843,8 @@ if not health:
     st.error(tr(lang, "backend_offline", url=backend_http))
     st.stop()
 
-# Clean Canva Pill Navigation (hidden on Home because Home features the signature Canva pill hub,
-# and hidden automatically when a student scans QR straight into a room)
-if st.session_state.page != "home" and not (
-    st.session_state.student_qr_entry and st.session_state.page == "join"
-):
+# Clean Horizontal Navigation (hidden automatically when a student scans QR straight into a room)
+if not (st.session_state.student_qr_entry and st.session_state.page == "join"):
     nav_cols = st.columns(5)
     nav_items = [
         ("home", f"🏠 {tr(lang, 'nav_home')}"),
@@ -845,7 +863,7 @@ if st.session_state.page != "home" and not (
 
 
 # ---------------------------------------------------------------------------
-# PAGE 1: HOME (Canva Royal Blue Bio-Link Hub + Retro Classroom Window)
+# PAGE 1: HOME (Figma Online Educational Platform Layout)
 # ---------------------------------------------------------------------------
 
 if st.session_state.page == "home":
@@ -861,173 +879,151 @@ if st.session_state.page == "home":
         else "KaTeX Math Pintar"
     )
 
-    hero_l, hero_r = st.columns([5.2, 4.8], gap="large")
-    with hero_l:
-        preview_line_1 = (
-            'Hari ini kita bahas <span class="cv-scene-gloss">Integral Riemann</span> dan '
-            '<span class="cv-scene-math">∫ 5x² dx <span class="cv-scene-auto">otomatis</span></span>'
-            if lang == "id"
-            else 'Today we cover <span class="cv-scene-gloss">Riemann Integral</span> and '
-            '<span class="cv-scene-math">∫ 5x² dx <span class="cv-scene-auto">automatic</span></span>'
-        )
-        preview_line_2 = (
-            'Lalu turunan <span class="cv-scene-math">d/dx (2x⁵) <span class="cv-scene-auto">otomatis</span></span> '
-            'langsung muncul di HP mahasiswa.'
-            if lang == "id"
-            else 'Then derivative <span class="cv-scene-math">d/dx (2x⁵) <span class="cv-scene-auto">automatic</span></span> '
-            'streams live to every student phone.'
-        )
-        st.markdown(
-            f'<div class="cv-window-wrap">'
-            f'  <div class="cv-heart-bubble">{HEART_SVG}</div>'
-            f'  <div class="cv-window">'
-            f'    <div class="cv-win-bar">'
-            f'      <span class="cv-win-dots" aria-hidden="true">'
-            f'        <span class="cv-dot-c"></span>'
-            f'        <span class="cv-dot-s"></span>'
-            f'        <span class="cv-dot-t"></span>'
-            f'      </span>'
-            f'      <span class="cv-win-bar-tag">LIVE CLASSROOM</span>'
-            f'    </div>'
-            f'    <div class="cv-win-scene">'
-            f'      <span class="cv-scene-live">● {"TEKS LANGSUNG" if lang == "id" else "LIVE CAPTIONS"}</span>'
-            f'      <div class="cv-scene-card">'
-            f'        <div class="cv-scene-meta">#1 · 09:00:12 · KALK202</div>'
-            f'        <div>{preview_line_1}</div>'
-            f'      </div>'
-            f'      <div class="cv-scene-card">'
-            f'        <div class="cv-scene-meta">#2 · 09:00:18 · KATEX MATH</div>'
-            f'        <div>{preview_line_2}</div>'
-            f'      </div>'
-            f'      <div class="cv-scene-footer">'
-            f'        <span class="cv-scene-chip">🎙️ {"Mic Besar" if lang == "id" else "Big Live Mic"}</span>'
-            f'        <span class="cv-scene-chip">📲 {"Scan QR Langsung" if lang == "id" else "Direct QR Join"}</span>'
-            f'        <span class="cv-scene-chip">📄 DOCX & PDF</span>'
-            f'      </div>'
-            f'    </div>'
-            f'  </div>'
-            f'</div>',
-            unsafe_allow_html=True,
-        )
+    hero_h1 = (
+        f'Teks Kuliah Langsung<br>untuk Masa <span class="fg-accent-word">Depan{UNDERLINE_SVG}</span>'
+        if lang == "id"
+        else f'Accessible Live Captions<br>for the <span class="fg-accent-word">Future{UNDERLINE_SVG}</span>'
+    )
+    hero_sub = (
+        "Dosen berbicara dari satu perangkat, teks real-time dengan rumus KaTeX otomatis, glosarium kuliah, dan Study Guide PDF rapi langsung hadir di HP setiap mahasiswa."
+        if lang == "id"
+        else "Speak from one host device while live captions, automatic KaTeX math, glossary matching, and polished AI study guides stream directly to every student phone."
+    )
+    preview_line_1 = (
+        'Hari ini kita bahas <span class="fg-preview-gloss">Integral Riemann</span> dan '
+        '<span class="fg-preview-math">∫ 5x² dx <span class="fg-preview-auto">otomatis</span></span>'
+        if lang == "id"
+        else 'Today we cover <span class="fg-preview-gloss">Riemann Integral</span> and '
+        '<span class="fg-preview-math">∫ 5x² dx <span class="fg-preview-auto">auto</span></span>'
+    )
+    preview_line_2 = (
+        'Lalu turunan <span class="fg-preview-math">d/dx (2x⁵) <span class="fg-preview-auto">otomatis</span></span> '
+        'disusun rapi jadi panduan belajar.'
+        if lang == "id"
+        else 'Then derivative <span class="fg-preview-math">d/dx (2x⁵) <span class="fg-preview-auto">auto</span></span> '
+        'is polished into clean study paragraphs.'
+    )
 
-    with hero_r:
-        hero_heading = (
-            "Buat kuliah<br>makin jelas!"
-            if lang == "id"
-            else "Let's make<br>learning clear!"
-        )
-        hero_sub = (
-            "Teks kuliah langsung dengan rumus KaTeX otomatis, glosarium dosen, dan QR ruangan instan."
-            if lang == "id"
-            else "Accessible live lecture captions with automatic KaTeX formulas, glossary matching & instant QR rooms."
-        )
-        st.markdown(
-            f'<div class="cv-hero-headline">'
-            f'  <h1>{hero_heading}</h1>'
-            f'  <p>{hero_sub}</p>'
-            f'</div>',
-            unsafe_allow_html=True,
-        )
-
-        # Signature Canva 2-Column Pill Action Hub
-        r1c1, r1c2 = st.columns(2)
-        with r1c1:
-            if st.button(
-                f"🚀 {tr(lang, 'btn_create')}",
-                key="hub_create",
-                type="primary",
-                use_container_width=True,
-            ):
-                st.session_state.created_room = None
-                navigate("create")
-        with r1c2:
-            if st.button(
-                f"✨ {'Demo Cepat' if lang == 'id' else 'Quick Demo'}",
-                key="hub_demo",
-                use_container_width=True,
-            ):
-                is_id = lang == "id"
-                demo = api.create_session(
-                    {
-                        "course_title": "Kalkulus II (Demo)" if is_id else "Calculus II (Demo)",
-                        "course_code": "KALK2",
-                        "topic": (
-                            "Bab 4 — Integral Tentu & Konvergensi"
-                            if is_id
-                            else "Chapter 4 — Definite Integrals & Convergence"
-                        ),
-                        "date": datetime.date.today().isoformat(),
-                        "language": "id-ID" if is_id else "en-US",
-                        "glossary": [
-                            "Integral Riemann",
-                            "Eigenvalue",
-                            "Transformasi Fourier",
-                            "Konvergensi",
-                            "Persamaan Diferensial",
-                        ]
-                        if is_id
-                        else [
-                            "Riemann Integral",
-                            "Eigenvalue",
-                            "Fourier Transform",
-                            "Convergence",
-                            "Differential Equation",
-                        ],
-                    }
-                )
-                navigate("host", demo["id"])
-
-        r2c1, r2c2 = st.columns(2)
-        with r2c1:
-            if st.button(
-                f"🎙️ {tr(lang, 'nav_host')}",
-                key="hub_host",
-                use_container_width=True,
-            ):
-                navigate("host")
-        with r2c2:
-            if st.button(
-                f"📱 {tr(lang, 'nav_student')}",
-                key="hub_join",
-                use_container_width=True,
-            ):
-                navigate("join")
-
-        r3c1, r3c2 = st.columns(2)
-        with r3c1:
-            if st.button(
-                f"📄 {tr(lang, 'nav_transcript')}",
-                key="hub_transcript",
-                use_container_width=True,
-            ):
-                navigate("transcript")
-        with r3c2:
-            next_lang_hub = "en" if lang == "id" else "id"
-            if st.button(
-                f"🌐 {'English UI' if lang == 'id' else 'Bahasa ID'}",
-                key="hub_lang",
-                use_container_width=True,
-            ):
-                st.session_state.ui_lang = next_lang_hub
-                st.rerun()
-
-        st.markdown(
-            f'<div class="cv-hero-stats">'
-            f'  <span class="cv-stat-pill">🟢 {db_badge}</span>'
-            f'  <span class="cv-stat-pill">🧮 {gem_badge}</span>'
-            f'  <span class="cv-stat-pill">📚 {len(sessions)} {"Sesi" if lang == "id" else "Sessions"}</span>'
-            f'</div>',
-            unsafe_allow_html=True,
-        )
-
-    # Coral-Orange Quick Join Room Strip + Crisp White Window Input
     st.markdown(
-        f'<div class="cv-join-strip">'
-        f'  <div>'
-        f'    <div class="cv-join-strip-title">📱 {"Punya Kode Ruangan dari Dosen?" if lang == "id" else "Have a Room Code from Your Lecturer?"}</div>'
-        f'    <div class="cv-join-strip-sub">{"Masukkan kode ruangan atau tempel tautan untuk langsung membaca teks kuliah." if lang == "id" else "Enter the room code or paste a link to join captions immediately."}</div>'
+        f'<div class="fg-hero">'
+        f'  <div class="fg-hero-arch" aria-hidden="true"></div>'
+        f'  <div class="fg-hero-grid">'
+        f'    <div class="fg-hero-copy">'
+        f'      <h1>{hero_h1}</h1>'
+        f'      <p>{hero_sub}</p>'
+        f'      <div class="fg-hero-stats">'
+        f'        <span class="fg-stat-chip">🟢 {db_badge}</span>'
+        f'        <span class="fg-stat-chip">🧮 {gem_badge}</span>'
+        f'        <span class="fg-stat-chip">📚 {len(sessions)} {"Sesi Tersimpan" if lang == "id" else "Saved Sessions"}</span>'
+        f'      </div>'
+        f'    </div>'
+        f'    <div class="fg-hero-visual">'
+        f'      <div class="fg-dashed-frame">'
+        f'        <div class="fg-preview-card">'
+        f'          <div class="fg-preview-top">'
+        f'            <span class="fg-live-dot-pill">● {"LANGSUNG" if lang == "id" else "LIVE"}</span>'
+        f'            <span class="fg-preview-meta">KALK-2026</span>'
+        f'          </div>'
+        f'          <div class="fg-preview-line">{preview_line_1}</div>'
+        f'          <div class="fg-preview-line">{preview_line_2}</div>'
+        f'        </div>'
+        f'        <div class="fg-float-badge">'
+        f'          <div class="fg-float-icon">✨</div>'
+        f'          <div>'
+        f'            <div class="fg-float-title">{"Study Guide & QR" if lang == "id" else "AI Study Guide"}</div>'
+        f'            <div class="fg-float-sub">{"PDF · DOCX · KaTeX" if lang == "id" else "Instant QR · PDF · DOCX"}</div>'
+        f'          </div>'
+        f'        </div>'
+        f'      </div>'
+        f'    </div>'
         f'  </div>'
-        f'  <span class="cv-win-dots" aria-hidden="true"><span class="cv-dot-c"></span><span class="cv-dot-s"></span><span class="cv-dot-t"></span></span>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
+    # Hero Action CTAs (Primary Orange + Crisp White Secondary)
+    cta1, cta2 = st.columns(2)
+    with cta1:
+        if st.button(
+            f"🚀 {tr(lang, 'btn_create')}",
+            key="home_create",
+            type="primary",
+            use_container_width=True,
+        ):
+            st.session_state.created_room = None
+            navigate("create")
+    with cta2:
+        if st.button(
+            f"✨ {tr(lang, 'btn_demo')}",
+            key="home_demo",
+            use_container_width=True,
+        ):
+            is_id = lang == "id"
+            demo = api.create_session(
+                {
+                    "course_title": "Kalkulus II (Demo)" if is_id else "Calculus II (Demo)",
+                    "course_code": "KALK2",
+                    "topic": (
+                        "Bab 4 — Integral Tentu & Konvergensi"
+                        if is_id
+                        else "Chapter 4 — Definite Integrals & Convergence"
+                    ),
+                    "date": datetime.date.today().isoformat(),
+                    "language": "id-ID" if is_id else "en-US",
+                    "glossary": [
+                        "Integral Riemann",
+                        "Eigenvalue",
+                        "Transformasi Fourier",
+                        "Konvergensi",
+                        "Persamaan Diferensial",
+                    ]
+                    if is_id
+                    else [
+                        "Riemann Integral",
+                        "Eigenvalue",
+                        "Fourier Transform",
+                        "Convergence",
+                        "Differential Equation",
+                    ],
+                }
+            )
+            navigate("host", demo["id"])
+
+    # 3 Soft Peach Feature Cards (Matching Figma Live Chat / Examination / Competition Row)
+    if lang == "id":
+        feats = [
+            ("🎙️", "Teks Kuliah Langsung", "Tombol mikrofon besar ramah HP & sinkronisasi real-time via QR ruangan langsung."),
+            ("🧮", "KaTeX & Glosarium", "Rumus integral, turunan, pangkat, serta istilah teknis dosen terdeteksi otomatis."),
+            ("📖", "Study Guide Akademik", "Transkrip mentah otomatis dirapikan jadi paragraf utuh siap ekspor PDF & DOCX."),
+        ]
+    else:
+        feats = [
+            ("🎙️", "Live Captions", "Large touch-friendly host mic & instant student access via direct room QR scan."),
+            ("🧮", "KaTeX & Glossary", "Spoken integrals, derivatives, powers, and course jargon formatted automatically."),
+            ("📖", "AI Study Guide", "Post-session async refinement turns choppy speech into polished PDF & DOCX notes."),
+        ]
+
+    feat_cards_html = "".join(
+        f'<div class="fg-feat-card">'
+        f'  <div class="fg-feat-icon">{icon}</div>'
+        f'  <div class="fg-feat-title">{title}</div>'
+        f'  <div class="fg-feat-desc">{desc}</div>'
+        f'</div>'
+        for icon, title, desc in feats
+    )
+    st.markdown(f'<div class="fg-features-grid">{feat_cards_html}</div>', unsafe_allow_html=True)
+
+    # Quick Join Room Section (Warm Peach Callout + Floating White Form Card)
+    st.markdown(
+        f'<div class="fg-join-band">'
+        f'  <div class="fg-join-left">'
+        f'    <div class="fg-join-icon">📱</div>'
+        f'    <div>'
+        f'      <div class="fg-join-title">{"Punya Kode Ruangan dari Dosen?" if lang == "id" else "Have a Room Code from Your Lecturer?"}</div>'
+        f'      <div class="fg-join-sub">{"Masukkan kode ruangan atau tempel link untuk langsung baca teks kuliah real-time." if lang == "id" else "Enter the room code or paste a link to open live lecture captions immediately."}</div>'
+        f'    </div>'
+        f'  </div>'
+        f'  <span class="fg-pill fg-pill-white">📲 Direct Room Join</span>'
         f'</div>',
         unsafe_allow_html=True,
     )
@@ -1042,7 +1038,7 @@ if st.session_state.page == "home":
             )
         with jc2:
             if st.button(
-                "Gabung →" if lang == "id" else "Join →",
+                "Gabung Ruangan →" if lang == "id" else "Join Room →",
                 type="primary",
                 use_container_width=True,
             ):
@@ -1052,8 +1048,12 @@ if st.session_state.page == "home":
                 else:
                     st.warning(tr(lang, "join_placeholder"))
 
+    # Centered Section Header (Matching Figma "Explore Our Popular Course")
     st.markdown(
-        f'<div class="cv-section-title"><span class="cv-section-dot"></span><span>{tr(lang, "past_sessions")}</span></div>',
+        f'<div class="fg-section-head">'
+        f'  <h2>{tr(lang, "past_sessions")}</h2>'
+        f'  <p>{"Lanjutkan sesi kuliah aktif atau buka Study Guide & ekspor catatan belajar." if lang == "id" else "Resume a live lecture room or open your polished Study Guide & exports."}</p>'
+        f'</div>',
         unsafe_allow_html=True,
     )
     if not sessions:
@@ -1062,11 +1062,11 @@ if st.session_state.page == "home":
         for s in sessions:
             tile_bg, emoji = subject_visual(s["course_title"])
             status_cls = (
-                "cv-pill-orange"
+                "fg-pill-orange"
                 if s["status"] == "live"
-                else "cv-pill-yellow"
+                else "fg-pill-yellow"
                 if s["status"] == "paused"
-                else "cv-pill-green"
+                else "fg-pill-green"
             )
             status_lbl = (
                 "● LANGSUNG"
@@ -1079,16 +1079,16 @@ if st.session_state.page == "home":
                 left, right = st.columns([6, 4])
                 with left:
                     st.markdown(
-                        f'<div class="cv-course-row">'
-                        f'  <div class="cv-course-tile" style="background:{tile_bg};">{emoji}</div>'
+                        f'<div class="fg-course-row">'
+                        f'  <div class="fg-course-tile" style="background:{tile_bg};">{emoji}</div>'
                         f'  <div>'
-                        f'    <div class="cv-course-title">{s["course_title"]}</div>'
-                        f'    <div class="cv-course-sub">{s["topic"]}</div>'
-                        f'    <div class="cv-pill-row" style="margin:6px 0 0;">'
-                        f'      <span class="cv-pill {status_cls}">{status_lbl}</span>'
-                        f'      <span class="cv-pill cv-pill-blue">{s["id"]}</span>'
-                        f'      <span class="cv-pill cv-pill-grey">💬 {s["caption_count"]}</span>'
-                        f'      <span class="cv-pill cv-pill-grey">👥 {s["student_count"]}</span>'
+                        f'    <div class="fg-course-title">{s["course_title"]}</div>'
+                        f'    <div class="fg-course-sub">{s["topic"]}</div>'
+                        f'    <div class="fg-pill-row" style="margin:6px 0 0;">'
+                        f'      <span class="fg-pill {status_cls}">{status_lbl}</span>'
+                        f'      <span class="fg-pill fg-pill-peach">{s["id"]}</span>'
+                        f'      <span class="fg-pill fg-pill-white">💬 {s["caption_count"]}</span>'
+                        f'      <span class="fg-pill fg-pill-white">👥 {s["student_count"]}</span>'
                         f'    </div>'
                         f'  </div>'
                         f'</div>',
@@ -1116,10 +1116,9 @@ elif st.session_state.page == "create":
     created = st.session_state.created_room
     if created:
         st.markdown(
-            win_banner_html(
-                "ROOM READY",
-                f'<span class="cv-pill cv-pill-orange">🎉 RUANGAN SIAP</span>'
-                f'<span class="cv-pill cv-pill-blue">{created["id"]}</span>',
+            page_banner_html(
+                f'<span class="fg-pill fg-pill-orange">🎉 RUANGAN SIAP</span>'
+                f'<span class="fg-pill fg-pill-white">{created["id"]}</span>',
                 created["course_title"],
                 f'{created["topic"]} · Bagikan QR di bawah ke mahasiswa sebelum mulai bicara!',
             ),
@@ -1149,9 +1148,8 @@ elif st.session_state.page == "create":
                 navigate("join", sid)
     else:
         st.markdown(
-            win_banner_html(
-                "CREATE SESSION",
-                '<span class="cv-pill cv-pill-orange">✨ STUDIO DOSEN</span>',
+            page_banner_html(
+                '<span class="fg-pill fg-pill-orange">✨ STUDIO DOSEN</span>',
                 tr(lang, "create_title"),
                 "Lengkapi mata kuliah & glosarium istilah agar transkripsi dan rumus semakin akurat."
                 if lang == "id"
@@ -1252,7 +1250,7 @@ elif st.session_state.page == "create":
 
 
 # ---------------------------------------------------------------------------
-# PAGE 3: HOST LIVE SCREEN (Canva Retro Window Studio)
+# PAGE 3: HOST LIVE SCREEN
 # ---------------------------------------------------------------------------
 
 elif st.session_state.page == "host":
@@ -1271,11 +1269,10 @@ elif st.session_state.page == "host":
         st.stop()
 
     st.markdown(
-        win_banner_html(
-            f"HOST STUDIO · {sess['id']}",
-            f'<span class="cv-pill cv-pill-blue">🎙️ {sess["id"]}</span>'
-            f'<span class="cv-pill cv-pill-grey">📅 {sess["date"]}</span>'
-            f'<span class="cv-pill cv-pill-orange">👥 {sess["student_count"]} online</span>',
+        page_banner_html(
+            f'<span class="fg-pill fg-pill-orange">🎙️ HOST · {sess["id"]}</span>'
+            f'<span class="fg-pill fg-pill-white">📅 {sess["date"]}</span>'
+            f'<span class="fg-pill fg-pill-peach">👥 {sess["student_count"]} online</span>',
             sess["course_title"],
             sess["topic"],
         ),
@@ -1420,16 +1417,15 @@ elif st.session_state.page == "host":
 
 
 # ---------------------------------------------------------------------------
-# PAGE 4: STUDENT CAPTION SCREEN (Canva Live Class Reading Room)
+# PAGE 4: STUDENT CAPTION SCREEN
 # ---------------------------------------------------------------------------
 
 elif st.session_state.page == "join":
     sid = st.session_state.active_session_id
     if not sid:
         st.markdown(
-            win_banner_html(
-                "JOIN CLASSROOM",
-                '<span class="cv-pill cv-pill-orange">📱 RUANG BELAJAR</span>',
+            page_banner_html(
+                '<span class="fg-pill fg-pill-orange">📱 RUANG MAHASISWA</span>',
                 tr(lang, "btn_join"),
                 "Masukkan kode ruangan atau tempel link dari dosen."
                 if lang == "id"
@@ -1461,16 +1457,15 @@ elif st.session_state.page == "join":
         st.stop()
 
     status_pill = (
-        '<span class="cv-pill cv-pill-yellow">⏸ DIJEDA</span>'
+        '<span class="fg-pill fg-pill-yellow">⏸ DIJEDA</span>'
         if sess["status"] == "paused"
-        else '<span class="cv-pill cv-pill-green">✓ SELESAI</span>'
+        else '<span class="fg-pill fg-pill-green">✓ SELESAI</span>'
         if sess["status"] == "ended"
-        else '<span class="cv-pill cv-pill-orange">● LANGSUNG</span>'
+        else '<span class="fg-pill fg-pill-orange">● LANGSUNG</span>'
     )
     st.markdown(
-        win_banner_html(
-            f"STUDENT ROOM · {sess['id']}",
-            f'{status_pill}<span class="cv-pill cv-pill-blue">ROOM {sess["id"]}</span>',
+        page_banner_html(
+            f'{status_pill}<span class="fg-pill fg-pill-white">Room {sess["id"]}</span>',
             sess["course_title"],
             sess["topic"],
         ),
@@ -1518,9 +1513,9 @@ elif st.session_state.page == "join":
                 return
             if live_sess["status"] == "ended":
                 st.success(
-                    "✅ **Sesi Telah Berakhir** — Klik tombol **Transkrip** di atas untuk membaca rangkuman dan ekspor `.docx` / `.pdf`."
+                    "✅ **Sesi Telah Berakhir** — Klik tombol **Transkrip** di atas untuk membaca Study Guide rapi & ekspor `.docx` / `.pdf`."
                     if lang == "id"
-                    else "✅ **Session Ended** — Tap **Transcript** above for the post-session summary and `.docx` / `.pdf` export."
+                    else "✅ **Session Ended** — Tap **Transcript** above for your polished Study Guide and `.docx` / `.pdf` export."
                 )
                 return
             if live_sess["status"] == "paused":
@@ -1560,7 +1555,7 @@ elif st.session_state.page == "join":
 
 
 # ---------------------------------------------------------------------------
-# PAGE 5: TRANSCRIPT, GEMINI SUMMARY & DOCX/PDF EXPORT (Catatan Belajar)
+# PAGE 5: TRANSCRIPT, ASYNC STUDY GUIDE, GEMINI SUMMARY & DOCX/PDF EXPORT
 # ---------------------------------------------------------------------------
 
 elif st.session_state.page == "transcript":
@@ -1582,19 +1577,18 @@ elif st.session_state.page == "transcript":
     polish_status = sess.get("polish_status") or "idle"
 
     polish_pill = (
-        '<span class="cv-pill cv-pill-green">✨ STUDY GUIDE SIAP</span>'
+        '<span class="fg-pill fg-pill-green">✨ Study Guide Siap</span>'
         if polish_status == "ready"
-        else '<span class="cv-pill cv-pill-yellow">⏳ MERAPIKAN PARAGRAF...</span>'
+        else '<span class="fg-pill fg-pill-yellow">⏳ Merapikan Paragraf...</span>'
         if polish_status == "processing"
-        else '<span class="cv-pill cv-pill-grey">📝 RAW LOG</span>'
+        else '<span class="fg-pill fg-pill-white">📝 Raw Log</span>'
     )
 
     st.markdown(
-        win_banner_html(
-            f"STUDY NOTES · {sess['id']}",
-            f'<span class="cv-pill cv-pill-blue">📘 {sess["id"]}</span>'
-            f'<span class="cv-pill cv-pill-grey">💬 {len(captions)} segmen</span>'
-            f'<span class="cv-pill cv-pill-orange">⭐ {len(bookmarked_seqs)} bookmark</span>'
+        page_banner_html(
+            f'<span class="fg-pill fg-pill-orange">📘 {sess["id"]}</span>'
+            f'<span class="fg-pill fg-pill-white">💬 {len(captions)} segmen</span>'
+            f'<span class="fg-pill fg-pill-peach">⭐ {len(bookmarked_seqs)} bookmark</span>'
             f'{polish_pill}',
             sess["course_title"],
             f'{sess["topic"]} · 📅 {sess["date"]}',
@@ -1604,9 +1598,9 @@ elif st.session_state.page == "transcript":
 
     if sess["glossary"]:
         chips = "".join(
-            f'<span class="cv-pill cv-pill-white">🏷️ {g}</span>' for g in sess["glossary"]
+            f'<span class="fg-pill fg-pill-peach">🏷️ {g}</span>' for g in sess["glossary"]
         )
-        st.markdown(f'<div class="cv-pill-row" style="margin-bottom:14px;">{chips}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="fg-pill-row" style="margin-bottom:14px;">{chips}</div>', unsafe_allow_html=True)
 
     # Lightweight async watcher while background post-session polish is running
     if polish_status == "processing":
@@ -1679,7 +1673,7 @@ elif st.session_state.page == "transcript":
     if sess.get("summary_md"):
         with st.container(border=True):
             st.markdown(
-                f'<div class="cv-summary-header">✨ {tr(lang, "summary_heading")}</div>',
+                f'<div class="fg-card-header"><span>✨ {tr(lang, "summary_heading")}</span></div>',
                 unsafe_allow_html=True,
             )
             st.markdown(sess["summary_md"])
@@ -1693,7 +1687,10 @@ elif st.session_state.page == "transcript":
             provider_lbl = sess.get("polish_provider") or "Academic Editor"
             with st.container(border=True):
                 st.markdown(
-                    f'<div class="cv-summary-header">📖 {tr(lang, "polish_heading")} · {provider_lbl}</div>',
+                    f'<div class="fg-card-header">'
+                    f'  <span>📖 {tr(lang, "polish_heading")}</span>'
+                    f'  <span class="fg-pill fg-pill-peach">{provider_lbl}</span>'
+                    f'</div>',
                     unsafe_allow_html=True,
                 )
                 st.markdown(sess["polished_transcript_md"])
@@ -1732,5 +1729,10 @@ elif st.session_state.page == "transcript":
         else:
             render_katex_transcript_list(filtered, bookmarked_seqs, ui_lang=lang)
 
-st.divider()
-st.caption(f"🔒 {tr(lang, 'privacy_note')}")
+st.markdown(
+    f'<div class="fg-footer">'
+    f'  <div class="fg-footer-brand">Lecture<span>Lens</span></div>'
+    f'  <div class="fg-footer-note">🔒 {tr(lang, "privacy_note")}</div>'
+    f'</div>',
+    unsafe_allow_html=True,
+)
