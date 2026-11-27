@@ -23,6 +23,10 @@ from backend.services.export_service import (
     build_pdf_bytes,
     build_txt_bytes,
 )
+from backend.services.polish_service import (
+    run_polish_for_session_threadsafe,
+    trigger_background_polish_thread,
+)
 from backend.services.refinement_service import refine_caption
 from backend.services.summary_service import generate_grounded_summary
 
@@ -94,6 +98,9 @@ def _serialize_session(db, s: LectureSession) -> dict[str, Any]:
         "language": s.language,
         "glossary": glossary,
         "summary_md": s.summary_md,
+        "polished_transcript_md": s.polished_transcript_md,
+        "polish_status": s.polish_status or "idle",
+        "polish_provider": s.polish_provider,
         "caption_count": cap_count,
         "student_count": get_student_count(s.id),
         "created_at": s.created_at,
@@ -203,19 +210,35 @@ class EmbeddedLectureLensAPI:
             return _serialize_session(db, sess)
 
     def patch_session(self, session_id: str, payload: dict[str, Any]) -> dict[str, Any]:
+        sid = session_id.upper()
+        should_polish = False
         with SessionLocal() as db:
-            sess = db.get(LectureSession, session_id.upper())
+            sess = db.get(LectureSession, sid)
             if not sess:
                 raise ValueError("Session not found")
             if payload.get("status"):
                 sess.status = payload["status"]
                 if payload["status"] == "ended":
                     sess.ended_at = int(time.time() * 1000)
+                    cap_count = (
+                        db.scalar(
+                            select(func.count(TranscriptSegment.id)).where(
+                                TranscriptSegment.session_id == sid
+                            )
+                        )
+                        or 0
+                    )
+                    if cap_count > 0:
+                        sess.polish_status = "processing"
+                        should_polish = True
             if payload.get("language"):
                 sess.language = payload["language"]
             db.commit()
             db.refresh(sess)
-            return _serialize_session(db, sess)
+            serialized = _serialize_session(db, sess)
+        if should_polish:
+            trigger_background_polish_thread(sid)
+        return serialized
 
     def delete_session(self, session_id: str) -> None:
         with SessionLocal() as db:
@@ -439,11 +462,44 @@ class EmbeddedLectureLensAPI:
             "provider": provider,
         }
 
+    def polish_transcript(self, session_id: str, wait: bool = True) -> dict[str, Any]:
+        sid = session_id.upper()
+        sess = self.get_session(sid)
+        if not sess:
+            raise ValueError("Session not found")
+        if sess.get("caption_count", 0) == 0:
+            return {
+                "session_id": sid,
+                "polish_status": "idle",
+                "polished_transcript_md": sess.get("polished_transcript_md"),
+                "provider": sess.get("polish_provider"),
+            }
+        if not wait:
+            with SessionLocal() as db:
+                row = db.get(LectureSession, sid)
+                if row:
+                    row.polish_status = "processing"
+                    db.commit()
+            trigger_background_polish_thread(sid)
+            return {
+                "session_id": sid,
+                "polish_status": "processing",
+                "polished_transcript_md": sess.get("polished_transcript_md"),
+                "provider": sess.get("polish_provider"),
+            }
+        res = run_polish_for_session_threadsafe(sid)
+        if not res:
+            raise ValueError("Session not found")
+        return res
+
     def download_export(self, session_id: str, fmt: str) -> bytes:
         sess = self.get_session(session_id)
         if not sess:
             raise ValueError("Session not found")
         captions = self.list_captions(session_id)
+        if captions and not sess.get("polished_transcript_md"):
+            run_polish_for_session_threadsafe(session_id)
+            sess = self.get_session(session_id) or sess
         if fmt == "docx":
             return build_docx_bytes(sess, captions)
         if fmt == "pdf":

@@ -584,6 +584,36 @@ st.markdown(
     margin-bottom: 12px;
   }
 
+  /* Streamlit Tabs on Royal Cobalt Blue Canvas */
+  div[data-testid="stTabs"] [role="tablist"] {
+    gap: 8px;
+    border-bottom: none !important;
+    margin-bottom: 10px;
+  }
+  div[data-testid="stTabs"] button[role="tab"] {
+    background: #ffffff !important;
+    color: #0c2337 !important;
+    border: 2.2px solid #0c2337 !important;
+    border-radius: 999px !important;
+    padding: 8px 18px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.03em;
+    box-shadow: 0 3px 0 #0c2337 !important;
+  }
+  div[data-testid="stTabs"] button[role="tab"] * {
+    color: #0c2337 !important;
+  }
+  div[data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
+    background: #ff4f28 !important;
+    color: #ffffff !important;
+  }
+  div[data-testid="stTabs"] button[role="tab"][aria-selected="true"] * {
+    color: #ffffff !important;
+  }
+  div[data-testid="stTabs"] [data-baseweb="tab-highlight"] {
+    display: none !important;
+  }
+
   @media (max-width: 768px) {
     .cv-hero-headline h1 { font-size: 32px; }
     .cv-window-wrap { padding-right: 6px; }
@@ -1549,13 +1579,23 @@ elif st.session_state.page == "transcript":
     captions = api.list_captions(sess["id"])
     bookmarks = api.list_bookmarks(sess["id"], st.session_state.student_id)
     bookmarked_seqs = {b["transcript_seq"] for b in bookmarks}
+    polish_status = sess.get("polish_status") or "idle"
+
+    polish_pill = (
+        '<span class="cv-pill cv-pill-green">✨ STUDY GUIDE SIAP</span>'
+        if polish_status == "ready"
+        else '<span class="cv-pill cv-pill-yellow">⏳ MERAPIKAN PARAGRAF...</span>'
+        if polish_status == "processing"
+        else '<span class="cv-pill cv-pill-grey">📝 RAW LOG</span>'
+    )
 
     st.markdown(
         win_banner_html(
             f"STUDY NOTES · {sess['id']}",
             f'<span class="cv-pill cv-pill-blue">📘 {sess["id"]}</span>'
             f'<span class="cv-pill cv-pill-grey">💬 {len(captions)} segmen</span>'
-            f'<span class="cv-pill cv-pill-orange">⭐ {len(bookmarked_seqs)} bookmark</span>',
+            f'<span class="cv-pill cv-pill-orange">⭐ {len(bookmarked_seqs)} bookmark</span>'
+            f'{polish_pill}',
             sess["course_title"],
             f'{sess["topic"]} · 📅 {sess["date"]}',
         ),
@@ -1568,11 +1608,35 @@ elif st.session_state.page == "transcript":
         )
         st.markdown(f'<div class="cv-pill-row" style="margin-bottom:14px;">{chips}</div>', unsafe_allow_html=True)
 
-    ex1, ex2, ex3, ex4 = st.columns(4)
-    with ex1:
+    # Lightweight async watcher while background post-session polish is running
+    if polish_status == "processing":
+        @st.fragment(run_every=datetime.timedelta(seconds=2.0))
+        def _watch_polish_status():
+            fresh = api.get_session(sess["id"])
+            if fresh and fresh.get("polish_status") != "processing":
+                st.rerun()
+            st.info(f"⏳ {tr(lang, 'polish_processing')}")
+
+        _watch_polish_status()
+
+    ai1, ai2 = st.columns(2)
+    with ai1:
+        if st.button(
+            f"🪄 {tr(lang, 'btn_polish')}",
+            type="primary",
+            disabled=len(captions) == 0,
+            use_container_width=True,
+        ):
+            with st.spinner("Menyusun paragraf akademik & membersihkan kata pengisi..."):
+                res = api.polish_transcript(sess["id"], wait=True)
+                sess["polished_transcript_md"] = res.get("polished_transcript_md")
+                sess["polish_status"] = res.get("polish_status", "ready")
+                sess["polish_provider"] = res.get("provider")
+                st.toast(f"Study Guide siap ({res.get('provider') or 'ok'})")
+                st.rerun()
+    with ai2:
         if st.button(
             f"✨ {tr(lang, 'btn_summary')}",
-            type="primary",
             disabled=len(captions) == 0,
             use_container_width=True,
         ):
@@ -1581,8 +1645,10 @@ elif st.session_state.page == "transcript":
                 sess["summary_md"] = res["summary_md"]
                 st.toast(f"Summary ready ({res['provider']})")
                 st.rerun()
-    with ex2:
-        if captions:
+
+    if captions:
+        ex1, ex2, ex3 = st.columns(3)
+        with ex1:
             docx_bytes = api.download_export(sess["id"], "docx")
             st.download_button(
                 f"📘 {tr(lang, 'export_docx')}",
@@ -1591,8 +1657,7 @@ elif st.session_state.page == "transcript":
                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                 use_container_width=True,
             )
-    with ex3:
-        if captions:
+        with ex2:
             pdf_bytes = api.download_export(sess["id"], "pdf")
             st.download_button(
                 f"📕 {tr(lang, 'export_pdf')}",
@@ -1601,8 +1666,7 @@ elif st.session_state.page == "transcript":
                 mime="application/pdf",
                 use_container_width=True,
             )
-    with ex4:
-        if captions:
+        with ex3:
             txt_bytes = api.download_export(sess["id"], "txt")
             st.download_button(
                 f"📝 {tr(lang, 'export_txt')}",
@@ -1620,34 +1684,53 @@ elif st.session_state.page == "transcript":
             )
             st.markdown(sess["summary_md"])
 
-    with st.container(border=True):
-        f1, f2 = st.columns([7, 3])
-        with f1:
-            query = st.text_input(
-                "Search",
-                placeholder=tr(lang, "search_placeholder"),
-                label_visibility="collapsed",
-            )
-        with f2:
-            only_bk = st.checkbox(tr(lang, "only_bookmarks"), value=False)
+    tab_guide, tab_raw = st.tabs(
+        [tr(lang, "tab_study_guide"), tr(lang, "tab_raw_log")]
+    )
 
-    filtered = captions
-    if only_bk:
-        filtered = [c for c in filtered if c["seq"] in bookmarked_seqs]
-    if query.strip():
-        ql = query.strip().lower()
-        filtered = [
-            c
-            for c in filtered
-            if ql in c["raw_text"].lower()
-            or ql in c["processed_text"].lower()
-            or any(ql in f.get("latex", "").lower() for f in c.get("formulas") or [])
-        ]
+    with tab_guide:
+        if sess.get("polished_transcript_md"):
+            provider_lbl = sess.get("polish_provider") or "Academic Editor"
+            with st.container(border=True):
+                st.markdown(
+                    f'<div class="cv-summary-header">📖 {tr(lang, "polish_heading")} · {provider_lbl}</div>',
+                    unsafe_allow_html=True,
+                )
+                st.markdown(sess["polished_transcript_md"])
+        elif polish_status == "processing":
+            st.info(f"⏳ {tr(lang, 'polish_processing')}")
+        else:
+            st.info(tr(lang, "polish_empty_cta"))
 
-    if not filtered:
-        st.info("Tidak ada baris transkrip yang cocok.")
-    else:
-        render_katex_transcript_list(filtered, bookmarked_seqs, ui_lang=lang)
+    with tab_raw:
+        with st.container(border=True):
+            f1, f2 = st.columns([7, 3])
+            with f1:
+                query = st.text_input(
+                    "Search",
+                    placeholder=tr(lang, "search_placeholder"),
+                    label_visibility="collapsed",
+                )
+            with f2:
+                only_bk = st.checkbox(tr(lang, "only_bookmarks"), value=False)
+
+        filtered = captions
+        if only_bk:
+            filtered = [c for c in filtered if c["seq"] in bookmarked_seqs]
+        if query.strip():
+            ql = query.strip().lower()
+            filtered = [
+                c
+                for c in filtered
+                if ql in c["raw_text"].lower()
+                or ql in c["processed_text"].lower()
+                or any(ql in f.get("latex", "").lower() for f in c.get("formulas") or [])
+            ]
+
+        if not filtered:
+            st.info("Tidak ada baris transkrip yang cocok.")
+        else:
+            render_katex_transcript_list(filtered, bookmarked_seqs, ui_lang=lang)
 
 st.divider()
 st.caption(f"🔒 {tr(lang, 'privacy_note')}")

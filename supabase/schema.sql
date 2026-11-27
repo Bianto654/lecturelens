@@ -17,9 +17,17 @@ CREATE TABLE IF NOT EXISTS public.sessions (
   status VARCHAR(16) NOT NULL DEFAULT 'live' CHECK (status IN ('live', 'paused', 'ended')),
   language VARCHAR(16) NOT NULL DEFAULT 'id-ID',
   summary_md TEXT,
+  polished_transcript_md TEXT,
+  polish_status VARCHAR(24) NOT NULL DEFAULT 'idle' CHECK (polish_status IN ('idle', 'processing', 'ready', 'failed')),
+  polish_provider VARCHAR(64),
   created_at BIGINT NOT NULL DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000)::BIGINT,
   ended_at BIGINT
 );
+
+-- Non-destructive migration for existing deployments
+ALTER TABLE public.sessions ADD COLUMN IF NOT EXISTS polished_transcript_md TEXT;
+ALTER TABLE public.sessions ADD COLUMN IF NOT EXISTS polish_status VARCHAR(24) NOT NULL DEFAULT 'idle';
+ALTER TABLE public.sessions ADD COLUMN IF NOT EXISTS polish_provider VARCHAR(64);
 
 CREATE INDEX IF NOT EXISTS idx_sessions_course_id ON public.sessions(course_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_status ON public.sessions(status);

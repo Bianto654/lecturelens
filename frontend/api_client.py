@@ -166,6 +166,15 @@ class LectureLensAPI:
         r.raise_for_status()
         return r.json()
 
+    def polish_transcript(self, session_id: str, wait: bool = True) -> dict[str, Any]:
+        r = httpx.post(
+            f"{self.base_url}/api/sessions/{session_id}/polish",
+            params={"wait": str(wait).lower()},
+            timeout=90.0,
+        )
+        r.raise_for_status()
+        return r.json()
+
     def download_export(self, session_id: str, fmt: str) -> bytes:
         r = httpx.get(
             f"{self.base_url}/api/sessions/{session_id}/export/{fmt}", timeout=30.0

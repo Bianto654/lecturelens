@@ -41,6 +41,7 @@ from backend.schemas import (
     CourseOut,
     FormulaAnnotation,
     GlossaryAnnotation,
+    PolishResponse,
     SessionCreate,
     SessionOut,
     SessionPatch,
@@ -51,10 +52,13 @@ from backend.services.export_service import (
     build_pdf_bytes,
     build_txt_bytes,
 )
+from backend.services.polish_service import run_polish_for_session_threadsafe
 from backend.services.refinement_service import refine_caption
 from backend.services.stt_service import stt_service
 from backend.services.summary_service import generate_grounded_summary
 from backend.ws_manager import ws_manager
+
+_BACKGROUND_TASKS: set[asyncio.Task] = set()
 
 
 @asynccontextmanager
@@ -113,11 +117,33 @@ def _serialize_session(db: Session, s: LectureSession) -> SessionOut:
         language=s.language,  # type: ignore[arg-type]
         glossary=glossary,
         summary_md=s.summary_md,
+        polished_transcript_md=s.polished_transcript_md,
+        polish_status=(s.polish_status or "idle"),  # type: ignore[arg-type]
+        polish_provider=s.polish_provider,
         caption_count=cap_count,
         student_count=ws_manager.student_count(s.id),
         created_at=s.created_at,
         ended_at=s.ended_at,
     )
+
+
+async def _async_polish_and_broadcast(session_id: str) -> None:
+    """Runs post-session academic transcript polish off the event loop and broadcasts update."""
+    sid = session_id.upper()
+    await asyncio.to_thread(run_polish_for_session_threadsafe, sid)
+    with SessionLocal() as db:
+        sess = db.get(LectureSession, sid)
+        if sess:
+            out = _serialize_session(db, sess)
+            await ws_manager.broadcast(
+                sid, {"type": "session_update", "session": out.model_dump()}
+            )
+
+
+def _schedule_async_polish(session_id: str) -> None:
+    task = asyncio.create_task(_async_polish_and_broadcast(session_id.upper()))
+    _BACKGROUND_TASKS.add(task)
+    task.add_done_callback(_BACKGROUND_TASKS.discard)
 
 
 def _serialize_caption(row: TranscriptSegment) -> CaptionOut:
@@ -339,10 +365,22 @@ async def patch_session(
     if not sess:
         raise HTTPException(status_code=404, detail="Session not found")
 
+    should_polish = False
     if payload.status is not None:
         sess.status = payload.status
         if payload.status == "ended":
             sess.ended_at = int(time.time() * 1000)
+            cap_count = (
+                db.scalar(
+                    select(func.count(TranscriptSegment.id)).where(
+                        TranscriptSegment.session_id == sess.id
+                    )
+                )
+                or 0
+            )
+            if cap_count > 0:
+                sess.polish_status = "processing"
+                should_polish = True
     if payload.language is not None:
         sess.language = payload.language
 
@@ -352,6 +390,8 @@ async def patch_session(
     await ws_manager.broadcast(
         sess.id, {"type": "session_update", "session": out.model_dump()}
     )
+    if should_polish:
+        _schedule_async_polish(sess.id)
     return out
 
 
@@ -588,8 +628,69 @@ async def create_summary(session_id: str, db: Session = Depends(get_db)):
     )
 
 
+@app.post("/api/sessions/{session_id}/polish", response_model=PolishResponse)
+async def polish_session_transcript(
+    session_id: str,
+    wait: bool = Query(default=True),
+    db: Session = Depends(get_db),
+):
+    """
+    Runs the post-session academic transcript polish pass (stitching choppy STT fragments,
+    removing oral fillers, grounding glossary & LaTeX into study-guide paragraphs).
+    Pass `wait=false` to trigger asynchronously in the background.
+    """
+    sid = session_id.upper()
+    sess = db.get(LectureSession, sid)
+    if not sess:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    cap_count = (
+        db.scalar(
+            select(func.count(TranscriptSegment.id)).where(
+                TranscriptSegment.session_id == sid
+            )
+        )
+        or 0
+    )
+    if cap_count == 0:
+        return PolishResponse(
+            session_id=sid,
+            polish_status="idle",
+            polished_transcript_md=sess.polished_transcript_md,
+            provider=sess.polish_provider,
+        )
+
+    if not wait:
+        sess.polish_status = "processing"
+        db.commit()
+        _schedule_async_polish(sid)
+        return PolishResponse(
+            session_id=sid,
+            polish_status="processing",
+            polished_transcript_md=sess.polished_transcript_md,
+            provider=sess.polish_provider,
+        )
+
+    res = await asyncio.to_thread(run_polish_for_session_threadsafe, sid)
+    if not res:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    with SessionLocal() as fresh_db:
+        updated = fresh_db.get(LectureSession, sid)
+        if updated:
+            await ws_manager.broadcast(
+                sid,
+                {
+                    "type": "session_update",
+                    "session": _serialize_session(fresh_db, updated).model_dump(),
+                },
+            )
+    return PolishResponse(**res)
+
+
 def _load_export_bundle(session_id: str, db: Session):
-    sess = db.get(LectureSession, session_id.upper())
+    sid = session_id.upper()
+    sess = db.get(LectureSession, sid)
     if not sess:
         raise HTTPException(status_code=404, detail="Session not found")
     rows = db.scalars(
@@ -597,6 +698,10 @@ def _load_export_bundle(session_id: str, db: Session):
         .where(TranscriptSegment.session_id == sess.id)
         .order_by(TranscriptSegment.seq.asc())
     ).all()
+    if rows and not sess.polished_transcript_md:
+        run_polish_for_session_threadsafe(sid)
+        db.expire_all()
+        sess = db.get(LectureSession, sid) or sess
     sess_dict = _serialize_session(db, sess).model_dump()
     captions = [_serialize_caption(r).model_dump() for r in rows]
     return sess, sess_dict, captions
@@ -811,18 +916,32 @@ async def ws_host(websocket: WebSocket, session_id: str):
             elif msg_type == "status":
                 new_status = data.get("status")
                 if new_status in ("live", "paused", "ended"):
+                    should_polish = False
                     with SessionLocal() as db:
                         sess = db.get(LectureSession, sid)
                         if sess:
                             sess.status = new_status
                             if new_status == "ended":
                                 sess.ended_at = int(time.time() * 1000)
+                                cap_count = (
+                                    db.scalar(
+                                        select(func.count(TranscriptSegment.id)).where(
+                                            TranscriptSegment.session_id == sid
+                                        )
+                                    )
+                                    or 0
+                                )
+                                if cap_count > 0:
+                                    sess.polish_status = "processing"
+                                    should_polish = True
                             db.commit()
                             db.refresh(sess)
                             out = _serialize_session(db, sess).model_dump()
                             await ws_manager.broadcast(
                                 sid, {"type": "session_update", "session": out}
                             )
+                    if should_polish:
+                        _schedule_async_polish(sid)
     except WebSocketDisconnect:
         pass
     finally:

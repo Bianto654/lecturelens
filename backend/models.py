@@ -49,6 +49,9 @@ class LectureSession(Base):
     status: Mapped[str] = mapped_column(String(16), default="live", index=True)
     language: Mapped[str] = mapped_column(String(16), default="id-ID")
     summary_md: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    polished_transcript_md: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    polish_status: Mapped[str] = mapped_column(String(24), default="idle")
+    polish_provider: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
     created_at: Mapped[int] = mapped_column(BigInteger, default=_now_ms)
     ended_at: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
 

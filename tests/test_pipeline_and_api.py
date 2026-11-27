@@ -3,6 +3,10 @@ from __future__ import annotations
 from fastapi.testclient import TestClient
 
 from backend.main import app
+from backend.services.polish_service import (
+    polish_lecture_transcript,
+    strip_disfluencies,
+)
 from backend.services.refinement_service import (
     find_formula_spans,
     find_glossary_spans,
@@ -157,3 +161,78 @@ def test_fastapi_end_to_end_session_ws_bookmarks_summary_and_exports():
         txt_r = client.get(f"/api/sessions/{sid}/export/txt")
         assert txt_r.status_code == 200
         assert b"\\int_0^1 x^2\\,dx" in txt_r.content
+        assert b"STRUCTURED STUDY GUIDE" in txt_r.content
+
+        # Post-session asynchronous polish pass triggered on session end & explicit endpoint
+        end_r = client.patch(f"/api/sessions/{sid}", json={"status": "ended"})
+        assert end_r.status_code == 200
+        assert end_r.json()["status"] == "ended"
+
+        pol_r = client.post(f"/api/sessions/{sid}/polish", params={"wait": "true"})
+        assert pol_r.status_code == 200
+        pol_body = pol_r.json()
+        assert pol_body["polish_status"] == "ready"
+        assert "**Eigenvalue**" in (pol_body["polished_transcript_md"] or "")
+        assert r"\int_0^1 x^2\,dx" in (pol_body["polished_transcript_md"] or "")
+
+
+def test_post_session_academic_polish_strips_fillers_and_stitches_paragraphs():
+    assert strip_disfluencies("eh umm jadi jadi kita kita bahas anu integral") == "jadi kita bahas integral"
+
+    raw_caps = [
+        {
+            "seq": 1,
+            "timestamp_ms": 1_000_000,
+            "raw_text": "eh umm hari ini kita bahas Integral Riemann",
+            "processed_text": "eh umm hari ini kita bahas Integral Riemann",
+            "segments": [
+                {"type": "text", "text": "eh umm hari ini kita bahas "},
+                {"type": "glossary", "matched_term": "Integral Riemann"},
+            ],
+            "formulas": [],
+            "glossary_matches": [{"matched_term": "Integral Riemann"}],
+            "is_unclear": False,
+        },
+        {
+            "seq": 2,
+            "timestamp_ms": 1_004_000,
+            "raw_text": "dan hitung integral dari 5x²",
+            "processed_text": "dan hitung integral dari 5x²",
+            "segments": [
+                {"type": "text", "text": "dan hitung "},
+                {"type": "formula", "original_text": "integral dari 5x²", "latex": r"\int 5x^2"},
+            ],
+            "formulas": [{"original_text": "integral dari 5x²", "latex": r"\int 5x^2"}],
+            "glossary_matches": [],
+            "is_unclear": False,
+        },
+        {
+            "seq": 3,
+            "timestamp_ms": 1_045_000,
+            "raw_text": "selanjutnya anu kita pakai turunan de per de ex",
+            "processed_text": "selanjutnya anu kita pakai turunan de per de ex",
+            "segments": [
+                {"type": "text", "text": "selanjutnya anu kita pakai turunan "},
+                {"type": "formula", "original_text": "de per de ex", "latex": r"\frac{d}{dx}"},
+            ],
+            "formulas": [{"original_text": "de per de ex", "latex": r"\frac{d}{dx}"}],
+            "glossary_matches": [],
+            "is_unclear": False,
+        },
+    ]
+
+    polished, provider = polish_lecture_transcript(
+        course_title="Kalkulus II",
+        topic="Integral & Turunan",
+        glossary=["Integral Riemann"],
+        captions=raw_caps,
+        language="id-ID",
+    )
+    assert "umm" not in polished.lower()
+    assert "anu" not in polished.lower()
+    assert "**Integral Riemann**" in polished
+    assert r"$\int 5x^2$" in polished
+    assert r"$\frac{d}{dx}$" in polished
+    # Fragment 1 & 2 stitched into one cohesive paragraph, fragment 3 starts Section 2 after gap/topic shift
+    assert "Bagian 1" in polished and "Bagian 2" in polished
+    assert provider.startswith("local-academic-editor") or provider.startswith("gemini")

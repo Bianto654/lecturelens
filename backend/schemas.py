@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 
 SpeechLanguage = Literal["id-ID", "en-US"]
 SessionStatus = Literal["live", "paused", "ended"]
+PolishStatus = Literal["idle", "processing", "ready", "failed"]
 
 
 class CourseCreate(BaseModel):
@@ -43,6 +44,9 @@ class SessionOut(BaseModel):
     language: SpeechLanguage
     glossary: list[str] = Field(default_factory=list)
     summary_md: Optional[str] = None
+    polished_transcript_md: Optional[str] = None
+    polish_status: PolishStatus = "idle"
+    polish_provider: Optional[str] = None
     caption_count: int = 0
     student_count: int = 0
     created_at: int
@@ -104,3 +108,10 @@ class SummaryResponse(BaseModel):
     session_id: str
     summary_md: str
     provider: str
+
+
+class PolishResponse(BaseModel):
+    session_id: str
+    polish_status: PolishStatus
+    polished_transcript_md: Optional[str] = None
+    provider: Optional[str] = None
