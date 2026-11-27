@@ -89,21 +89,6 @@ class CaptionSubmit(BaseModel):
     use_gemini: bool = True
 
 
-class BookmarkCreate(BaseModel):
-    transcript_seq: int
-    student_id: str = Field(min_length=2, max_length=80)
-    note: str = ""
-
-
-class BookmarkOut(BaseModel):
-    id: int
-    session_id: str
-    transcript_seq: int
-    student_id: str
-    note: str
-    created_at: int
-
-
 class SummaryResponse(BaseModel):
     session_id: str
     summary_md: str

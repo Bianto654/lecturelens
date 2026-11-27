@@ -124,11 +124,6 @@ SHARED_STYLES = """
     min-height: 40px; padding: 8px 14px; border-radius: 10px;
     border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 13px; font-weight: 500;
   }
-  .bk-btn {
-    border: 1px solid var(--border); background: var(--bg); color: var(--muted);
-    border-radius: 999px; padding: 4px 11px; font-size: 11.5px; cursor: pointer; font-weight: 600;
-  }
-  .bk-btn.saved { background: #f77e23; color: #ffffff; border-color: #f77e23; }
 </style>
 """
 
@@ -597,14 +592,13 @@ def render_student_live_console(
 ) -> None:
     """
     High-contrast, zero-flicker mobile-first Student Caption Screen powered by
-    FastAPI WebSockets + KaTeX + Private Bookmarks (Supabase PostgreSQL).
+    FastAPI WebSockets + KaTeX.
     """
     is_id = ui_lang == "id"
     cfg = {
         "sessionId": session["id"],
         "studentId": student_id,
         "wsUrl": f"{ws_base_url}/ws/student/{session['id']}?client_id={student_id}",
-        "bookmarksApi": f"{http_base_url}/api/sessions/{session['id']}/bookmarks",
         "autoLabel": "otomatis" if is_id else "automatic",
         "isId": is_id,
         "courseTitle": session["course_title"],
@@ -668,7 +662,6 @@ let dark = localStorage.getItem('ll_py_dark') === '1';
 let autoScroll = true;
 let captions = [];
 let interimText = '';
-let bookmarkedSeqs = new Set();
 let ws = null;
 
 const streamEl = document.getElementById('stream');
@@ -717,36 +710,6 @@ streamEl.addEventListener('scroll', () => {{
   if (dist > 80 && autoScroll) {{ autoScroll = false; updateScrollUi(); }}
 }});
 
-async function loadBookmarks() {{
-  try {{
-    const r = await fetch(CFG.bookmarksApi + '?student_id=' + encodeURIComponent(CFG.studentId));
-    if (r.ok) {{
-      const list = await r.json();
-      bookmarkedSeqs = new Set(list.map(b => b.transcript_seq));
-      renderStream();
-    }}
-  }} catch (e) {{}}
-}}
-loadBookmarks();
-
-window.toggleBookmark = async function(seq) {{
-  const has = bookmarkedSeqs.has(seq);
-  try {{
-    if (has) {{
-      await fetch(CFG.bookmarksApi + '/' + seq + '?student_id=' + encodeURIComponent(CFG.studentId), {{ method: 'DELETE' }});
-      bookmarkedSeqs.delete(seq);
-    }} else {{
-      await fetch(CFG.bookmarksApi, {{
-        method: 'POST',
-        headers: {{ 'Content-Type': 'application/json' }},
-        body: JSON.stringify({{ transcript_seq: seq, student_id: CFG.studentId, note: '' }})
-      }});
-      bookmarkedSeqs.add(seq);
-    }}
-    renderStream();
-  }} catch (e) {{}}
-}};
-
 function renderStream() {{
   if (!captions.length && !interimText) {{
     streamEl.innerHTML = '<div style="margin:auto;color:var(--muted);text-align:center;font-size:16px;">'
@@ -755,18 +718,15 @@ function renderStream() {{
     return;
   }}
   let html = '<div style="margin-top:auto;display:flex;flex-direction:column;gap:14px;">';
-  html += captions.map(cap => {{
-    const saved = bookmarkedSeqs.has(cap.seq);
-    return '<div class="cap-item">'
+  html += captions.map(cap =>
+    '<div class="cap-item">'
       + '<div class="cap-meta">'
       + '<span>#' + cap.seq + ' &middot; ' + fmtTime(cap.timestamp_ms) + '</span>'
-      + '<button class="bk-btn ' + (saved ? 'saved' : '') + '" onclick="toggleBookmark(' + cap.seq + ')">'
-      + (saved ? '★ ' + (CFG.isId ? 'Tersimpan' : 'Bookmarked') : '☆ Bookmark')
-      + '</button>'
+      + '<span>' + escHtml(cap.refined_by || 'rules') + '</span>'
       + '</div>'
       + '<div>' + renderSegmentsHtml(cap, CFG.autoLabel) + '</div>'
-      + '</div>';
-  }}).join('');
+      + '</div>'
+  ).join('');
   if (interimText) {{
     html += '<div class="interim-box">' + escHtml(interimText) + '</div>';
   }}
@@ -841,7 +801,6 @@ setInterval(() => {{ if (ws && ws.readyState === 1) ws.send('ping'); }}, 18000);
 
 def render_katex_transcript_list(
     captions: list[dict],
-    bookmarked_seqs: set[int],
     ui_lang: str = "id",
     student_mode: bool = False,
 ) -> None:
@@ -854,7 +813,6 @@ def render_katex_transcript_list(
     is_id = ui_lang == "id"
     payload = {
         "captions": captions,
-        "bookmarks": list(bookmarked_seqs),
         "autoLabel": auto_label,
         "studentMode": student_mode,
         "isId": is_id,
@@ -887,7 +845,6 @@ def render_katex_transcript_list(
 <script>
 {SHARED_RENDER_JS}
 const DATA = {json.dumps(payload)};
-const bset = new Set(DATA.bookmarks || []);
 const root = document.getElementById('list');
 
 const SIZES = [
@@ -924,10 +881,9 @@ applyVisuals();
 
 root.innerHTML = '<div style="margin-top:auto;display:flex;flex-direction:column;gap:12px;">'
   + DATA.captions.map((cap, idx) => {{
-      const star = bset.has(cap.seq) ? ' <span class="badge badge-warn">★ Bookmark</span>' : '';
       const newest = idx === DATA.captions.length - 1 ? 'border-color: var(--brand);' : '';
       return '<div class="cap-item" style="' + newest + '">'
-        + '<div class="cap-meta"><span>#' + cap.seq + ' &middot; ' + fmtTime(cap.timestamp_ms) + star + '</span><span>' + escHtml(cap.refined_by || 'rules') + '</span></div>'
+        + '<div class="cap-meta"><span>#' + cap.seq + ' &middot; ' + fmtTime(cap.timestamp_ms) + '</span><span>' + escHtml(cap.refined_by || 'rules') + '</span></div>'
         + '<div>' + renderSegmentsHtml(cap, DATA.autoLabel) + '</div>'
         + '</div>';
     }}).join('')

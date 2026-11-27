@@ -85,7 +85,7 @@ def test_refinement_preserves_original_text_and_handles_unclear():
     assert unclear.processed_text == "[unclear]"
 
 
-def test_fastapi_end_to_end_session_ws_bookmarks_summary_and_exports():
+def test_fastapi_end_to_end_session_ws_summary_polish_and_exports():
     with TestClient(app) as client:
         h = client.get("/api/health")
         assert h.status_code == 200 and h.json()["ok"] is True
@@ -134,15 +134,6 @@ def test_fastapi_end_to_end_session_ws_bookmarks_summary_and_exports():
                 assert got_caption is not None
                 assert got_caption["formulas"][0]["latex"] == r"\int_0^1 x^2\,dx"
                 assert got_caption["glossary_matches"][0]["matched_term"] == "Eigenvalue"
-
-        # Private bookmark CRUD
-        bk = client.post(
-            f"/api/sessions/{sid}/bookmarks",
-            json={"transcript_seq": 1, "student_id": "stu-1", "note": "Penting untuk UTS"},
-        )
-        assert bk.status_code == 201
-        bks = client.get(f"/api/sessions/{sid}/bookmarks", params={"student_id": "stu-1"})
-        assert len(bks.json()) == 1
 
         # Post-session grounded summary
         summ = client.post(f"/api/sessions/{sid}/summary")

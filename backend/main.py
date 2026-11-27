@@ -26,15 +26,12 @@ from sqlalchemy.orm import Session
 from backend.config import get_settings
 from backend.db import SessionLocal, get_db, init_db
 from backend.models import (
-    Bookmark,
     Course,
     GlossaryTerm,
     LectureSession,
     TranscriptSegment,
 )
 from backend.schemas import (
-    BookmarkCreate,
-    BookmarkOut,
     CaptionOut,
     CaptionSubmit,
     CourseCreate,
@@ -499,99 +496,6 @@ async def transcribe_uploaded_audio(
         )
 
     return created
-
-
-# ---------------------------------------------------------------------------
-# Private Student Bookmarks (Supabase PostgreSQL)
-# ---------------------------------------------------------------------------
-
-
-@app.get("/api/sessions/{session_id}/bookmarks", response_model=list[BookmarkOut])
-def list_bookmarks(
-    session_id: str,
-    student_id: str = Query(..., min_length=2),
-    db: Session = Depends(get_db),
-):
-    rows = db.scalars(
-        select(Bookmark)
-        .where(
-            Bookmark.session_id == session_id.upper(),
-            Bookmark.student_id == student_id,
-        )
-        .order_by(Bookmark.transcript_seq.asc())
-    ).all()
-    return [
-        BookmarkOut(
-            id=b.id,
-            session_id=b.session_id,
-            transcript_seq=b.transcript_seq,
-            student_id=b.student_id,
-            note=b.note,
-            created_at=b.created_at,
-        )
-        for b in rows
-    ]
-
-
-@app.post("/api/sessions/{session_id}/bookmarks", response_model=BookmarkOut, status_code=201)
-def upsert_bookmark(
-    session_id: str, payload: BookmarkCreate, db: Session = Depends(get_db)
-):
-    sid = session_id.upper()
-    if not db.get(LectureSession, sid):
-        raise HTTPException(status_code=404, detail="Session not found")
-
-    existing = db.scalar(
-        select(Bookmark).where(
-            Bookmark.session_id == sid,
-            Bookmark.transcript_seq == payload.transcript_seq,
-            Bookmark.student_id == payload.student_id,
-        )
-    )
-    if existing:
-        existing.note = payload.note.strip()
-        db.commit()
-        db.refresh(existing)
-        b = existing
-    else:
-        b = Bookmark(
-            session_id=sid,
-            transcript_seq=payload.transcript_seq,
-            student_id=payload.student_id,
-            note=payload.note.strip(),
-        )
-        db.add(b)
-        db.commit()
-        db.refresh(b)
-
-    return BookmarkOut(
-        id=b.id,
-        session_id=b.session_id,
-        transcript_seq=b.transcript_seq,
-        student_id=b.student_id,
-        note=b.note,
-        created_at=b.created_at,
-    )
-
-
-@app.delete("/api/sessions/{session_id}/bookmarks/{seq}", status_code=204)
-def delete_bookmark(
-    session_id: str,
-    seq: int,
-    student_id: str = Query(..., min_length=2),
-    db: Session = Depends(get_db),
-):
-    existing = db.scalar(
-        select(Bookmark).where(
-            Bookmark.session_id == session_id.upper(),
-            Bookmark.transcript_seq == seq,
-            Bookmark.student_id == student_id,
-        )
-    )
-    if existing:
-        db.delete(existing)
-        db.commit()
-    return Response(status_code=204)
 
 
 # ---------------------------------------------------------------------------

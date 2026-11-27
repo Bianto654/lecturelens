@@ -6,7 +6,7 @@ Mobile-first live lecture captioning platform built with the exact planned stack
 |---|---|---|
 | **Frontend & UI** | **Streamlit** | `streamlit_app.py`, `frontend/` (mobile-first UI + live WebSocket KaTeX components) |
 | **Backend & Real-Time Sync** | **FastAPI + WebSockets** | `backend/main.py`, `backend/ws_manager.py` (`/ws/host/{id}`, `/ws/student/{id}`) |
-| **Database** | **Supabase PostgreSQL** | `backend/models.py`, `backend/db.py`, `supabase/schema.sql` (courses, sessions, glossaries, transcripts, private bookmarks) |
+| **Database** | **Supabase PostgreSQL** | `backend/models.py`, `backend/db.py`, `supabase/schema.sql` (courses, sessions, glossaries, transcripts) |
 | **Speech-to-Text (STT)** | **Faster-Whisper (`large-v3-turbo`) + Silero VAD** | `backend/services/stt_service.py` (glossary `hotwords` + `initial_prompt`, built-in ONNX Silero VAD) |
 | **Math Engine & Context Refinement** | **Google Gemini Flash API + KaTeX** | `backend/services/refinement_service.py` + KaTeX rendering in `frontend/components.py` |
 | **Summarization & Export** | **Google Gemini Flash API, `python-docx`, `ReportLab`** | `backend/services/summary_service.py`, `backend/services/export_service.py` |
@@ -22,12 +22,13 @@ lecturelens-py/
 │   ├── config.py                     # Pydantic Settings (.env loader)
 │   ├── db.py                         # SQLAlchemy engine (Supabase PostgreSQL / local SQLite fallback)
 │   ├── main.py                       # FastAPI REST endpoints & WebSockets
-│   ├── models.py                     # courses, sessions, glossaries, transcripts, bookmarks
+│   ├── models.py                     # courses, sessions, glossaries, transcripts
 │   ├── schemas.py                    # Pydantic request/response models
 │   ├── ws_manager.py                 # Low-latency room WebSocket broadcast & presence manager
 │   └── services/
 │       ├── stt_service.py            # Faster-Whisper (large-v3-turbo) + Silero VAD + hotwords/initial_prompt
 │       ├── refinement_service.py     # Google Gemini Flash API + rule-based ID/EN spoken math & fuzzy glossary
+│       ├── polish_service.py         # Post-session async academic transcript polish (Gemini Flash + local fallback)
 │       ├── summary_service.py        # Transcript-grounded post-session summary (Gemini Flash)
 │       └── export_service.py         # .docx (python-docx), .pdf (ReportLab), .txt exporters
 ├── frontend/
@@ -37,7 +38,7 @@ lecturelens-py/
 ├── supabase/
 │   └── schema.sql                    # PostgreSQL DDL for Supabase SQL Editor
 ├── tests/
-│   └── test_pipeline_and_api.py      # End-to-end pytest suite (math, glossary, WebSockets, bookmarks, docx/pdf)
+│   └── test_pipeline_and_api.py      # End-to-end pytest suite (math, glossary, WebSockets, polish, docx/pdf)
 ├── .streamlit/
 │   ├── config.toml                   # Streamlit theme & server config
 │   └── secrets.toml.example          # Streamlit Community Cloud secrets template

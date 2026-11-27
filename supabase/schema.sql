@@ -59,15 +59,3 @@ CREATE TABLE IF NOT EXISTS public.transcripts (
 );
 
 CREATE INDEX IF NOT EXISTS idx_transcripts_session_seq ON public.transcripts(session_id, seq);
-
-CREATE TABLE IF NOT EXISTS public.bookmarks (
-  id SERIAL PRIMARY KEY,
-  session_id VARCHAR(64) NOT NULL REFERENCES public.sessions(id) ON DELETE CASCADE,
-  transcript_seq INTEGER NOT NULL,
-  student_id VARCHAR(80) NOT NULL,
-  note TEXT NOT NULL DEFAULT '',
-  created_at BIGINT NOT NULL DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000)::BIGINT,
-  CONSTRAINT uq_bookmark_student_seg UNIQUE (session_id, transcript_seq, student_id)
-);
-
-CREATE INDEX IF NOT EXISTS idx_bookmarks_session_student ON public.bookmarks(session_id, student_id);

@@ -131,34 +131,6 @@ class LectureLensAPI:
         r.raise_for_status()
         return r.json()
 
-    def list_bookmarks(self, session_id: str, student_id: str) -> list[dict[str, Any]]:
-        r = httpx.get(
-            f"{self.base_url}/api/sessions/{session_id}/bookmarks",
-            params={"student_id": student_id},
-            timeout=8.0,
-        )
-        r.raise_for_status()
-        return r.json()
-
-    def upsert_bookmark(
-        self, session_id: str, seq: int, student_id: str, note: str = ""
-    ) -> dict[str, Any]:
-        r = httpx.post(
-            f"{self.base_url}/api/sessions/{session_id}/bookmarks",
-            json={"transcript_seq": seq, "student_id": student_id, "note": note},
-            timeout=8.0,
-        )
-        r.raise_for_status()
-        return r.json()
-
-    def delete_bookmark(self, session_id: str, seq: int, student_id: str) -> None:
-        r = httpx.delete(
-            f"{self.base_url}/api/sessions/{session_id}/bookmarks/{seq}",
-            params={"student_id": student_id},
-            timeout=8.0,
-        )
-        r.raise_for_status()
-
     def generate_summary(self, session_id: str) -> dict[str, Any]:
         r = httpx.post(
             f"{self.base_url}/api/sessions/{session_id}/summary", timeout=60.0

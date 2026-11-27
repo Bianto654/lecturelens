@@ -1379,7 +1379,7 @@ elif st.session_state.page == "host":
         st.markdown("#### 📝 Transkrip Berlangsung" if lang == "id" else "#### 📝 Live Transcript")
         host_caps = api.list_captions(sess["id"])
         if host_caps:
-            render_katex_transcript_list(host_caps, set(), ui_lang=lang)
+            render_katex_transcript_list(host_caps, ui_lang=lang)
         else:
             st.info(
                 "Belum ada teks. Tap tombol mikrofon besar di atas dan mulai berbicara, atau tekan ✨ Kirim 1 Baris Demo."
@@ -1525,8 +1525,6 @@ elif st.session_state.page == "join":
                     else "⏸ The lecturer has temporarily paused captions."
                 )
             live_caps = api.list_captions(sess["id"])
-            bks = api.list_bookmarks(sess["id"], st.session_state.student_id)
-            bk_seqs = {b["transcript_seq"] for b in bks}
             if not live_caps:
                 st.info(
                     "Terhubung ke ruangan! Menunggu dosen mulai berbicara…"
@@ -1534,22 +1532,7 @@ elif st.session_state.page == "join":
                     else "Connected to the room! Waiting for the lecturer to begin…"
                 )
                 return
-            render_katex_transcript_list(
-                live_caps, bk_seqs, ui_lang=lang, student_mode=True
-            )
-            latest_seq = live_caps[-1]["seq"]
-            saved = latest_seq in bk_seqs
-            lbl = (
-                f"★ Hapus Bookmark Segmen #{latest_seq}"
-                if saved
-                else f"⭐ Simpan Bookmark Pribadi (#{latest_seq})"
-            )
-            if st.button(lbl, key=f"quick_bk_{latest_seq}", use_container_width=True):
-                if saved:
-                    api.delete_bookmark(sess["id"], latest_seq, st.session_state.student_id)
-                else:
-                    api.upsert_bookmark(sess["id"], latest_seq, st.session_state.student_id)
-                st.rerun()
+            render_katex_transcript_list(live_caps, ui_lang=lang, student_mode=True)
 
         _live_student_feed()
 
@@ -1572,8 +1555,6 @@ elif st.session_state.page == "transcript":
         st.stop()
 
     captions = api.list_captions(sess["id"])
-    bookmarks = api.list_bookmarks(sess["id"], st.session_state.student_id)
-    bookmarked_seqs = {b["transcript_seq"] for b in bookmarks}
     polish_status = sess.get("polish_status") or "idle"
 
     polish_pill = (
@@ -1588,7 +1569,6 @@ elif st.session_state.page == "transcript":
         page_banner_html(
             f'<span class="fg-pill fg-pill-orange">📘 {sess["id"]}</span>'
             f'<span class="fg-pill fg-pill-white">💬 {len(captions)} segmen</span>'
-            f'<span class="fg-pill fg-pill-peach">⭐ {len(bookmarked_seqs)} bookmark</span>'
             f'{polish_pill}',
             sess["course_title"],
             f'{sess["topic"]} · 📅 {sess["date"]}',
@@ -1701,19 +1681,13 @@ elif st.session_state.page == "transcript":
 
     with tab_raw:
         with st.container(border=True):
-            f1, f2 = st.columns([7, 3])
-            with f1:
-                query = st.text_input(
-                    "Search",
-                    placeholder=tr(lang, "search_placeholder"),
-                    label_visibility="collapsed",
-                )
-            with f2:
-                only_bk = st.checkbox(tr(lang, "only_bookmarks"), value=False)
+            query = st.text_input(
+                "Search",
+                placeholder=tr(lang, "search_placeholder"),
+                label_visibility="collapsed",
+            )
 
         filtered = captions
-        if only_bk:
-            filtered = [c for c in filtered if c["seq"] in bookmarked_seqs]
         if query.strip():
             ql = query.strip().lower()
             filtered = [
@@ -1727,7 +1701,7 @@ elif st.session_state.page == "transcript":
         if not filtered:
             st.info("Tidak ada baris transkrip yang cocok.")
         else:
-            render_katex_transcript_list(filtered, bookmarked_seqs, ui_lang=lang)
+            render_katex_transcript_list(filtered, ui_lang=lang)
 
 st.markdown(
     f'<div class="fg-footer">'

@@ -66,11 +66,6 @@ class LectureSession(Base):
         cascade="all, delete-orphan",
         order_by="TranscriptSegment.seq",
     )
-    bookmarks: Mapped[list[Bookmark]] = relationship(
-        back_populates="session",
-        cascade="all, delete-orphan",
-        order_by="Bookmark.created_at",
-    )
 
 
 class GlossaryTerm(Base):
@@ -113,27 +108,3 @@ class TranscriptSegment(Base):
     refined_by: Mapped[str] = mapped_column(String(32), default="rules")
 
     session: Mapped[LectureSession] = relationship(back_populates="transcripts")
-
-
-class Bookmark(Base):
-    __tablename__ = "bookmarks"
-    __table_args__ = (
-        UniqueConstraint(
-            "session_id",
-            "transcript_seq",
-            "student_id",
-            name="uq_bookmark_student_seg",
-        ),
-    )
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    session_id: Mapped[str] = mapped_column(
-        ForeignKey("sessions.id", ondelete="CASCADE"),
-        index=True,
-    )
-    transcript_seq: Mapped[int] = mapped_column(Integer, nullable=False)
-    student_id: Mapped[str] = mapped_column(String(80), index=True)
-    note: Mapped[str] = mapped_column(Text, default="")
-    created_at: Mapped[int] = mapped_column(BigInteger, default=_now_ms)
-
-    session: Mapped[LectureSession] = relationship(back_populates="bookmarks")

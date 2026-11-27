@@ -12,7 +12,6 @@ from sqlalchemy import func, select
 from backend.config import get_settings
 from backend.db import SessionLocal, init_db
 from backend.models import (
-    Bookmark,
     Course,
     GlossaryTerm,
     LectureSession,
@@ -367,77 +366,6 @@ class EmbeddedLectureLensAPI:
             "Tambahkan GEMINI_API_KEY di Streamlit Secrets (gratis di aistudio.google.com/apikey) "
             "untuk mentranskripsi file audio / rekaman mikrofon langsung di Streamlit Cloud."
         )
-
-    def list_bookmarks(self, session_id: str, student_id: str) -> list[dict[str, Any]]:
-        with SessionLocal() as db:
-            rows = db.scalars(
-                select(Bookmark)
-                .where(
-                    Bookmark.session_id == session_id.upper(),
-                    Bookmark.student_id == student_id,
-                )
-                .order_by(Bookmark.transcript_seq.asc())
-            ).all()
-            return [
-                {
-                    "id": b.id,
-                    "session_id": b.session_id,
-                    "transcript_seq": b.transcript_seq,
-                    "student_id": b.student_id,
-                    "note": b.note,
-                    "created_at": b.created_at,
-                }
-                for b in rows
-            ]
-
-    def upsert_bookmark(
-        self, session_id: str, seq: int, student_id: str, note: str = ""
-    ) -> dict[str, Any]:
-        sid = session_id.upper()
-        with SessionLocal() as db:
-            existing = db.scalar(
-                select(Bookmark).where(
-                    Bookmark.session_id == sid,
-                    Bookmark.transcript_seq == seq,
-                    Bookmark.student_id == student_id,
-                )
-            )
-            if existing:
-                existing.note = note.strip()
-                db.commit()
-                db.refresh(existing)
-                b = existing
-            else:
-                b = Bookmark(
-                    session_id=sid,
-                    transcript_seq=seq,
-                    student_id=student_id,
-                    note=note.strip(),
-                )
-                db.add(b)
-                db.commit()
-                db.refresh(b)
-            return {
-                "id": b.id,
-                "session_id": b.session_id,
-                "transcript_seq": b.transcript_seq,
-                "student_id": b.student_id,
-                "note": b.note,
-                "created_at": b.created_at,
-            }
-
-    def delete_bookmark(self, session_id: str, seq: int, student_id: str) -> None:
-        with SessionLocal() as db:
-            existing = db.scalar(
-                select(Bookmark).where(
-                    Bookmark.session_id == session_id.upper(),
-                    Bookmark.transcript_seq == seq,
-                    Bookmark.student_id == student_id,
-                )
-            )
-            if existing:
-                db.delete(existing)
-                db.commit()
 
     def generate_summary(self, session_id: str) -> dict[str, Any]:
         sess = self.get_session(session_id)
