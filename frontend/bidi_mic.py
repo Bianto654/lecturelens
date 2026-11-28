@@ -332,7 +332,13 @@ _HOST_MIC_HTML = """
 <div class="ll-mic-window">
   <div class="ll-win-bar">
     <span class="ll-win-dots">
-      <span class="ll-win-badge-icon" aria-hidden="true">🎙</span>
+      <span class="ll-win-badge-icon" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" x2="12" y1="19" y2="22"/>
+        </svg>
+      </span>
       <span class="ll-win-title">Live Classroom Audio Studio</span>
     </span>
     <span class="ll-win-sub">Real-time Captioning</span>
@@ -344,11 +350,10 @@ _HOST_MIC_HTML = """
           <span class="ll-dot"></span>
           <span id="stateText">Siap</span>
         </span>
-        <span id="stuPill" class="ll-pill ll-pill-blue">👥 0 mahasiswa</span>
       </div>
       <div class="ll-lang-toggle" role="group" aria-label="Speech language">
-        <button id="langId" class="ll-lang-btn active" type="button">🇮🇩 ID</button>
-        <button id="langEn" class="ll-lang-btn" type="button">🇺🇸 EN</button>
+        <button id="langId" class="ll-lang-btn active" type="button">ID</button>
+        <button id="langEn" class="ll-lang-btn" type="button">EN</button>
       </div>
     </div>
 
@@ -363,7 +368,7 @@ _HOST_MIC_HTML = """
         </button>
       </div>
       <div id="heroLabel" class="ll-hero-label">Tap Mikrofon untuk Mulai Bicara</div>
-      <div id="heroSub" class="ll-hero-sub">Suara dosen langsung ditranskripsi real-time dengan pencocokan glosarium & rumus KaTeX.</div>
+      <div id="heroSub" class="ll-hero-sub">Suara dosen langsung ditranskripsi real-time dengan pencocokan glosarium &amp; rumus KaTeX.</div>
       <div id="wave" class="ll-wave" aria-hidden="true">
         <div class="ll-bar"></div><div class="ll-bar"></div><div class="ll-bar"></div>
         <div class="ll-bar"></div><div class="ll-bar"></div><div class="ll-bar"></div>
@@ -371,12 +376,12 @@ _HOST_MIC_HTML = """
       </div>
     </div>
 
-    <div id="interimBox" class="ll-interim">Teks sementara akan muncul di sini saat Anda mulai berbicara…</div>
+    <div id="interimBox" class="ll-interim">Teks sementara akan muncul di sini saat Anda mulai berbicara...</div>
     <div id="errBox" class="ll-error" role="alert"></div>
 
     <div class="ll-controls">
-      <button id="btnDemo" class="ll-action-btn" type="button">✨ Kirim 1 Baris Demo</button>
-      <button id="btnEnd" class="ll-action-btn ll-action-danger" type="button">■ Akhiri Sesi</button>
+      <button id="btnDemo" class="ll-action-btn" type="button">Kirim 1 Baris Demo</button>
+      <button id="btnEnd" class="ll-action-btn ll-action-danger" type="button">Akhiri Sesi</button>
     </div>
   </div>
 </div>
@@ -391,7 +396,6 @@ export default function(component) {
 
   const q = (id) => parentElement.querySelector('#' + id);
   const statePill = q('statePill');
-  const stuPill   = q('stuPill');
   const langIdBtn = q('langId');
   const langEnBtn = q('langEn');
   const micRing   = q('micRing');
@@ -441,16 +445,11 @@ export default function(component) {
   };
 
   function renderUi() {
-    const stuCount = Number(cfg.student_count || 0);
-    stuPill.textContent = isId
-      ? ('👥 ' + stuCount + ' mahasiswa online')
-      : ('👥 ' + stuCount + ' students online');
-
     langIdBtn.classList.toggle('active', ctrl.lang === 'id-ID');
     langEnBtn.classList.toggle('active', ctrl.lang === 'en-US');
 
-    btnDemo.textContent = isId ? '✨ Kirim 1 Baris Demo' : '✨ Send 1 Demo Line';
-    btnEnd.textContent  = isId ? '■ Akhiri Sesi' : '■ End Session';
+    btnDemo.textContent = isId ? 'Kirim 1 Baris Demo' : 'Send 1 Demo Line';
+    btnEnd.textContent  = isId ? 'Akhiri Sesi' : 'End Session';
 
     if (ctrl.active) {
       micRing.classList.add('listening');
@@ -458,7 +457,7 @@ export default function(component) {
       waveEl.classList.add('active');
       statePill.className = 'll-pill ll-pill-live';
       statePill.innerHTML = '<span class="ll-dot ll-dot-pulse"></span><span>' + (isId ? 'MENDENGARKAN' : 'LISTENING') + '</span>';
-      heroLabel.textContent = isId ? 'Sedang Mendengarkan… (Tap untuk Jeda)' : 'Listening… (Tap to Pause)';
+      heroLabel.textContent = isId ? 'Sedang Mendengarkan... (Tap untuk Jeda)' : 'Listening... (Tap to Pause)';
       heroSub.textContent = isId
         ? 'Berbicaralah dengan jelas. Setiap kalimat otomatis diproses glosarium & rumus lalu dikirim ke mahasiswa.'
         : 'Speak clearly. Each sentence is automatically processed with glossary & formulas and sent live.';
@@ -470,7 +469,7 @@ export default function(component) {
       statePill.innerHTML = '<span class="ll-dot"></span><span>' + (isId ? 'SIAP / DIJEDA' : 'READY / PAUSED') + '</span>';
       heroLabel.textContent = isId ? 'Tap Mikrofon untuk Mulai Bicara' : 'Tap Microphone to Start Speaking';
       heroSub.textContent = isId
-        ? 'Ketuk tombol bulat biru di atas untuk mulai transkripsi langsung (Chrome / Edge / Safari).'
+        ? 'Ketuk tombol bulat di atas untuk mulai transkripsi langsung (Chrome / Edge / Safari).'
         : 'Tap the large round button above to start live speech captioning (Chrome / Edge / Safari).';
     }
 
@@ -480,8 +479,8 @@ export default function(component) {
     } else {
       interimEl.classList.remove('has-text');
       interimEl.textContent = ctrl.active
-        ? (isId ? '🎙️ Menunggu suara Anda…' : '🎙️ Waiting for speech…')
-        : (isId ? 'Teks sementara akan muncul di sini saat Anda mulai berbicara…' : 'Live interim words will appear here as you speak…');
+        ? (isId ? 'Menunggu suara Anda...' : 'Waiting for speech...')
+        : (isId ? 'Teks sementara akan muncul di sini saat Anda mulai berbicara...' : 'Live interim words will appear here as you speak...');
     }
 
     if (ctrl.lastError) {
@@ -774,7 +773,13 @@ _QR_CARD_CSS = """
 _QR_CARD_HTML = """
 <div class="qr-window">
   <div class="qr-bar">
-    <span class="qr-bar-left">📲 Room Access QR</span>
+    <span class="qr-bar-left">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f77e23" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+        <rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM18 18h3v3h-3z"/>
+      </svg>
+      <span>Room Access QR</span>
+    </span>
     <span class="qr-bar-lbl">Scan langsung masuk kelas</span>
   </div>
   <div class="qr-shell">
@@ -831,7 +836,7 @@ export default function(component) {
     try {
       await navigator.clipboard.writeText(joinUrl);
       copyBtn.classList.add('copied');
-      copyBtn.textContent = isId ? '✓ Tersalin!' : '✓ Copied!';
+      copyBtn.textContent = isId ? 'Tersalin!' : 'Copied!';
       setTimeout(() => {
         copyBtn.classList.remove('copied');
         copyBtn.textContent = isId ? 'Salin Link' : 'Copy Link';
@@ -865,7 +870,6 @@ _qr_card_component = st.components.v2.component(
 def mount_host_mic_console(
     session_id: str,
     speech_lang: str,
-    student_count: int,
     ui_lang: str = "id",
 ) -> tuple[Optional[dict[str, Any]], Optional[dict[str, Any]]]:
     """
@@ -877,7 +881,6 @@ def mount_host_mic_console(
         data={
             "session_id": session_id,
             "speech_lang": speech_lang,
-            "student_count": student_count,
             "ui_lang": ui_lang,
         },
         on_utterance_change=lambda: None,

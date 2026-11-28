@@ -31,10 +31,6 @@ from backend.services.summary_service import generate_grounded_summary
 
 _INIT_LOCK = threading.Lock()
 _DB_READY = False
-_PRESENCE_LOCK = threading.Lock()
-# session_id -> {student_id: last_seen_ms}
-_PRESENCE: dict[str, dict[str, int]] = {}
-_PRESENCE_TTL_MS = 20_000
 
 
 def _ensure_db() -> None:
@@ -45,31 +41,6 @@ def _ensure_db() -> None:
         if not _DB_READY:
             init_db()
             _DB_READY = True
-
-
-def touch_student_presence(session_id: str, student_id: str) -> int:
-    sid = session_id.upper()
-    now = int(time.time() * 1000)
-    with _PRESENCE_LOCK:
-        room = _PRESENCE.setdefault(sid, {})
-        room[student_id] = now
-        stale = [k for k, ts in room.items() if now - ts > _PRESENCE_TTL_MS]
-        for k in stale:
-            room.pop(k, None)
-        return len(room)
-
-
-def get_student_count(session_id: str) -> int:
-    sid = session_id.upper()
-    now = int(time.time() * 1000)
-    with _PRESENCE_LOCK:
-        room = _PRESENCE.get(sid)
-        if not room:
-            return 0
-        stale = [k for k, ts in room.items() if now - ts > _PRESENCE_TTL_MS]
-        for k in stale:
-            room.pop(k, None)
-        return len(room)
 
 
 def _generate_room_code(course_title: str) -> str:
@@ -101,7 +72,6 @@ def _serialize_session(db, s: LectureSession) -> dict[str, Any]:
         "polish_status": s.polish_status or "idle",
         "polish_provider": s.polish_provider,
         "caption_count": cap_count,
-        "student_count": get_student_count(s.id),
         "created_at": s.created_at,
         "ended_at": s.ended_at,
     }

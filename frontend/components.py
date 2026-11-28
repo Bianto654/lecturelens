@@ -206,7 +206,6 @@ def render_host_live_console(
   <div class="toolbar">
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
       <span id="connBadge" class="badge badge-warn">Menghubungkan...</span>
-      <span id="stuBadge" class="badge badge-brand">0 {'mahasiswa' if is_id else 'students'}</span>
       <span id="statusBadge" class="badge badge-ok">{session['status'].upper()}</span>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -223,14 +222,14 @@ def render_host_live_console(
 
   <div style="padding:12px 14px;border-bottom:1px solid var(--border);background:var(--panel);">
     <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
-      <button id="btnStart" class="btn btn-green" type="button">▶ {'Mulai Transkripsi' if is_id else 'Start Captioning'}</button>
-      <button id="btnPause" class="btn btn-amber" type="button" style="display:none;">⏸ {'Jeda' if is_id else 'Pause'}</button>
-      <button id="btnResume" class="btn btn-green" type="button" style="display:none;">▶ {'Lanjutkan' if is_id else 'Resume'}</button>
-      <button id="btnDemoOne" class="btn" type="button">✨ {'Kirim 1 Baris Demo' if is_id else 'Send 1 Demo Line'}</button>
-      <button id="btnEnd" class="btn btn-red" type="button">■ {'Akhiri Sesi' if is_id else 'End Session'}</button>
+      <button id="btnStart" class="btn btn-green" type="button">{'Mulai Transkripsi' if is_id else 'Start Captioning'}</button>
+      <button id="btnPause" class="btn btn-amber" type="button" style="display:none;">{'Jeda' if is_id else 'Pause'}</button>
+      <button id="btnResume" class="btn btn-green" type="button" style="display:none;">{'Lanjutkan' if is_id else 'Resume'}</button>
+      <button id="btnDemoOne" class="btn" type="button">{'Kirim 1 Baris Demo' if is_id else 'Send 1 Demo Line'}</button>
+      <button id="btnEnd" class="btn btn-red" type="button">{'Akhiri Sesi' if is_id else 'End Session'}</button>
     </div>
     <div style="margin-top:10px;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);">
-      <span>🎤 {'Level Input Suara' if is_id else 'Input Level'}</span>
+      <span>{'Level Input Suara' if is_id else 'Input Level'}</span>
       <span id="levelPct" style="font-family:monospace;">0%</span>
     </div>
     <div class="meter-wrap"><div id="meterFill" class="meter-fill"></div></div>
@@ -278,7 +277,6 @@ let recognition = null;
 let mockTimer = null;
 
 const connBadge = document.getElementById('connBadge');
-const stuBadge = document.getElementById('stuBadge');
 const statusBadge = document.getElementById('statusBadge');
 const streamEl = document.getElementById('stream');
 const meterFill = document.getElementById('meterFill');
@@ -349,7 +347,6 @@ function connectWs() {{
       const msg = JSON.parse(ev.data);
       if (msg.type === 'snapshot') {{
         captions = msg.captions || [];
-        stuBadge.textContent = (msg.student_count || 0) + (CFG.isId ? ' mahasiswa' : ' students');
         if (msg.session) statusBadge.textContent = (msg.session.status || 'live').toUpperCase();
         renderStream();
       }} else if (msg.type === 'caption' && msg.caption) {{
@@ -360,8 +357,6 @@ function connectWs() {{
       }} else if (msg.type === 'interim') {{
         interimText = msg.text || '';
         renderStream();
-      }} else if (msg.type === 'student_count') {{
-        stuBadge.textContent = (msg.count || 0) + (CFG.isId ? ' mahasiswa' : ' students');
       }} else if (msg.type === 'session_update' && msg.session) {{
         statusBadge.textContent = (msg.session.status || 'live').toUpperCase();
       }} else if (msg.type === 'stt_error') {{
@@ -611,16 +606,15 @@ def render_student_live_console(
 <div class="card">
   <div class="toolbar">
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-      <span class="win-dots" aria-hidden="true"><span class="wd-c"></span><span class="wd-s"></span><span class="wd-t"></span></span>
-      <span id="liveBadge" class="badge badge-err">● LIVE</span>
+      <span id="liveBadge" class="badge badge-err">LIVE</span>
       <span id="connBadge" class="badge badge-warn">{'Menghubungkan...' if is_id else 'Connecting...'}</span>
     </div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
       <button id="btnFontDec" class="btn" type="button" aria-label="Decrease font">A-</button>
       <span id="fontLabel" style="font-size:12px;font-weight:700;min-width:26px;text-align:center;color:var(--text);">M</span>
       <button id="btnFontInc" class="btn" type="button" aria-label="Increase font">A+</button>
-      <button id="btnScroll" class="btn" type="button">⏸ {'Jeda Gulir' if is_id else 'Pause Scroll'}</button>
-      <button id="btnTheme" class="btn" type="button">🌙</button>
+      <button id="btnScroll" class="btn" type="button">{'Jeda Gulir' if is_id else 'Pause Scroll'}</button>
+      <button id="btnTheme" class="btn" type="button">{'Gelap' if is_id else 'Dark'}</button>
     </div>
   </div>
 
@@ -630,10 +624,9 @@ def render_student_live_console(
   </div>
 
   <div id="endedPanel" style="display:none;padding:48px 24px;text-align:center;">
-    <div style="font-size:40px;">✅</div>
     <h2 style="margin:10px 0 6px;">{'Sesi Telah Berakhir' if is_id else 'Session Ended'}</h2>
     <p style="color:var(--muted);max-width:460px;margin:0 auto;font-size:14px;">
-      {'Dosen telah mengakhiri sesi kuliah langsung ini. Buka tab Transkrip & Ringkasan di atas untuk melihat ringkasan Gemini dan ekspor .docx / .pdf.' if is_id else 'The lecturer ended this live session. Switch to the Transcript & Summary tab above to generate a Gemini summary and export .docx / .pdf.'}
+      {'Dosen telah mengakhiri sesi kuliah langsung ini. Buka tab Transkrip di atas untuk melihat Study Guide rapi, ringkasan Gemini, dan ekspor .docx / .pdf.' if is_id else 'The lecturer ended this live session. Switch to the Transcript tab above to view your Study Guide, Gemini summary, and .docx / .pdf exports.'}
     </p>
   </div>
 
@@ -641,7 +634,7 @@ def render_student_live_console(
     <div id="stream" class="stream" style="height:460px;font-size:21px;" role="log" aria-live="polite"></div>
     <button id="jumpBtn" class="btn btn-primary" type="button"
       style="display:none;position:absolute;right:16px;bottom:16px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,0.2);">
-      {'Ke teks terbaru ↓' if is_id else 'Jump to latest ↓'}
+      {'Ke teks terbaru' if is_id else 'Jump to latest'}
     </button>
   </div>
 </div>
@@ -676,7 +669,9 @@ const fontLabel = document.getElementById('fontLabel');
 
 function applyPrefs() {{
   document.body.classList.toggle('dark', dark);
-  btnTheme.textContent = dark ? '☀️' : '🌙';
+  btnTheme.textContent = dark
+    ? (CFG.isId ? 'Terang' : 'Light')
+    : (CFG.isId ? 'Gelap' : 'Dark');
   streamEl.style.fontSize = SIZES[fontIdx].px + 'px';
   fontLabel.textContent = SIZES[fontIdx].label;
   localStorage.setItem('ll_py_font', String(fontIdx));
@@ -690,8 +685,8 @@ btnTheme.onclick = () => {{ dark = !dark; applyPrefs(); }};
 
 function updateScrollUi() {{
   btnScroll.textContent = autoScroll
-    ? ('⏸ ' + (CFG.isId ? 'Jeda Gulir' : 'Pause Scroll'))
-    : ('▶ ' + (CFG.isId ? 'Lanjut Gulir' : 'Resume Scroll'));
+    ? (CFG.isId ? 'Jeda Gulir' : 'Pause Scroll')
+    : (CFG.isId ? 'Lanjut Gulir' : 'Resume Scroll');
   jumpBtn.style.display = autoScroll ? 'none' : 'inline-flex';
 }}
 
@@ -748,7 +743,7 @@ function applySessionStatus(st) {{
     endedPanel.style.display = 'none';
   }} else {{
     liveBadge.className = 'badge badge-err';
-    liveBadge.textContent = CFG.isId ? '● LANGSUNG' : '● LIVE';
+    liveBadge.textContent = CFG.isId ? 'LANGSUNG' : 'LIVE';
     streamEl.style.display = 'flex';
     endedPanel.style.display = 'none';
   }}
@@ -828,7 +823,7 @@ def render_katex_transcript_list(
             <button id="fDec" class="btn" type="button" aria-label="Decrease font">A-</button>
             <span id="fLbl" style="font-size:12px;font-weight:700;min-width:26px;text-align:center;color:var(--text);">M</span>
             <button id="fInc" class="btn" type="button" aria-label="Increase font">A+</button>
-            <button id="tBtn" class="btn" type="button" aria-label="Toggle theme">🌙</button>
+            <button id="tBtn" class="btn" type="button" aria-label="Toggle theme">{'Gelap' if is_id else 'Dark'}</button>
           </div>
         </div>
         """
@@ -867,7 +862,9 @@ function applyVisuals() {{
   const lbl = document.getElementById('fLbl');
   const tBtn = document.getElementById('tBtn');
   if (lbl) lbl.textContent = SIZES[fIdx].label;
-  if (tBtn) tBtn.textContent = dark ? '☀️' : '🌙';
+  if (tBtn) tBtn.textContent = dark
+    ? (DATA.isId ? 'Terang' : 'Light')
+    : (DATA.isId ? 'Gelap' : 'Dark');
   localStorage.setItem('ll_stu_font', String(fIdx));
   localStorage.setItem('ll_stu_dark', dark ? '1' : '0');
 }}

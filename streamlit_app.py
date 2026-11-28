@@ -30,7 +30,6 @@ load_dotenv()
 
 st.set_page_config(
     page_title="LectureLens — Teks Kuliah Langsung",
-    page_icon="🎓",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -552,12 +551,28 @@ st.markdown(
     height: 52px;
     border-radius: 14px;
     color: #ffffff;
-    font-size: 22px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     box-shadow: 0 8px 18px rgba(247, 126, 35, 0.2);
+  }
+  .fg-dot-ok {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #16a34a;
+    display: inline-block;
+  }
+  .fg-dot-live {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    display: inline-block;
   }
   .fg-course-title {
     font-size: 15.5px;
@@ -772,17 +787,24 @@ def resolve_public_app_url() -> str:
 
 
 SUBJECT_PALETTES = [
-    ("linear-gradient(135deg, #ff9642, #f77e23)", "📐"),
-    ("linear-gradient(135deg, #333333, #1e1e1e)", "💻"),
-    ("linear-gradient(135deg, #fb923c, #ea580c)", "🧪"),
-    ("linear-gradient(135deg, #f59e0b, #d97706)", "🧬"),
-    ("linear-gradient(135deg, #4b5563, #1f2937)", "📚"),
+    "linear-gradient(135deg, #ff9642, #f77e23)",
+    "linear-gradient(135deg, #333333, #1e1e1e)",
+    "linear-gradient(135deg, #fb923c, #ea580c)",
+    "linear-gradient(135deg, #f59e0b, #d97706)",
+    "linear-gradient(135deg, #4b5563, #1f2937)",
 ]
 
 
 def subject_visual(title: str) -> tuple[str, str]:
     idx = sum(ord(ch) for ch in title) % len(SUBJECT_PALETTES)
-    return SUBJECT_PALETTES[idx]
+    words = [w for w in re.sub(r"[^A-Za-z0-9\s]", "", title).split() if w]
+    if len(words) >= 2:
+        mono = (words[0][0] + words[1][0]).upper()
+    elif words:
+        mono = words[0][:2].upper()
+    else:
+        mono = "LL"
+    return SUBJECT_PALETTES[idx], mono
 
 
 BRAND_SVG = """
@@ -795,6 +817,39 @@ BRAND_SVG = """
 UNDERLINE_SVG = """
 <svg viewBox="0 0 180 12" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" aria-hidden="true">
   <path d="M3 9C48 2.5 128 2 177 7.5" stroke="#F77E23" stroke-width="4" stroke-linecap="round"/>
+</svg>
+"""
+
+ICON_MIC_SVG = """
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+  <path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>
+</svg>
+"""
+
+ICON_MATH_SVG = """
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M18 4H6l6 8-6 8h12"/>
+</svg>
+"""
+
+ICON_BOOK_SVG = """
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+</svg>
+"""
+
+ICON_QR_SVG = """
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+  <rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM18 18h3v3h-3z"/>
+</svg>
+"""
+
+ICON_SPARK_SVG = """
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2z"/>
 </svg>
 """
 
@@ -835,7 +890,7 @@ with hdr_l:
     )
 with hdr_r:
     next_lang = "en" if lang == "id" else "id"
-    if st.button(f"🌐 {lang.upper()} → {next_lang.upper()}", use_container_width=True):
+    if st.button(f"{lang.upper()} / {next_lang.upper()}", use_container_width=True):
         st.session_state.ui_lang = next_lang
         st.rerun()
 
@@ -847,11 +902,11 @@ if not health:
 if not (st.session_state.student_qr_entry and st.session_state.page == "join"):
     nav_cols = st.columns(5)
     nav_items = [
-        ("home", f"🏠 {tr(lang, 'nav_home')}"),
-        ("create", f"➕ {tr(lang, 'nav_create')}"),
-        ("host", f"🎙️ {tr(lang, 'nav_host')}"),
-        ("join", f"📱 {tr(lang, 'nav_student')}"),
-        ("transcript", f"📄 {tr(lang, 'nav_transcript')}"),
+        ("home", tr(lang, "nav_home")),
+        ("create", tr(lang, "nav_create")),
+        ("host", tr(lang, "nav_host")),
+        ("join", tr(lang, "nav_student")),
+        ("transcript", tr(lang, "nav_transcript")),
     ]
     for col, (p_key, label) in zip(nav_cols, nav_items):
         with col:
@@ -912,23 +967,23 @@ if st.session_state.page == "home":
         f'      <h1>{hero_h1}</h1>'
         f'      <p>{hero_sub}</p>'
         f'      <div class="fg-hero-stats">'
-        f'        <span class="fg-stat-chip">🟢 {db_badge}</span>'
-        f'        <span class="fg-stat-chip">🧮 {gem_badge}</span>'
-        f'        <span class="fg-stat-chip">📚 {len(sessions)} {"Sesi Tersimpan" if lang == "id" else "Saved Sessions"}</span>'
+        f'        <span class="fg-stat-chip"><span class="fg-dot-ok"></span>{db_badge}</span>'
+        f'        <span class="fg-stat-chip">{gem_badge}</span>'
+        f'        <span class="fg-stat-chip">{len(sessions)} {"Sesi Tersimpan" if lang == "id" else "Saved Sessions"}</span>'
         f'      </div>'
         f'    </div>'
         f'    <div class="fg-hero-visual">'
         f'      <div class="fg-dashed-frame">'
         f'        <div class="fg-preview-card">'
         f'          <div class="fg-preview-top">'
-        f'            <span class="fg-live-dot-pill">● {"LANGSUNG" if lang == "id" else "LIVE"}</span>'
+        f'            <span class="fg-live-dot-pill"><span class="fg-dot-live"></span>{"LANGSUNG" if lang == "id" else "LIVE"}</span>'
         f'            <span class="fg-preview-meta">KALK-2026</span>'
         f'          </div>'
         f'          <div class="fg-preview-line">{preview_line_1}</div>'
         f'          <div class="fg-preview-line">{preview_line_2}</div>'
         f'        </div>'
         f'        <div class="fg-float-badge">'
-        f'          <div class="fg-float-icon">✨</div>'
+        f'          <div class="fg-float-icon">{ICON_SPARK_SVG}</div>'
         f'          <div>'
         f'            <div class="fg-float-title">{"Study Guide & QR" if lang == "id" else "AI Study Guide"}</div>'
         f'            <div class="fg-float-sub">{"PDF · DOCX · KaTeX" if lang == "id" else "Instant QR · PDF · DOCX"}</div>'
@@ -945,7 +1000,7 @@ if st.session_state.page == "home":
     cta1, cta2 = st.columns(2)
     with cta1:
         if st.button(
-            f"🚀 {tr(lang, 'btn_create')}",
+            tr(lang, "btn_create"),
             key="home_create",
             type="primary",
             use_container_width=True,
@@ -954,7 +1009,7 @@ if st.session_state.page == "home":
             navigate("create")
     with cta2:
         if st.button(
-            f"✨ {tr(lang, 'btn_demo')}",
+            tr(lang, "btn_demo"),
             key="home_demo",
             use_container_width=True,
         ):
@@ -992,15 +1047,15 @@ if st.session_state.page == "home":
     # 3 Soft Peach Feature Cards (Matching Figma Live Chat / Examination / Competition Row)
     if lang == "id":
         feats = [
-            ("🎙️", "Teks Kuliah Langsung", "Tombol mikrofon besar ramah HP & sinkronisasi real-time via QR ruangan langsung."),
-            ("🧮", "KaTeX & Glosarium", "Rumus integral, turunan, pangkat, serta istilah teknis dosen terdeteksi otomatis."),
-            ("📖", "Study Guide Akademik", "Transkrip mentah otomatis dirapikan jadi paragraf utuh siap ekspor PDF & DOCX."),
+            (ICON_MIC_SVG, "Teks Kuliah Langsung", "Tombol mikrofon besar ramah HP & sinkronisasi real-time via QR ruangan langsung."),
+            (ICON_MATH_SVG, "KaTeX & Glosarium", "Rumus integral, turunan, pangkat, serta istilah teknis dosen terdeteksi otomatis."),
+            (ICON_BOOK_SVG, "Study Guide Akademik", "Transkrip mentah otomatis dirapikan jadi paragraf utuh siap ekspor PDF & DOCX."),
         ]
     else:
         feats = [
-            ("🎙️", "Live Captions", "Large touch-friendly host mic & instant student access via direct room QR scan."),
-            ("🧮", "KaTeX & Glossary", "Spoken integrals, derivatives, powers, and course jargon formatted automatically."),
-            ("📖", "AI Study Guide", "Post-session async refinement turns choppy speech into polished PDF & DOCX notes."),
+            (ICON_MIC_SVG, "Live Captions", "Large touch-friendly host mic & instant student access via direct room QR scan."),
+            (ICON_MATH_SVG, "KaTeX & Glossary", "Spoken integrals, derivatives, powers, and course jargon formatted automatically."),
+            (ICON_BOOK_SVG, "AI Study Guide", "Post-session async refinement turns choppy speech into polished PDF & DOCX notes."),
         ]
 
     feat_cards_html = "".join(
@@ -1017,13 +1072,13 @@ if st.session_state.page == "home":
     st.markdown(
         f'<div class="fg-join-band">'
         f'  <div class="fg-join-left">'
-        f'    <div class="fg-join-icon">📱</div>'
+        f'    <div class="fg-join-icon">{ICON_QR_SVG}</div>'
         f'    <div>'
         f'      <div class="fg-join-title">{"Punya Kode Ruangan dari Dosen?" if lang == "id" else "Have a Room Code from Your Lecturer?"}</div>'
         f'      <div class="fg-join-sub">{"Masukkan kode ruangan atau tempel link untuk langsung baca teks kuliah real-time." if lang == "id" else "Enter the room code or paste a link to open live lecture captions immediately."}</div>'
         f'    </div>'
         f'  </div>'
-        f'  <span class="fg-pill fg-pill-white">📲 Direct Room Join</span>'
+        f'  <span class="fg-pill fg-pill-white">Direct Room Join</span>'
         f'</div>',
         unsafe_allow_html=True,
     )
@@ -1038,7 +1093,7 @@ if st.session_state.page == "home":
             )
         with jc2:
             if st.button(
-                "Gabung Ruangan →" if lang == "id" else "Join Room →",
+                "Gabung Ruangan" if lang == "id" else "Join Room",
                 type="primary",
                 use_container_width=True,
             ):
@@ -1060,7 +1115,7 @@ if st.session_state.page == "home":
         st.info(tr(lang, "no_sessions"))
     else:
         for s in sessions:
-            tile_bg, emoji = subject_visual(s["course_title"])
+            tile_bg, mono = subject_visual(s["course_title"])
             status_cls = (
                 "fg-pill-orange"
                 if s["status"] == "live"
@@ -1069,26 +1124,26 @@ if st.session_state.page == "home":
                 else "fg-pill-green"
             )
             status_lbl = (
-                "● LANGSUNG"
+                '<span class="fg-dot-live"></span>LANGSUNG'
                 if s["status"] == "live"
-                else "⏸ DIJEDA"
+                else "DIJEDA"
                 if s["status"] == "paused"
-                else "✓ SELESAI"
+                else "SELESAI"
             )
+            seg_lbl = f'{s["caption_count"]} {"segmen" if lang == "id" else "lines"}'
             with st.container(border=True):
                 left, right = st.columns([6, 4])
                 with left:
                     st.markdown(
                         f'<div class="fg-course-row">'
-                        f'  <div class="fg-course-tile" style="background:{tile_bg};">{emoji}</div>'
+                        f'  <div class="fg-course-tile" style="background:{tile_bg};">{mono}</div>'
                         f'  <div>'
                         f'    <div class="fg-course-title">{s["course_title"]}</div>'
                         f'    <div class="fg-course-sub">{s["topic"]}</div>'
                         f'    <div class="fg-pill-row" style="margin:6px 0 0;">'
                         f'      <span class="fg-pill {status_cls}">{status_lbl}</span>'
                         f'      <span class="fg-pill fg-pill-peach">{s["id"]}</span>'
-                        f'      <span class="fg-pill fg-pill-white">💬 {s["caption_count"]}</span>'
-                        f'      <span class="fg-pill fg-pill-white">👥 {s["student_count"]}</span>'
+                        f'      <span class="fg-pill fg-pill-white">{seg_lbl}</span>'
                         f'    </div>'
                         f'  </div>'
                         f'</div>',
@@ -1098,13 +1153,13 @@ if st.session_state.page == "home":
                     st.write("")
                     b1, b2, b3 = st.columns(3)
                     with b1:
-                        if st.button("🎙️ Host", key=f"h_{s['id']}", use_container_width=True):
+                        if st.button("Host", key=f"h_{s['id']}", use_container_width=True):
                             navigate("host", s["id"])
                     with b2:
-                        if st.button("📱 Masuk", key=f"j_{s['id']}", use_container_width=True):
+                        if st.button("Masuk" if lang == "id" else "Join", key=f"j_{s['id']}", use_container_width=True):
                             navigate("join", s["id"])
                     with b3:
-                        if st.button("📄", key=f"t_{s['id']}", use_container_width=True):
+                        if st.button("Catatan" if lang == "id" else "Notes", key=f"t_{s['id']}", use_container_width=True):
                             navigate("transcript", s["id"])
 
 
@@ -1117,7 +1172,7 @@ elif st.session_state.page == "create":
     if created:
         st.markdown(
             page_banner_html(
-                f'<span class="fg-pill fg-pill-orange">🎉 RUANGAN SIAP</span>'
+                f'<span class="fg-pill fg-pill-orange">RUANGAN SIAP</span>'
                 f'<span class="fg-pill fg-pill-white">{created["id"]}</span>',
                 created["course_title"],
                 f'{created["topic"]} · Bagikan QR di bawah ke mahasiswa sebelum mulai bicara!',
@@ -1136,20 +1191,20 @@ elif st.session_state.page == "create":
         c_a, c_b = st.columns(2)
         with c_a:
             if st.button(
-                f"🎙️ {tr(lang, 'open_host')}", type="primary", use_container_width=True
+                tr(lang, "open_host"), type="primary", use_container_width=True
             ):
                 sid = created["id"]
                 st.session_state.created_room = None
                 navigate("host", sid)
         with c_b:
-            if st.button(f"📱 {tr(lang, 'open_student')}", use_container_width=True):
+            if st.button(tr(lang, "open_student"), use_container_width=True):
                 sid = created["id"]
                 st.session_state.created_room = None
                 navigate("join", sid)
     else:
         st.markdown(
             page_banner_html(
-                '<span class="fg-pill fg-pill-orange">✨ STUDIO DOSEN</span>',
+                '<span class="fg-pill fg-pill-orange">STUDIO DOSEN</span>',
                 tr(lang, "create_title"),
                 "Lengkapi mata kuliah & glosarium istilah agar transkripsi dan rumus semakin akurat."
                 if lang == "id"
@@ -1179,7 +1234,7 @@ elif st.session_state.page == "create":
             with up_col2:
                 st.write("")
                 st.write("")
-                if st.button(f"✨ {tr(lang, 'load_sample')}", use_container_width=True):
+                if st.button(tr(lang, "load_sample"), use_container_width=True):
                     sample = [
                         "Integral Riemann",
                         "Eigenvalue",
@@ -1223,7 +1278,7 @@ elif st.session_state.page == "create":
                     help=tr(lang, "glossary_help"),
                 )
                 submitted = st.form_submit_button(
-                    f"🚀 {tr(lang, 'start_session')}",
+                    tr(lang, "start_session"),
                     type="primary",
                     use_container_width=True,
                 )
@@ -1264,15 +1319,14 @@ elif st.session_state.page == "host":
 
     if not sess:
         st.info("Pilih atau buat sesi terlebih dahulu.")
-        if st.button(f"➕ {tr(lang, 'btn_create')}", type="primary"):
+        if st.button(tr(lang, "btn_create"), type="primary"):
             navigate("create")
         st.stop()
 
     st.markdown(
         page_banner_html(
-            f'<span class="fg-pill fg-pill-orange">🎙️ HOST · {sess["id"]}</span>'
-            f'<span class="fg-pill fg-pill-white">📅 {sess["date"]}</span>'
-            f'<span class="fg-pill fg-pill-peach">👥 {sess["student_count"]} online</span>',
+            f'<span class="fg-pill fg-pill-orange">HOST · {sess["id"]}</span>'
+            f'<span class="fg-pill fg-pill-white">{sess["date"]}</span>',
             sess["course_title"],
             sess["topic"],
         ),
@@ -1280,7 +1334,7 @@ elif st.session_state.page == "host":
     )
 
     join_url = f"{public_app_url}/?page=join&session={sess['id']}"
-    with st.expander(f"📲 Bagikan QR Code & Link Mahasiswa ({sess['id']})", expanded=False):
+    with st.expander(f"Bagikan QR Code & Link Mahasiswa ({sess['id']})", expanded=False):
         mount_room_qr_card(
             session_id=sess["id"],
             fallback_origin=public_app_url,
@@ -1319,7 +1373,6 @@ elif st.session_state.page == "host":
         utterance, action = mount_host_mic_console(
             session_id=sess["id"],
             speech_lang=sess["language"],
-            student_count=sess["student_count"],
             ui_lang=lang,
         )
 
@@ -1368,7 +1421,7 @@ elif st.session_state.page == "host":
                     )
                 with m2:
                     if st.form_submit_button(
-                        "📤 Kirim" if lang == "id" else "📤 Send",
+                        "Kirim" if lang == "id" else "Send",
                         type="primary",
                         use_container_width=True,
                     ):
@@ -1376,18 +1429,18 @@ elif st.session_state.page == "host":
                             api.submit_caption(sess["id"], u_in.strip())
                             st.rerun()
 
-        st.markdown("#### 📝 Transkrip Berlangsung" if lang == "id" else "#### 📝 Live Transcript")
+        st.markdown("#### Transkrip Berlangsung" if lang == "id" else "#### Live Transcript")
         host_caps = api.list_captions(sess["id"])
         if host_caps:
             render_katex_transcript_list(host_caps, ui_lang=lang)
         else:
             st.info(
-                "Belum ada teks. Tap tombol mikrofon besar di atas dan mulai berbicara, atau tekan ✨ Kirim 1 Baris Demo."
+                "Belum ada teks. Tap tombol mikrofon besar di atas dan mulai berbicara, atau tekan Kirim 1 Baris Demo."
                 if lang == "id"
-                else "No captions yet. Tap the big microphone button above and start speaking, or tap ✨ Send 1 Demo Line."
+                else "No captions yet. Tap the big microphone button above and start speaking, or tap Send 1 Demo Line."
             )
 
-    with st.expander(f"🎧 {tr(lang, 'upload_audio_title')}", expanded=False):
+    with st.expander(tr(lang, "upload_audio_title"), expanded=False):
         st.caption(tr(lang, "upload_audio_help"))
         audio_file = st.file_uploader(
             "Audio file",
@@ -1397,7 +1450,7 @@ elif st.session_state.page == "host":
         if audio_file is not None:
             st.audio(audio_file.getvalue())
             if st.button(
-                f"🚀 {tr(lang, 'btn_transcribe_audio')}",
+                tr(lang, "btn_transcribe_audio"),
                 type="primary",
                 use_container_width=True,
             ):
@@ -1425,7 +1478,7 @@ elif st.session_state.page == "join":
     if not sid:
         st.markdown(
             page_banner_html(
-                '<span class="fg-pill fg-pill-orange">📱 RUANG MAHASISWA</span>',
+                '<span class="fg-pill fg-pill-orange">RUANG MAHASISWA</span>',
                 tr(lang, "btn_join"),
                 "Masukkan kode ruangan atau tempel link dari dosen."
                 if lang == "id"
@@ -1436,7 +1489,7 @@ elif st.session_state.page == "join":
         with st.container(border=True):
             code_in = st.text_input(tr(lang, "join_placeholder"))
             if st.button(
-                "Masuk Ruangan →" if lang == "id" else "Join Room →",
+                "Masuk Ruangan" if lang == "id" else "Join Room",
                 type="primary",
                 use_container_width=True,
             ):
@@ -1452,16 +1505,16 @@ elif st.session_state.page == "join":
             if lang == "id"
             else f"Room `{sid}` was not found. Make sure the lecturer created an active session."
         )
-        if st.button(f"🏠 {tr(lang, 'nav_home')}", type="primary"):
+        if st.button(tr(lang, "nav_home"), type="primary"):
             navigate("home")
         st.stop()
 
     status_pill = (
-        '<span class="fg-pill fg-pill-yellow">⏸ DIJEDA</span>'
+        '<span class="fg-pill fg-pill-yellow">DIJEDA</span>'
         if sess["status"] == "paused"
-        else '<span class="fg-pill fg-pill-green">✓ SELESAI</span>'
+        else '<span class="fg-pill fg-pill-green">SELESAI</span>'
         if sess["status"] == "ended"
-        else '<span class="fg-pill fg-pill-orange">● LANGSUNG</span>'
+        else '<span class="fg-pill fg-pill-orange"><span class="fg-dot-live"></span>LANGSUNG</span>'
     )
     st.markdown(
         page_banner_html(
@@ -1474,10 +1527,10 @@ elif st.session_state.page == "join":
 
     s_nav1, s_nav2 = st.columns(2)
     with s_nav1:
-        if st.button(f"📄 {tr(lang, 'nav_transcript')}", use_container_width=True):
+        if st.button(tr(lang, "nav_transcript"), use_container_width=True):
             navigate("transcript", sess["id"])
     with s_nav2:
-        if st.button(f"🏠 {tr(lang, 'nav_home')}", use_container_width=True):
+        if st.button(tr(lang, "nav_home"), use_container_width=True):
             navigate("home")
 
     if not getattr(api, "is_embedded", False):
@@ -1489,14 +1542,12 @@ elif st.session_state.page == "join":
             ui_lang=lang,
         )
     else:
-        from frontend.local_backend import touch_student_presence
-
         if "stu_pause_poll" not in st.session_state:
             st.session_state.stu_pause_poll = False
 
         with st.container(border=True):
             st.session_state.stu_pause_poll = st.toggle(
-                "⏸ Jeda Auto-Refresh" if lang == "id" else "⏸ Pause Auto-Refresh",
+                "Jeda Auto-Refresh" if lang == "id" else "Pause Auto-Refresh",
                 value=st.session_state.stu_pause_poll,
             )
 
@@ -1506,30 +1557,29 @@ elif st.session_state.page == "join":
             else datetime.timedelta(seconds=1.5)
         )
         def _live_student_feed():
-            touch_student_presence(sess["id"], st.session_state.student_id)
             live_sess = api.get_session(sess["id"])
             if not live_sess:
                 st.error("Sesi tidak ditemukan.")
                 return
             if live_sess["status"] == "ended":
                 st.success(
-                    "✅ **Sesi Telah Berakhir** — Klik tombol **Transkrip** di atas untuk membaca Study Guide rapi & ekspor `.docx` / `.pdf`."
+                    "**Sesi Telah Berakhir** — Klik tombol **Transkrip** di atas untuk membaca Study Guide rapi & ekspor `.docx` / `.pdf`."
                     if lang == "id"
-                    else "✅ **Session Ended** — Tap **Transcript** above for your polished Study Guide and `.docx` / `.pdf` export."
+                    else "**Session Ended** — Tap **Transcript** above for your polished Study Guide and `.docx` / `.pdf` export."
                 )
                 return
             if live_sess["status"] == "paused":
                 st.warning(
-                    "⏸ Dosen sedang menjeda sesi sementara."
+                    "Dosen sedang menjeda sesi sementara."
                     if lang == "id"
-                    else "⏸ The lecturer has temporarily paused captions."
+                    else "The lecturer has temporarily paused captions."
                 )
             live_caps = api.list_captions(sess["id"])
             if not live_caps:
                 st.info(
-                    "Terhubung ke ruangan! Menunggu dosen mulai berbicara…"
+                    "Terhubung ke ruangan! Menunggu dosen mulai berbicara..."
                     if lang == "id"
-                    else "Connected to the room! Waiting for the lecturer to begin…"
+                    else "Connected to the room! Waiting for the lecturer to begin..."
                 )
                 return
             render_katex_transcript_list(live_caps, ui_lang=lang, student_mode=True)
@@ -1558,27 +1608,27 @@ elif st.session_state.page == "transcript":
     polish_status = sess.get("polish_status") or "idle"
 
     polish_pill = (
-        '<span class="fg-pill fg-pill-green">✨ Study Guide Siap</span>'
+        '<span class="fg-pill fg-pill-green">Study Guide Siap</span>'
         if polish_status == "ready"
-        else '<span class="fg-pill fg-pill-yellow">⏳ Merapikan Paragraf...</span>'
+        else '<span class="fg-pill fg-pill-yellow">Merapikan Paragraf...</span>'
         if polish_status == "processing"
-        else '<span class="fg-pill fg-pill-white">📝 Raw Log</span>'
+        else '<span class="fg-pill fg-pill-white">Raw Log</span>'
     )
 
     st.markdown(
         page_banner_html(
-            f'<span class="fg-pill fg-pill-orange">📘 {sess["id"]}</span>'
-            f'<span class="fg-pill fg-pill-white">💬 {len(captions)} segmen</span>'
+            f'<span class="fg-pill fg-pill-orange">{sess["id"]}</span>'
+            f'<span class="fg-pill fg-pill-white">{len(captions)} segmen</span>'
             f'{polish_pill}',
             sess["course_title"],
-            f'{sess["topic"]} · 📅 {sess["date"]}',
+            f'{sess["topic"]} · {sess["date"]}',
         ),
         unsafe_allow_html=True,
     )
 
     if sess["glossary"]:
         chips = "".join(
-            f'<span class="fg-pill fg-pill-peach">🏷️ {g}</span>' for g in sess["glossary"]
+            f'<span class="fg-pill fg-pill-peach">{g}</span>' for g in sess["glossary"]
         )
         st.markdown(f'<div class="fg-pill-row" style="margin-bottom:14px;">{chips}</div>', unsafe_allow_html=True)
 
@@ -1589,14 +1639,14 @@ elif st.session_state.page == "transcript":
             fresh = api.get_session(sess["id"])
             if fresh and fresh.get("polish_status") != "processing":
                 st.rerun()
-            st.info(f"⏳ {tr(lang, 'polish_processing')}")
+            st.info(tr(lang, "polish_processing"))
 
         _watch_polish_status()
 
     ai1, ai2 = st.columns(2)
     with ai1:
         if st.button(
-            f"🪄 {tr(lang, 'btn_polish')}",
+            tr(lang, "btn_polish"),
             type="primary",
             disabled=len(captions) == 0,
             use_container_width=True,
@@ -1610,7 +1660,7 @@ elif st.session_state.page == "transcript":
                 st.rerun()
     with ai2:
         if st.button(
-            f"✨ {tr(lang, 'btn_summary')}",
+            tr(lang, "btn_summary"),
             disabled=len(captions) == 0,
             use_container_width=True,
         ):
@@ -1625,7 +1675,7 @@ elif st.session_state.page == "transcript":
         with ex1:
             docx_bytes = api.download_export(sess["id"], "docx")
             st.download_button(
-                f"📘 {tr(lang, 'export_docx')}",
+                tr(lang, "export_docx"),
                 data=docx_bytes,
                 file_name=f"lecturelens-{sess['id'].lower()}-{sess['date']}.docx",
                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -1634,7 +1684,7 @@ elif st.session_state.page == "transcript":
         with ex2:
             pdf_bytes = api.download_export(sess["id"], "pdf")
             st.download_button(
-                f"📕 {tr(lang, 'export_pdf')}",
+                tr(lang, "export_pdf"),
                 data=pdf_bytes,
                 file_name=f"lecturelens-{sess['id'].lower()}-{sess['date']}.pdf",
                 mime="application/pdf",
@@ -1643,7 +1693,7 @@ elif st.session_state.page == "transcript":
         with ex3:
             txt_bytes = api.download_export(sess["id"], "txt")
             st.download_button(
-                f"📝 {tr(lang, 'export_txt')}",
+                tr(lang, "export_txt"),
                 data=txt_bytes,
                 file_name=f"lecturelens-{sess['id'].lower()}-{sess['date']}.txt",
                 mime="text/plain",
@@ -1653,7 +1703,7 @@ elif st.session_state.page == "transcript":
     if sess.get("summary_md"):
         with st.container(border=True):
             st.markdown(
-                f'<div class="fg-card-header"><span>✨ {tr(lang, "summary_heading")}</span></div>',
+                f'<div class="fg-card-header"><span>{tr(lang, "summary_heading")}</span></div>',
                 unsafe_allow_html=True,
             )
             st.markdown(sess["summary_md"])
@@ -1668,14 +1718,14 @@ elif st.session_state.page == "transcript":
             with st.container(border=True):
                 st.markdown(
                     f'<div class="fg-card-header">'
-                    f'  <span>📖 {tr(lang, "polish_heading")}</span>'
+                    f'  <span>{tr(lang, "polish_heading")}</span>'
                     f'  <span class="fg-pill fg-pill-peach">{provider_lbl}</span>'
                     f'</div>',
                     unsafe_allow_html=True,
                 )
                 st.markdown(sess["polished_transcript_md"])
         elif polish_status == "processing":
-            st.info(f"⏳ {tr(lang, 'polish_processing')}")
+            st.info(tr(lang, "polish_processing"))
         else:
             st.info(tr(lang, "polish_empty_cta"))
 
@@ -1706,7 +1756,7 @@ elif st.session_state.page == "transcript":
 st.markdown(
     f'<div class="fg-footer">'
     f'  <div class="fg-footer-brand">Lecture<span>Lens</span></div>'
-    f'  <div class="fg-footer-note">🔒 {tr(lang, "privacy_note")}</div>'
+    f'  <div class="fg-footer-note">{tr(lang, "privacy_note")}</div>'
     f'</div>',
     unsafe_allow_html=True,
 )
